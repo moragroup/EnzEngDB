@@ -8,4 +8,7 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD ["uvicorn", "levseq_dash.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["gunicorn", "--workers=3", "--threads=1", "-b", "0.0.0.0:8050", "levseq_dash.app.main_app_test:server"]
+# example to pverride the CMD on the commad line after the image has been created
+# in this example I changed the number of workers for gunicorn
+# docker run -p 8050:8050 <image-name>> gunicorn --workers 1 --bind 0.0.0.0:8050 levseq_dash.app.main_app_test:server
