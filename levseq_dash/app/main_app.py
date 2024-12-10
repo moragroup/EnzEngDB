@@ -22,9 +22,7 @@ load_figure_template(gs.dbc_template_name)
 
 
 app.layout = dbc.Container(
-    [
-        layout_upload.upload_form_layout
-    ],
+    [layout_upload.upload_form_layout],
     # fluid=True,
 )
 # Run the app
