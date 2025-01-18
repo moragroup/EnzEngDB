@@ -30,7 +30,7 @@ form = dbc.Form(
                 dbc.Col(
                     [
                         dcc.DatePickerSingle(
-                            id="id-experiment-date",
+                            id="id-input-experiment-date",
                             clearable=True,
                             # className="dbc",
                             # TODO: what should be the placeholder
