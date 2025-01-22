@@ -212,7 +212,7 @@ layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container fr
         # "width": "90%",  # 50% width
         # "margin": "0 auto",  # Center horizontally
         # "text-align": "center",  # Center text inside the div
-        "border": "1px solid cyan",  # for visual debugging
+        # "border": "1px solid cyan",  # for visual debugging
         # "padding": "10px",  #spacing inside the div
     },
 )
