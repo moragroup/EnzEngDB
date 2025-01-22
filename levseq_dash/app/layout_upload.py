@@ -3,6 +3,7 @@ from dash import dcc, html
 
 from levseq_dash.app import components, inline_styles
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.data_manager import MutagenesisMethod
 
 # TODO: all placeholders must be in strings file
 
@@ -111,17 +112,8 @@ form = dbc.Form(
                         html.Div(
                             [
                                 dbc.RadioItems(
-                                    options=[
-                                        {
-                                            "label": gs.eppcr,
-                                            "value": 1,
-                                        },
-                                        {
-                                            "label": gs.ssm,
-                                            "value": 2,
-                                        },
-                                    ],
-                                    value=1,
+                                    options=[MutagenesisMethod.epPCR, MutagenesisMethod.SSM],
+                                    value=MutagenesisMethod.epPCR,
                                     id="id-radio-epr",
                                     inline=True,
                                 ),

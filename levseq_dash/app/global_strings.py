@@ -9,8 +9,8 @@ product_cas = "Product CAS Number"
 assay = "Assay"
 tech = "Mutagenesis Method"
 
-eppcr = "epPCR"
-ssm = "SSM"
+eppcr = "Error-prone PCR (epPCR)"
+ssm = "Site saturation mutagenesis (SSM)"
 
 experiment_name_placeholder = "Enter a name for your experiment."
 

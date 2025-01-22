@@ -1,3 +1,13 @@
+from enum import StrEnum
+
+from levseq_dash.app import global_strings as gs
+
+
+class MutagenesisMethod(StrEnum):
+    epPCR = gs.eppcr
+    SSM = gs.ssm
+
+
 class DataManager:
     def __init__(self):
         """Initialize the database"""
@@ -18,7 +28,7 @@ class DataManager:
         substrate_cas_number: list[str],
         product_cas_number: list[str],
         assay,
-        mutagenesis_method: bool,  # epPCR=0 SSM=1
+        mutagenesis_method: MutagenesisMethod,  # epPCR or SSM
         experiment_content,  # or file - the contents of the csv
         geometry_content,
         parent_sequence=None,  # processed

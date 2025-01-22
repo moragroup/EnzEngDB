@@ -6,7 +6,7 @@ from datetime import datetime
 import pandas as pd
 
 from levseq_dash.app import parser
-from levseq_dash.app.data_manager import DataManager
+from levseq_dash.app.data_manager import DataManager, MutagenesisMethod
 
 
 class Experiment:
@@ -89,7 +89,7 @@ class FileManager(DataManager):
         substrate_cas_number: list[str],
         product_cas_number: list[str],
         assay,
-        mutagenesis_method: bool,  # epPCR=0 SSM=1
+        mutagenesis_method: MutagenesisMethod,
         experiment_content,  # or file - the contents of the csv
         geometry_content,
         parent_sequence=None,
