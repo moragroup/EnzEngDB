@@ -3,7 +3,6 @@ import plotly_express as px
 import regex as re
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.tests.conftest import experiment_ep_example
 
 
 def creat_heatmap(df, plate_number, property_stat, cas_number):

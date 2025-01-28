@@ -42,7 +42,7 @@ app.layout = dbc.Container(
         layout_experiment.layout,
         dcc.Store(id="id-data-exp"),
         dcc.Store(id="id-data-structure"),
-        #dcc.Store(id="id-experiment-selected"),
+        # dcc.Store(id="id-experiment-selected"),
     ],
     fluid=True,
 )
