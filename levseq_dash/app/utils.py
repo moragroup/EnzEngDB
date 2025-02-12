@@ -1,7 +1,50 @@
 import base64
 import io
+import re
 
 import pandas as pd
+from dash_molstar.utils import molstar_helper
+
+
+def get_geometry_for_viewer(exp):
+    if exp.geometry_file_path:
+        pdb_cif = molstar_helper.parse_molecule(exp.geometry_file_path, fmt="cif")
+    else:
+        pdb_cif = molstar_helper.parse_molecule(exp.geometry_base64_bytes, fmt="cif")
+    return pdb_cif
+
+
+def gather_residues_from_selection(selected_rows):
+    mutations = f"{selected_rows[0]['amino_acid_substitutions']}"
+    mutations_split = mutations.split("_") if "_" in mutations else [mutations]
+    residues = list()
+    for mutation in mutations_split:
+        match = re.search(r"[A-Za-z](\d+)[A-Za-z]", mutation)
+        if match:
+            number = match.group(1)  # Extract the captured number
+            residues.append(number)
+    return residues
+
+
+def get_selection_focus(residues):
+    target = molstar_helper.get_targets(
+        chain="A",
+        residue=residues,
+        auth=True,
+        # if it's a CIF file to select the authentic chain names and residue
+        # numbers
+    )
+    sel = molstar_helper.get_selection(
+        target,
+        # select by default, it will put a green highlight on the atoms
+        # default select mode (true) or hover mode (false)
+        # select=False,  # default select mode (true) or hover mode (false)
+        add=False,
+    )  # TODO: do we want to add to the list?
+    foc = molstar_helper.get_focus(target, analyse=True)
+
+    return sel, foc
+
 
 # def get_file_size(file_bytes):
 #     # TODO: revisit theis function, make it better or remove altogether
