@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from levseq_dash.app import components, inline_styles
+from levseq_dash.app import components, vis
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app.data_manager import MutagenesisMethod
 
@@ -136,7 +136,7 @@ form = dbc.Form(
                         id="id-button-upload-data",
                         children=dbc.Button(gs.button_upload_csv, color="secondary", outline=True),
                         multiple=False,
-                        style=inline_styles.upload_default,
+                        style=vis.upload_default,
                     ),
                     width=6,
                 ),
@@ -145,7 +145,7 @@ form = dbc.Form(
                         id="id-button-upload-structure",
                         children=dbc.Button(gs.button_upload_pdb, color="secondary", outline=True),
                         multiple=False,
-                        style=inline_styles.upload_default,
+                        style=vis.upload_default,
                     ),
                     width=6,
                 ),

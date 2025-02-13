@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html
-from dash_iconify import DashIconify
+
+from levseq_dash.app import vis
 
 navbar = dbc.Navbar(
     dbc.Container(
@@ -15,7 +16,7 @@ navbar = dbc.Navbar(
     ),
     color="dark",
     dark=True,
-    className="bg-primary text-light py-4 text-center fs-1 fw-light border-bottom",
+    className="text-light py-4 text-center fs-1 fw-light border-bottom",
 )
 
 sidebar = html.Div(
@@ -26,17 +27,29 @@ sidebar = html.Div(
         ),
         html.Hr(),
         html.Br(),
-        dbc.NavItem(dbc.NavLink(
-            [DashIconify(icon="mdi:home", width=20), " Lab Dashboard"],
-            href="/")),
-        dbc.NavItem(dbc.NavLink(
-            [DashIconify(icon="mdi:tray-upload", width=20), " Upload New Experiment"],
-            href="/upload")),
+        dbc.Nav(
+            [
+                dbc.NavLink(
+                    [vis.icon_home, " Lab Dashboard"],
+                    href="/",
+                    active="exact",
+                    className="sidebar-link",
+                ),
+                dbc.NavLink(
+                    [vis.icon_upload, " Upload New Experiment"],
+                    href="/upload",
+                    active="exact",
+                    className="sidebar-link",
+                ),
+            ],
+            vertical=True,
+            # pills=True,
+        ),
     ],
     style={
         # "background-color": "#f8f9fa",
         "height": "100%",
         "padding": "20px",
     },
-    className="p-0 bg-light",
+    className="p-0",
 )

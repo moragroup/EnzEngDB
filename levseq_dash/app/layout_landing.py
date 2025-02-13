@@ -1,20 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import html
-from dash_iconify import DashIconify
 
-from levseq_dash.app import components, inline_styles
+from levseq_dash.app import components, vis
 
-MEDIUM = 20
-SMALL = 16
-
-del_exp = html.I(
-    DashIconify(icon="fa-solid:trash-alt", height=SMALL, width=SMALL),
-    # style={"margin-right": "8px"} # add the margin if there is text next to it
-    # style={"color": "var(--bs-danger)"}
-)
-go_to_next = html.I(
-    DashIconify(icon="line-md:chevron-small-triple-right", height=SMALL, width=SMALL), style={"margin-left": "8px"}
-)
 # -------------------------------------------------------
 layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container from parent
     [
@@ -23,28 +11,28 @@ layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container fr
                 dbc.Col(
                     dbc.Card(
                         [
-                            dbc.CardHeader("Total Experiments", className=inline_styles.top_card_head),
-                            dbc.CardBody(id="id-lab-experiment-count", className=inline_styles.top_card_body),
+                            dbc.CardHeader("Total Experiments", className=vis.top_card_head),
+                            dbc.CardBody(id="id-lab-experiment-count", className=vis.top_card_body),
                         ],
-                        style=inline_styles.card_shadow,
+                        style=vis.card_shadow,
                     ),
                     width=2,
-                    style=inline_styles.border_column,
+                    style=vis.border_column,
                 ),
                 dbc.Col(
                     dbc.Card(
                         [
-                            dbc.CardHeader("Used CAS", className=inline_styles.top_card_head),
-                            dbc.CardBody(id="id-lab-experiment-all-cas", className=inline_styles.top_card_body),
+                            dbc.CardHeader("Used CAS", className=vis.top_card_head),
+                            dbc.CardBody(id="id-lab-experiment-all-cas", className=vis.top_card_body),
                         ],
-                        style=inline_styles.card_shadow,
+                        style=vis.card_shadow,
                     ),
-                    width=5,
-                    style=inline_styles.border_column,
+                    # width=5,
+                    style=vis.border_column,
                 ),
             ],
             className="g-2 mb-4",
-            style=inline_styles.border_row,
+            style=vis.border_row,
         ),
         dbc.Row(
             [
@@ -52,13 +40,13 @@ layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container fr
                     [
                         dbc.Card(
                             [
-                                dbc.CardHeader("All Experiments", className=inline_styles.top_card_head),
+                                dbc.CardHeader("All Experiments", className=vis.top_card_head),
                                 dbc.CardBody(
                                     [
                                         html.Div(  # TODO: dbc.container adds padding to the surrounding area
                                             [components.get_table_all_experiments()],
                                             className="dbc dbc-ag-grid",
-                                            style=inline_styles.border_table,
+                                            style=vis.border_table,
                                         ),
                                         # TODO: delete this later
                                         # html.Br(),
@@ -90,7 +78,7 @@ layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container fr
                                                         n_clicks=0,
                                                         # children=html.Span([del_exp, "Delete Experiment"]),
                                                         children=html.Span(
-                                                            [del_exp],
+                                                            [vis.icon_del_exp],
                                                             # override the button color
                                                             # since it's of type "link"
                                                             style={"color": "var(--bs-danger)"},
@@ -105,7 +93,9 @@ layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container fr
                                                 ),
                                                 dbc.Col(
                                                     dbc.Button(
-                                                        children=html.Span(["Go to Experiment Dashboard", go_to_next]),
+                                                        children=html.Span(
+                                                            ["Go to Experiment Dashboard", vis.icon_go_to_next]
+                                                        ),
                                                         id="id-button-show-experiment",
                                                         n_clicks=0,
                                                         disabled=True,
@@ -129,10 +119,9 @@ layout = html.Div(  # TODO: dbc.Container doesn't pick up the fluid container fr
                                 # "width": "530px", "height": "630px"
                             },
                         ),
-                        # html.Div(id="selected-row-value"),
                     ],
                     # width=6,
-                    style=inline_styles.border_column,
+                    style=vis.border_column,
                 ),
             ],
             className="mb-4",  # TODO: change gutter to g-1 here? or not
