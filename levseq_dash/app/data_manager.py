@@ -1,23 +1,16 @@
 import os
 import random
 from collections import defaultdict
-from enum import StrEnum
 from pathlib import Path
 
 import pandas as pd
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app import parser
-from levseq_dash.app.experiment import Experiment, extract_experiment_meta_data
+from levseq_dash.app import utils
+from levseq_dash.app.experiment import Experiment, MutagenesisMethod
 from levseq_dash.app.settings import CONFIG
 from levseq_dash.app.tests.conftest import test_assay_list
 from levseq_dash.app.wsexec import Query
-
-
-class MutagenesisMethod(StrEnum):
-    epPCR = gs.eppcr
-    SSM = gs.ssm
-
 
 use_db_web_service = False
 load_all_experiments = True
@@ -39,38 +32,13 @@ class DataManager:
             # use this flag for debugging multiple files.
             # This will load all csv files in test/data
             if CONFIG["debug"]["load_all_experiments_from_disk"]:
-                test_experiments = gather_all_test_experiments()
-                for key in test_experiments.keys():
-                    exp_file_path = test_experiments[key]["csv"]
-                    geometry_file_path = test_experiments[key]["geometry"]
+                # function below will load test data files and their geometry from the
+                # data folder and fill self.experiments_dict
+                self._load_test_experiment_data()
 
-                    data_df = df = pd.read_csv(exp_file_path)
-                    # unique_cas = df[gs.c_cas].unique()
-                    # unique_plates = df[gs.c_plate].unique()
-                    # filtered_df = df[(df[gs.c_cas] == unique_cas[0]) & (df[gs.c_plate] == unique_plates[0])].copy()
-                    filename = os.path.basename(exp_file_path)
-                    if "ssm" in str(exp_file_path):
-                        mutagenesis_method = MutagenesisMethod.SSM
-                    else:
-                        mutagenesis_method = MutagenesisMethod.epPCR
-
-                    assay_index = random.randrange(len(test_assay_list))
-                    assay = test_assay_list[assay_index]
-                    exp = Experiment(
-                        data_df=data_df,
-                        experiment_name=filename,
-                        experiment_date="01-01-2025",
-                        substrate_cas_number=generate_random_cas_numbers(),
-                        product_cas_number=generate_random_cas_numbers(),
-                        assay=assay,
-                        mutagenesis_method=mutagenesis_method,
-                        geometry_file_path=geometry_file_path,
-                    )
-                    self.add_experiment(exp)
-
-        # -----------------------
-        #       ADD DATA
-        # -----------------------
+    # -----------------------
+    #       ADD DATA
+    # -----------------------
 
     def add_experiment_from_ui(
         self,
@@ -112,8 +80,7 @@ class DataManager:
             # cb_csv = Query("load_file", [uid, eid, "test_csv.csv", experiment_content_base64_string])
             # cb_cif = Query("load_file", [uid, eid, "test_cif.cif", geometry_content])
         else:
-            print("FileManager: add_new_experiment_from_ui")
-            data_df = parser.decode_csv_file_base64_string_to_dataframe(experiment_content_base64_string)
+            data_df = utils.decode_csv_file_base64_string_to_dataframe(experiment_content_base64_string)
             exp = Experiment(
                 data_df=data_df,
                 experiment_name=experiment_name,
@@ -125,18 +92,17 @@ class DataManager:
                 geometry_file_path=None,
                 geometry_base64_string=geometry_content_base64_string,
             )
-            n = self.add_experiment(exp)
+            n = self._add_experiment(exp)
 
         return n
 
-    def add_experiment(self, exp: Experiment):
-        if use_db_web_service:
-            # you shouldn't be using this method with the db
-            n = -1
-        else:
+    def _add_experiment(self, exp: Experiment):
+        if not use_db_web_service:
             n = len(self.experiments_dict.items())
             self.experiments_dict[n] = exp
-        return n
+            return n
+        else:
+            raise Exception("Shouldn't be using this function with db!")
 
     # ---------------------------
     #    Delete
@@ -210,8 +176,12 @@ class DataManager:
         if use_db_web_service:
             pass
         else:
-            data = {key: extract_experiment_meta_data(key, exp) for key, exp in self.experiments_dict.items()}
-            df = pd.DataFrame.from_dict(data, orient="index")
+            # get the metadata for all the experiments
+            data = {key: exp.exp_meta_data_to_dict() for key, exp in self.experiments_dict.items()}
+            # convert into a dataframe and add the key = experiment_id as index
+            df = pd.DataFrame.from_dict(data, orient="index").reset_index()
+            # rename the index to experiment_id
+            df.rename(columns={"index": "experiment_id"}, inplace=True)
 
         return df
 
@@ -228,7 +198,11 @@ class DataManager:
     # ---------------------------
     def get_experiment(self, experiment_id: int) -> Experiment:
         # helper function
-        exp = self.experiments_dict[experiment_id]
+        exp = None
+        if use_db_web_service:
+            pass
+        else:
+            exp = self.experiments_dict[experiment_id]
         return exp
 
     def get_experiment_all(self, experiment_id: int):
@@ -335,38 +309,73 @@ class DataManager:
     def get_cas_numbers(self):
         return None
 
+    @staticmethod
+    def gather_all_test_experiments():
+        experiments = {}
+        folder_path = Path(__file__).parent / "tests/data/"
+        # Check if the folder exists
+        if folder_path.exists() and folder_path.is_dir():
+            # Get all files in the directory
+            files_in_directory = [file for file in folder_path.iterdir() if file.is_file()]
+            for file_path in files_in_directory:
+                if file_path.suffix.lower() == ".csv":
+                    file_prefix = os.path.splitext(file_path)[0]
+                    # Search for a CIF file with the same prefix and additional characters
+                    cif_candidates = [file for file in files_in_directory if file.match(f"{file_prefix}*.cif")]
+                    geometry = None
+                    if cif_candidates:
+                        geometry = cif_candidates[0]
+                    else:
+                        # search for a pdb file
+                        pdb_candidates = [file for file in files_in_directory if file.match(f"{file_prefix}*.pdb")]
+                        if pdb_candidates:
+                            geometry = pdb_candidates[0]
 
-def gather_all_test_experiments():
-    experiments = {}
-    folder_path = Path(__file__).parent / "tests/data/"
-    # Check if the folder exists
-    if folder_path.exists() and folder_path.is_dir():
-        # Get all files in the directory
-        files_in_directory = [file for file in folder_path.iterdir() if file.is_file()]
-        for file_path in files_in_directory:
-            if file_path.suffix.lower() == ".csv":
-                file_prefix = os.path.splitext(file_path)[0]
-                # Search for a CIF file with the same prefix and additional characters
-                cif_candidates = [file for file in files_in_directory if file.match(f"{file_prefix}*.cif")]
-                geometry = None
-                if cif_candidates:
-                    geometry = cif_candidates[0]
-                else:
-                    # search for a pdb file
-                    pdb_candidates = [file for file in files_in_directory if file.match(f"{file_prefix}*.pdb")]
-                    if pdb_candidates:
-                        geometry = pdb_candidates[0]
+                    if geometry:
+                        n = len(experiments)
+                        experiments[n] = {"csv": file_path, "geometry": geometry}
+                        # experiments.update({"csv": file_path,
+                        #                     "geometry": geometry})
 
-                if geometry:
-                    n = len(experiments)
-                    experiments[n] = {"csv": file_path, "geometry": geometry}
-                    # experiments.update({"csv": file_path,
-                    #                     "geometry": geometry})
+        else:
+            raise Exception  # (f"Directory does not exist: {folder_path}")
 
-    else:
-        raise Exception  # (f"Directory does not exist: {folder_path}")
+        return experiments
 
-    return experiments
+    def _load_test_experiment_data(self):
+        """
+        This method is only used for loading from disk for test purposes.
+        It is not to be used outside of this context.
+        """
+        experiment_data_geometry_dict = self.gather_all_test_experiments()
+        for key in experiment_data_geometry_dict.keys():
+            exp_file_path = experiment_data_geometry_dict[key]["csv"]
+            geometry_file_path = experiment_data_geometry_dict[key]["geometry"]
+
+            # read the contents of the data
+            data_df = pd.read_csv(exp_file_path, usecols=gs.experiment_core_data_list)
+            # assign its method
+            filename = os.path.basename(exp_file_path)
+            if "ssm" in str(exp_file_path):
+                mutagenesis_method = MutagenesisMethod.SSM
+            else:
+                mutagenesis_method = MutagenesisMethod.epPCR
+
+            # this is test data so assign random assay and cas numbers
+            assay_index = random.randrange(len(test_assay_list))
+            assay = test_assay_list[assay_index]
+
+            exp = Experiment(
+                data_df=data_df,
+                experiment_name=filename,
+                experiment_date="01-01-2025",
+                substrate_cas_number=generate_random_cas_numbers(),
+                product_cas_number=generate_random_cas_numbers(),
+                assay=assay,
+                mutagenesis_method=mutagenesis_method,
+                geometry_file_path=geometry_file_path,
+            )
+            self._add_experiment(exp)
 
 
 def generate_random_cas_numbers():

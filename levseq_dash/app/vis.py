@@ -1,7 +1,6 @@
+import plotly_express as px
 from dash import html
 from dash_iconify import DashIconify
-import plotly_express as px
-import pandas as pd
 
 # --------------------
 #   Inline styles
@@ -96,5 +95,3 @@ def data_bars_colorscale(df, column):
         )
 
     return styles
-
-
