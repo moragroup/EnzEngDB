@@ -17,7 +17,6 @@ experiment_name_placeholder = "Enter a name for your experiment."
 button_upload_csv = "Upload Experiment Data"
 button_upload_pdb = "Upload PDB/CIF"
 
-
 # Experiment Card Strings
 sequence = "Amino Acid Sequence"
 experiment = "Experiment Name"
@@ -31,21 +30,34 @@ cas_prod = "Product CAS"
 viewer_header = "Protein Structure"
 top_variants = "Top Variants"
 
-
 # DO NOT CHANGE PAST HERE
 dbc_template_name = "flatly"
 
 c_cas = "cas_number"
 c_plate = "plate"
 c_well = "well"
+c_alignment_count = "alignment_count"
 c_fitness = "fitness_value"
 c_substitutions = "amino_acid_substitutions"
+c_alignment_probability = "alignment_probability"
+c_aa_sequence = "aa_sequence"
 c_fitness_value = "fitness_value"
 stat_list = [
     c_fitness_value,  # must remain first
-    "alignment_count",
-    "alignment_probability",
+    c_alignment_count,
+    c_alignment_probability,
     # "average_mutation_frequency", # removed
     # "p_value", # removed
     # "p_adj_value", # removed
+]
+
+experiment_core_data_list = [
+    c_cas,
+    c_plate,
+    c_well,
+    c_alignment_count,
+    c_substitutions,
+    c_alignment_probability,
+    c_aa_sequence,
+    c_fitness_value,
 ]
