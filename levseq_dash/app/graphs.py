@@ -5,7 +5,7 @@ import regex as re
 from levseq_dash.app import global_strings as gs
 
 
-def creat_heatmap(df, plate_number, property_stat, cas_number):
+def creat_heatmap(df, plate_number, property, cas_number):
     # Need to create a .copy() of the original df. Pandas did not like appending the columns
     # to the original later in the code here, and it raised many warnings.
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
@@ -16,7 +16,7 @@ def creat_heatmap(df, plate_number, property_stat, cas_number):
     filtered_df["X-L"] = filtered_df[gs.c_well].str[0]
     filtered_df["Y-N"] = filtered_df[gs.c_well].str[1:].astype(int)
 
-    heatmap_data = filtered_df.pivot(index="Y-N", columns="X-L", values=property_stat)
+    heatmap_data = filtered_df.pivot(index="Y-N", columns="X-L", values=property)
 
     annotations_data = filtered_df.pivot(index="Y-N", columns="X-L", values=gs.c_substitutions)
 
@@ -238,5 +238,5 @@ def create_sunburst(df):
 
 # creat_heatmap(df=experiment_ep_example.data_df,
 #               plate_number=experiment_ep_example.plates[0],
-#               property_stat=gs.stat_list[0],
+#               property=gs.experiment_heatmap_properties_list[0],
 #               cas_number=experiment_ep_example.unique_cas_in_data[0])

@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import dash_molstar
 
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app import vis
 
 
 def get_label(string):
@@ -54,7 +55,7 @@ def get_top_variant_column_defs(df):
                 "buttons": ["reset", "apply"],
                 "closeOnApply": True,
             },
-            # "cellStyle": {"styleConditions": data_bars_colorscale(df, "fitness_value")},
+            "cellStyle": {"styleConditions": vis.data_bars_colorscale(df, gs.c_fitness_value)},
             "flex": 2,
         },
     ]

@@ -1,12 +1,20 @@
-import re
+import json
 
 import dash_bootstrap_components as dbc
 from dash import Dash, Input, Output, State, ctx, dcc, html, no_update
 from dash.exceptions import PreventUpdate
 from dash_bootstrap_templates import load_figure_template
-from dash_molstar.utils import molstar_helper
 
-from levseq_dash.app import components, graphs, layout_experiment, layout_landing, parser
+from levseq_dash.app import (
+    components,
+    graphs,
+    layout_bars,
+    layout_experiment,
+    layout_landing,
+    layout_upload,
+    utils,
+    vis,
+)
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app.data_manager import DataManager
 from levseq_dash.app.settings import CONFIG
@@ -16,6 +24,7 @@ dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.mi
 app = Dash(
     __name__,
     title=gs.web_title,
+    suppress_callback_exceptions=True,
     external_stylesheets=[dbc.themes.MINTY, dbc_css, dbc.icons.BOOTSTRAP, dbc.icons.FONT_AWESOME],
 )
 
@@ -31,27 +40,89 @@ app.server.config.update(SECRET_KEY=CONFIG["db-service"]["session_key"])
 # TODO: this may be replaced
 data_mgr = DataManager()
 
+
 app.layout = dbc.Container(
     [
-        # top_navbar,
-        # layout_upload.upload_form_layout,
+        layout_bars.navbar,
         html.Div(id="temp-output", className="mt-4"),  # TODO: temp
-        html.Br(),
-        layout_landing.layout,
-        html.Br(),
-        layout_experiment.layout,
-        dcc.Store(id="id-data-exp"),
-        dcc.Store(id="id-data-structure"),
+        dbc.Row(
+            [
+                # Left column with a logo
+                dbc.Col(
+                    layout_bars.sidebar,
+                    width=2,
+                    style={"border-right": "1px solid #dee2e6"},
+                ),
+                # Main content
+                dbc.Col(
+                    html.Div(id="id-page-content"),
+                    width=10,
+                    style=vis.border_column,
+                ),
+            ],
+            # className="g-0",
+        ),
+        # stores
+        dcc.Store(id="id-exp-upload-csv"),
+        dcc.Store(id="id-exp-upload-structure"),
         dcc.Store(id="id-experiment-selected"),
+        dcc.Store(id="id-store-heatmap-data"),
+        dcc.Location(id="url", refresh=False),
     ],
     fluid=True,
 )
 
 
+@app.callback(Output("id-page-content", "children"), Input("url", "pathname"))
+def display_page(pathname):
+    if pathname == "/":
+        return layout_landing.layout
+    elif pathname == "/experiment":
+        return layout_experiment.layout
+    elif pathname == "/upload":
+        return layout_upload.layout
+    else:
+        return html.Div([html.H2("Page not found!")])
+
+
+@app.callback(
+    Output("id-table-all-experiments", "rowData"),
+    Output("id-lab-experiment-count", "children"),
+    Output("id-lab-experiment-all-cas", "children"),
+    Input("id-table-all-experiments", "columnDefs"),
+    # prevent_initial_call=True,
+)
+def load_landing_page(temp_text):
+    df = data_mgr.get_lab_experiments_with_meta_data()
+    rows, columns = df.shape
+    # TODO: which unique cas do we want to show here? unique files?
+    unique_call_values = set(df["substrate_cas_number"].str.split(", ").explode())
+    sorted_string = ", ".join(map(str, sorted(unique_call_values)))
+    return (
+        df.to_dict("records"),
+        rows,
+        sorted_string,  # comma separated string
+    )
+
+
+# -------------------------------
+#   Uploading Experiment
+# -------------------------------
+@app.callback(
+    Output("id-list-assay", "options"),
+    Input("id-list-assay", "options"),
+    # prevent_initial_call=True,
+)
+def set_assay_list(assay_list):
+    # TODO: check if this gets called back multiple times or not
+    assay_list = data_mgr.get_assays()
+    return assay_list
+
+
 @app.callback(
     Output("id-button-upload-data-info", "children"),
     # Output("id-button-upload-data", "style"),
-    Output("id-data-exp", "data"),
+    Output("id-exp-upload-csv", "data"),
     Input("id-button-upload-data", "contents"),
     State("id-button-upload-data", "filename"),
     State("id-button-upload-data", "last_modified"),
@@ -61,9 +132,9 @@ def on_upload_experiment_file(dash_upload_string_contents, filename, last_modifi
         # TODO add the alert
         return "No file uploaded.", no_update
     else:
-        base64_encoded_string = parser.decode_base64_binary_string_to_base64_bytes(dash_upload_string_contents)
+        base64_encoded_string = utils.decode_base64_binary_string_to_base64_bytes(dash_upload_string_contents)
 
-        df = parser.decode_csv_file_base64_string_to_dataframe(base64_encoded_string)
+        df = utils.decode_csv_file_base64_string_to_dataframe(base64_encoded_string)
         rows, cols = df.shape
         info = (
             f"Uploaded File: {filename} --- "
@@ -78,7 +149,7 @@ def on_upload_experiment_file(dash_upload_string_contents, filename, last_modifi
 @app.callback(
     Output("id-button-upload-structure-info", "children"),
     # Output("id-button-upload-structure", "style"),
-    Output("id-data-structure", "data"),
+    Output("id-exp-upload-structure", "data"),
     Input("id-button-upload-structure", "contents"),
     State("id-button-upload-structure", "filename"),
     State("id-button-upload-structure", "last_modified"),
@@ -88,7 +159,7 @@ def on_upload_structure_file(dash_upload_string_contents, filename, last_modifie
         # TODO add the alert
         return "No file uploaded.", no_update
     else:
-        base64_encoded_string = parser.decode_base64_binary_string_to_base64_bytes(dash_upload_string_contents)
+        base64_encoded_string = utils.decode_base64_binary_string_to_base64_bytes(dash_upload_string_contents)
 
         info = (
             f"Uploaded File: {filename}  "
@@ -107,8 +178,8 @@ def on_upload_structure_file(dash_upload_string_contents, filename, last_modifie
     State("id-input-product-cas", "value"),
     State("id-list-assay", "value"),
     State("id-radio-epr", "value"),
-    State("id-data-structure", "data"),
-    State("id-data-exp", "data"),
+    State("id-exp-upload-structure", "data"),
+    State("id-exp-upload-csv", "data"),
     prevent_initial_call=True,
 )
 def on_submit_experiment(
@@ -122,21 +193,8 @@ def on_submit_experiment(
     geometry_content_base64_encoded_string,
     experiment_base64_encoded_string,
 ):
-    if ctx.triggered_id == "id-button-submit":
-        # TODO: remove this later, this is just for debugging
-        # df = parser.decode_csv_file_base64_string_to_dataframe(experiment_base64_encoded_string)
-        # rows, cols = df.shape
-
-        # TODO: fix the splitting here
-        # sub_cas_split = substrate_cas.split(';')
-        # substrate_cas_numbers = [item for item in sub_cas_split if item]
-        #
-        # product_cas_split = product_cas.split(';')
-        # product_cas_numbers = [item for item in product_cas_split if item]
-
+    if n_clicks > 0 and ctx.triggered_id == "id-button-submit":
         # TODO: verify the CAS numbers somewhere or in another callback
-        # verify the experiment here or on another callback
-        # file_bytes = base64.b64decode(content_string)
 
         index = data_mgr.add_experiment_from_ui(
             user_id="some_user_name",
@@ -159,75 +217,109 @@ def on_submit_experiment(
         return no_update
 
 
+# -------------------------------
+#   Experiment Dashboard
+# -------------------------------
 @app.callback(
+    Output("url", "pathname"),
+    # this seems like a duplicate but adding this will actually
+    # trigger the callback with the components in the layout
+    Output("id-page-content", "children", allow_duplicate=True),
+    Input("id-button-show-experiment", "n_clicks"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def on_go_to__experiment(n_clicks, pathname):
+    if n_clicks > 0 and ctx.triggered_id == "id-button-show-experiment":
+        return "/experiment", layout_experiment.layout
+    else:
+        return pathname, no_update
+
+
+@app.callback(
+    # Variant table
     Output("id-table-top-variants", "rowData"),
     Output("id-table-top-variants", "columnDefs"),
+    # Protein
+    Output("id-viewer", "data"),
+    # Meta data
     Output("id-experiment-name", "children"),
     Output("id-experiment-sequence", "children"),
     Output("id-experiment-mutagenesis-method", "children"),
     Output("id-experiment-date", "children"),
+    Output("id-experiment-upload", "children"),
     Output("id-experiment-plate-count", "children"),
+    Output("id-experiment-file-cas", "children"),
     Output("id-experiment-sub-cas", "children"),
     Output("id-experiment-product-cas", "children"),
     Output("id-experiment-assay", "children"),
-    Output("id-viewer", "data"),
+    # Heat map dropdowns options and defaults
     Output("id-list-plates", "options"),
     Output("id-list-plates", "value"),
     Output("id-list-cas-numbers", "options"),
     Output("id-list-cas-numbers", "value"),
     Output("id-list-properties", "options"),
     Output("id-list-properties", "value"),
+    # Heat map figure
     Output("id-experiment-heatmap", "figure"),
-    Input("id-button-temp-use", "n_clicks"),
-    Input("id-experiment-selected", "data"),
+    # Output("id-store-heatmap-data", "data"),
+    # Inputs
+    Input("url", "pathname"),
+    State("id-experiment-selected", "data"),
     prevent_initial_call=True,
 )
-def on_load_experiment_dashboard(n_clicks, experiment_id):
-    # TODO: remove this button trigger and replace with table click trigger adn input experiment ID
-    if ctx.triggered_id == "id-button-temp-use":
-        # TODO: load from file for now
-        # data_mgr.add_experiment(experiment_ep_example)
+def on_load_experiment_dashboard(pathname, experiment_id):
+    if pathname == "/experiment":
         exp = data_mgr.get_experiment(experiment_id)
 
         # viewer data
         # TODO : this needs to be moved out of here so it can pickup the file format
-        # in the component. Hardcoded here for now.
-        # bytes = parser.decode_base64_string_to_base64_bytes(exp.geometry_base64_string)
-        # try:
-        if exp.geometry_file_path:
-            pdb_cif = molstar_helper.parse_molecule(exp.geometry_file_path, fmt="cif")
-        else:
-            pdb_cif = molstar_helper.parse_molecule(exp.geometry_base64_bytes, fmt="cif")
+        pdb_cif = utils.get_geometry_for_viewer(exp)
 
         # load the dropdown for the plots with default values
         default_plate = exp.plates[0]
-        default_cas = exp.cas_unique_values[0]
-        default_stat = gs.stat_list[0]
-        stat_heatmap = graphs.creat_heatmap(exp.data_df, default_plate, default_stat, default_cas)
-        # except Exception:
-        #    raise PreventUpdate
+        default_cas = exp.unique_cas_in_data[0]
+        default_experiment_heatmap_properties_list = gs.experiment_heatmap_properties_list[0]
+        fig_experiment_heatmap = graphs.creat_heatmap(
+            df=exp.data_df,
+            plate_number=default_plate,
+            property=default_experiment_heatmap_properties_list,
+            cas_number=default_cas,
+        )
 
         columnDefs = components.get_top_variant_column_defs(exp.data_df)
+
+        # heatmap_df = exp.data_df[[gs.c_cas, gs.c_plate, gs.c_well, gs.c_alignment_count,
+        #                          gs.c_alignment_probability, gs.c_fitness_value]]
+        # heatmap_json = heatmap_df.to_json(date_format='iso', orient='records')
+        # Convert to JSON
+        # json_data = json.dumps(exp.exp_to_dict(), indent=4)
+        # json_data = json.dumps(exp, cls=CustomEncoder, indent=4)
+
+        # exp_dict = json.loads(exp_json)
+        # exp = Experiment.exp_from_dict(exp_dict)
 
         return (
             exp.data_df.to_dict("records"),
             columnDefs,
+            pdb_cif,
             exp.experiment_name,
             exp.parent_sequence,
             exp.mutagenesis_method,
-            exp.experiment_time,
+            exp.experiment_date,
+            exp.upload_time_stamp,
             exp.plates_count,
+            exp.unique_cas_in_data,
             exp.substrate_cas_number,
             exp.product_cas_number,
             exp.assay,
-            pdb_cif,
-            exp.plates,
-            default_plate,
-            exp.cas_unique_values,
-            default_cas,
-            gs.stat_list,
-            gs.stat_list[0],
-            stat_heatmap,
+            exp.plates,  # Heat map figure list of plates
+            default_plate,  # dropdown default plate
+            exp.unique_cas_in_data,  # Heat map figure list of cas values
+            default_cas,  # dropdown default Cas
+            gs.experiment_heatmap_properties_list,  # Property dropdown list
+            gs.experiment_heatmap_properties_list[0],  # Property dropdown default
+            fig_experiment_heatmap,
         )
     else:
         return no_update
@@ -241,16 +333,19 @@ def on_load_experiment_dashboard(n_clicks, experiment_id):
     Input("id-list-plates", "value"),
     Input("id-list-cas-numbers", "value"),
     Input("id-list-properties", "value"),
+    # State("id-store-heatmap-data", "data"),
     prevent_initial_call=True,
 )
 def on_heatmap_selection(experiment_id, selected_plate, selected_cas_number, selected_stat_property):
     # TODO: transfer of data here
     exp = data_mgr.get_experiment(experiment_id)
+    df = exp.data_df
+    # df = pd.read_json(heatmap_data_json, orient="records")
 
-    show_cas_numbers = selected_stat_property == gs.stat_list[0]
+    show_cas_numbers = selected_stat_property == gs.experiment_heatmap_properties_list[0]
 
     stat_heatmap = graphs.creat_heatmap(
-        exp.data_df, plate_number=selected_plate, property_stat=selected_stat_property, cas_number=selected_cas_number
+        df, plate_number=selected_plate, property=selected_stat_property, cas_number=selected_cas_number
     )
     if not show_cas_numbers:
         class_name = "opacity-50 text-secondary dbc"
@@ -259,15 +354,15 @@ def on_heatmap_selection(experiment_id, selected_plate, selected_cas_number, sel
     return stat_heatmap, not show_cas_numbers, class_name
 
 
-@app.callback(
-    Output("selected-row-value", "children"),
-    Input("id-table-top-variants", "selectedRows"),
-    prevent_initial_call=True,
-)
-def display_selected_row(selected_rows):
-    if selected_rows:
-        return f"Selected Column B Value: {selected_rows[0]['amino_acid_substitutions']}"
-    return "No row selected."
+# @app.callback(
+#     Output("selected-row-value", "children"),
+#     Input("id-table-top-variants", "selectedRows"),
+#     prevent_initial_call=True,
+# )
+# def display_selected_row(selected_rows):
+#     if selected_rows:
+#         return f"Selected Column B Value: {selected_rows[0]['amino_acid_substitutions']}"
+#     return "No row selected."
 
 
 @app.callback(
@@ -278,65 +373,14 @@ def display_selected_row(selected_rows):
 )
 def focus_select_output(selected_rows):
     if selected_rows:
-        mutations = f"{selected_rows[0]['amino_acid_substitutions']}"
-        mutations_split = mutations.split("_") if "_" in mutations else [mutations]
-        residues = list()
-        for mutation in mutations_split:
-            match = re.search(r"[A-Za-z](\d+)[A-Za-z]", mutation)
-            if match:
-                number = match.group(1)  # Extract the captured number
-                residues.append(number)
+        residues = utils.gather_residues_from_selection(selected_rows)
 
         # residue = list(range(1, 26)) # you can provide a list
         if len(residues) != 0:
-            target = molstar_helper.get_targets(
-                chain="A",
-                residue=residues,
-                auth=True,
-                # if it's a CIF file to select the authentic chain names and residue
-                # numbers
-            )
-            sel = molstar_helper.get_selection(
-                target,
-                # select by default, it will put a green highlight on the atoms
-                # default select mode (true) or hover mode (false)
-                # select=False,  # default select mode (true) or hover mode (false)
-                add=False,
-            )  # TODO: do we want to add to the list?
-            foc = molstar_helper.get_focus(target, analyse=True)
+            sel, foc = utils.get_selection_focus(residues)
             return sel, foc
 
     raise PreventUpdate
-
-
-@app.callback(
-    Output("id-list-assay", "options"),
-    Input("id-list-assay", "options"),
-    # prevent_initial_call=True,
-)
-def set_assay_list(assay_list):
-    # TODO: check if this gets called back multiple times or not
-    assay_list = data_mgr.get_assays()
-    return assay_list
-
-
-@app.callback(
-    Output("id-table-all-experiments", "rowData"),
-    Output("id-lab-experiment-count", "children"),
-    Output("id-lab-experiment-all-cas", "children"),
-    Input("id-table-all-experiments", "columnDefs"),
-    # prevent_initial_call=True,
-)
-def load_landing_page(temp_text):
-    df = data_mgr.get_lab_experiments_with_meta_data()
-    rows, columns = df.shape
-    unique_call_values = set(df["sub_cas"].str.split(", ").explode())
-    sorted_string = ", ".join(map(str, sorted(unique_call_values)))
-    return (
-        df.to_dict("records"),
-        rows,
-        sorted_string,  # comma separated string
-    )
 
 
 @app.callback(
