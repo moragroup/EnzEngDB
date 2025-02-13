@@ -2,6 +2,8 @@ import dash_ag_grid as dag
 import dash_bootstrap_components as dbc
 import dash_molstar
 
+from levseq_dash.app import global_strings as gs
+
 
 def get_label(string):
     return dbc.Label(string, width=3, className="fs-6")
@@ -11,29 +13,49 @@ def get_top_variant_column_defs(df):
     # mean_values = df[df["amino_acid_substitutions"] == "#PARENT#"].groupby("cas_number")["fitness_value"].mean()
     return [
         {
-            "field": "cas_number",
+            "field": gs.c_cas,
             "headerName": "CAS #",
-            "width": 180,
-        },
-        {
-            "field": "plate",
             "filterParams": {
                 "buttons": ["reset", "apply"],
                 "closeOnApply": True,
             },
+            # flex allows the resizing to be dynamic
+            "flex": 2,
         },
         {
-            "field": "well",
-            "width": 125,
+            "field": gs.c_plate,
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 2,
         },
         {
-            "field": "amino_acid_substitutions",
+            "field": gs.c_well,
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 1,
+        },
+        {
+            "field": gs.c_substitutions,
             "headerName": "Substitutions",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 2,
         },
         {
-            "field": "fitness_value",
+            "field": gs.c_fitness_value,
             "filter": "agNumberColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
             # "cellStyle": {"styleConditions": data_bars_colorscale(df, "fitness_value")},
+            "flex": 2,
         },
     ]
 
@@ -44,37 +66,92 @@ def get_all_experiments_column_defs():
             "headerCheckboxSelection": True,
             "checkboxSelection": True,
             "headerName": "",
-            "width": 50,
+            "width": 30,
+            # "flex": 1,
         },
         {
             "field": "experiment_id",
+            "headerName": "ID",
             "filter": "agNumberColumnFilter",
-            # "checkboxSelection": True,
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 2,
         },
         {
             "field": "experiment_name",
-        },
-        {
-            "field": "upload_time_stamp",
+            "headerName": "Name",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 3,
         },
         {
             "field": "experiment_date",
+            "headerName": "Date",
+            "filter": "agDateColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 4,
         },
         {
-            "field": "sub_cas",
+            "field": "upload_time_stamp",
+            "headerName": "Uploaded",
+            "filter": "agDateColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 4,
         },
         {
-            "field": "prod_cas",
+            "field": "substrate_cas_number",
+            "headerName": "Sub CAS",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 3,
+        },
+        {
+            "field": "product_cas_number",
+            "headerName": "Prod CAS",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 4,
         },
         {
             "field": "assay",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 4,
         },
         {
             "field": "mutagenesis_method",
+            "headerName": "Mutagenesis Method",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 4,
         },
         {
             "field": "plates_count",
+            "headerName": "#Plates",
             "filter": "agNumberColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 2,
         },
     ]
 
@@ -82,9 +159,9 @@ def get_all_experiments_column_defs():
 def get_table_experiment():
     return dag.AgGrid(
         id="id-table-top-variants",
-        # rowData=data.to_dict("records"),
+        # columnDef have a colored column which is dynamic and will be returned in a callback
         # columnDefs=components.get_top_variant_column_defs(),
-        # TODO: update this correctly
+        columnSize="autoSize",
         defaultColDef={
             # do NOT set "flex": 1 in default col def as it overrides all
             # the column widths
@@ -95,12 +172,10 @@ def get_table_experiment():
             "wrapHeaderText": True,
             "autoHeaderHeight": True,
         },
-        # columnSize="sizeToFit",
         style={"height": "600px", "width": "100%"},
         dashGridOptions={
-            # "rowDragManaged": True,
-            # "rowDragEntireRow": True
-            "rowSelection": "single",
+            # https://ag-grid.com/javascript-data-grid/selection-overview/#cell-text-selection
+            "enableCellTextSelection": True,
         },
         rowClassRules={
             # "bg-secondary": "params.data.well == 'A2'",
@@ -115,9 +190,7 @@ def get_table_experiment():
 def get_table_all_experiments():
     return dag.AgGrid(
         id="id-table-all-experiments",
-        # rowData=data.to_dict("records"),
         columnDefs=get_all_experiments_column_defs(),
-        # TODO: update this correctly
         defaultColDef={
             # do NOT set "flex": 1 in default col def as it overrides all
             # the column widths
@@ -129,14 +202,14 @@ def get_table_all_experiments():
             "autoHeaderHeight": True,
             # "flex": 1,  # TODO: remove this after you put fixed width
         },
-        columnSize="sizeToFit",
         # style={"height": "600px", "width": "100%"},
-        # style={"width": "100%"},
         dashGridOptions={
-            "rowSelection": "multiple",  # Enable multiple selection
+            # Enable multiple selection
+            "rowSelection": "multiple",
             "suppressRowClickSelection": True,
-            # Use only checkboxes for selection
             "animateRows": True,
+            # https://ag-grid.com/javascript-data-grid/selection-overview/#cell-text-selection
+            "enableCellTextSelection": True,
         },
     )
 
