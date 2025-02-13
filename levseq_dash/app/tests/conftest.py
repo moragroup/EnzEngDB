@@ -54,7 +54,7 @@ def experiment_ep_pcr():
 @pytest.fixture(scope="session")
 def experiment_ep_pcr_with_user_cas():
     return Experiment(
-        data_df=pd.read_csv(path_exp_ep_data),
+        data_df=pd.read_csv(path_exp_ep_data, usecols=gs.experiment_core_data_list),
         experiment_name="ep_file",
         experiment_date="TBD",
         # these are RANDOM cas numbers for test only

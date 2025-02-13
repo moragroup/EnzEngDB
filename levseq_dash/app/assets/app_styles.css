@@ -1,6 +1,6 @@
-/*.bg-dark {*/
-/*    background-color: #003B4C !important; !* caltech color *!*/
-/*}*/
+.bg-dark {
+    background-color: #003B4C !important; /* caltech color */
+}
 
 /*.bg-primary {*/
 /*    background-color: #FF6C0C !important; !* caltech color *!*/
@@ -23,3 +23,27 @@
 /*    !*font-size: 18px;*!*/
 /*    !*text-align: center;*!*/
 /*}*/
+
+
+.sidebar-link {
+    display: block;
+    padding: 10px 20px;
+    color: white !important;
+    background-color: var(--bs-gray-500);
+    /*background-color: var(--bs-primary-bg-subtle);*/
+    /*border-radius: 8px;*/
+    text-decoration: none;
+    margin: 5px 0;
+    text-align: center;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.sidebar-link.active {
+    background-color: var(--bs-gray-700) !important;  /* Uses theme's primary color */
+    color: white !important;
+    font-weight: bold;
+    /*border-radius: 8px;*/
+}
+.sidebar-link:hover {
+    background-color: var(--bs-gray-700)!important;
+}
