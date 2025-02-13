@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import plotly_express as px
 import regex as re
@@ -19,7 +18,7 @@ def creat_heatmap(df, plate_number, property_stat, cas_number):
 
     heatmap_data = filtered_df.pivot(index="Y-N", columns="X-L", values=property_stat)
 
-    annotations_data = filtered_df.pivot(index="Y-N", columns="X-L", values=gs.mutations)
+    annotations_data = filtered_df.pivot(index="Y-N", columns="X-L", values=gs.c_substitutions)
 
     fig = px.imshow(
         heatmap_data.values,
@@ -240,4 +239,4 @@ def create_sunburst(df):
 # creat_heatmap(df=experiment_ep_example.data_df,
 #               plate_number=experiment_ep_example.plates[0],
 #               property_stat=gs.stat_list[0],
-#               cas_number=experiment_ep_example.cas_unique_values[0])
+#               cas_number=experiment_ep_example.unique_cas_in_data[0])
