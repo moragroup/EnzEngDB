@@ -18,7 +18,8 @@ dependencies = [
     "pandas",
     "dash-loading-spinners",
     "gunicorn",
-    "pyyaml"
+    "pyyaml",
+    "dash_molstar"
 ]
 
 [project.optional-dependencies]
