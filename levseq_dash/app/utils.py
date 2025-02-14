@@ -138,7 +138,7 @@ def calculate_group_mean_ratios_per_cas_and_plate(df):
     # Compute fitness ratio relative to the mean
     df["ratio"] = df[value_col] / df["mean"]
     # TODO: rounding creates an error
-    #df["ratio"] = df["ratio"].round(2)
+    # df["ratio"] = df["ratio"].round(2)
     group_stats_ratio = df.groupby(group_cols)["ratio"].agg(["min", "max"]).reset_index()
     df = df.merge(group_stats_ratio, on=group_cols, suffixes=("", "_group"))
 

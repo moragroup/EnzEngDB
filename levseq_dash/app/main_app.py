@@ -229,7 +229,7 @@ def on_submit_experiment(
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_go_to__experiment(n_clicks, pathname):
+def on_go_to_experiment(n_clicks, pathname):
     if n_clicks > 0 and ctx.triggered_id == "id-button-show-experiment":
         return "/experiment", layout_experiment.layout
     else:
@@ -287,7 +287,12 @@ def on_load_experiment_dashboard(pathname, experiment_id):
             cas_number=default_cas,
         )
 
-        columnDefs = components.get_top_variant_column_defs(exp.data_df)
+        # columnDefs = components.get_top_variant_column_defs(exp.data_df)
+
+        # in order to color the fitness ratio I have to calculate the mean of the parents per cas per plate.
+        # coloring only works if I add the column
+        df_filtered_with_ratio = utils.calculate_group_mean_ratios_per_cas_and_plate(exp.data_df)
+        columnDefs_with_ratio = components.get_top_variant_column_defs(df_filtered_with_ratio)
 
         # heatmap_df = exp.data_df[[gs.c_cas, gs.c_plate, gs.c_well, gs.c_alignment_count,
         #                          gs.c_alignment_probability, gs.c_fitness_value]]
@@ -300,8 +305,10 @@ def on_load_experiment_dashboard(pathname, experiment_id):
         # exp = Experiment.exp_from_dict(exp_dict)
 
         return (
-            exp.data_df.to_dict("records"),
-            columnDefs,
+            # exp.data_df.to_dict("records"),
+            # columnDefs,
+            df_filtered_with_ratio.to_dict("records"),
+            columnDefs_with_ratio,
             pdb_cif,
             exp.experiment_name,
             exp.parent_sequence,
@@ -354,15 +361,15 @@ def on_heatmap_selection(experiment_id, selected_plate, selected_cas_number, sel
     return stat_heatmap, not show_cas_numbers, class_name
 
 
-# @app.callback(
-#     Output("selected-row-value", "children"),
-#     Input("id-table-top-variants", "selectedRows"),
-#     prevent_initial_call=True,
-# )
-# def display_selected_row(selected_rows):
-#     if selected_rows:
-#         return f"Selected Column B Value: {selected_rows[0]['amino_acid_substitutions']}"
-#     return "No row selected."
+@app.callback(
+    Output("selected-row-value", "children"),
+    Input("id-table-top-variants", "selectedRows"),
+    prevent_initial_call=True,
+)
+def display_selected_row(selected_rows):
+    if selected_rows:
+        return f"Selected Column B Value: {selected_rows[0]['amino_acid_substitutions']}"
+    return "No row selected."
 
 
 @app.callback(
