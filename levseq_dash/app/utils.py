@@ -110,3 +110,36 @@ def decode_csv_file_bytes_to_dataframe(base64_encoded_bytes):
         # return "The content is not a valid UTF-8 string."
 
     return df
+
+
+def calculate_group_mean_ratios_per_cas_and_plate(df):
+    df = df.loc[:, ["cas_number", "plate", "well", "amino_acid_substitutions", "fitness_value"]]
+    group_cols = ["cas_number", "plate"]
+    value_col = "fitness_value"
+    parent_value = "#PARENT#"
+    parent_col = "amino_acid_substitutions"
+
+    # Compute min and max fitness for each group
+    group_stats = df.groupby(group_cols)[value_col].agg(["min", "max"]).reset_index()
+
+    # Compute mean ONLY for rows where parent_col == parent_value, per group
+    parent_mean = (
+        df[df[parent_col] == parent_value]
+        .groupby(group_cols)[value_col]
+        .mean()
+        .reset_index()
+        .rename(columns={value_col: "mean"})
+    )
+
+    # Merge stats back into df
+    df = df.merge(group_stats, on=group_cols, suffixes=("", "_group"))
+    df = df.merge(parent_mean, on=group_cols, how="left")  # Keeps all rows, even if no mean exists
+
+    # Compute fitness ratio relative to the mean
+    df["ratio"] = df[value_col] / df["mean"]
+    # TODO: rounding creates an error
+    #df["ratio"] = df["ratio"].round(2)
+    group_stats_ratio = df.groupby(group_cols)["ratio"].agg(["min", "max"]).reset_index()
+    df = df.merge(group_stats_ratio, on=group_cols, suffixes=("", "_group"))
+
+    return df

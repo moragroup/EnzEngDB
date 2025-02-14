@@ -4,6 +4,7 @@ import dash_molstar
 
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app import vis
+from levseq_dash.app.example_aggrid_barchart import data_bars_group_mean_colorscale
 
 
 def get_label(string):
@@ -29,7 +30,7 @@ def get_top_variant_column_defs(df):
                 "buttons": ["reset", "apply"],
                 "closeOnApply": True,
             },
-            "flex": 2,
+            "flex": 3,
         },
         {
             "field": gs.c_well,
@@ -37,11 +38,11 @@ def get_top_variant_column_defs(df):
                 "buttons": ["reset", "apply"],
                 "closeOnApply": True,
             },
-            "flex": 1,
+            "flex": 2,
         },
         {
             "field": gs.c_substitutions,
-            "headerName": "Substitutions",
+            "headerName": "Sub",
             "filterParams": {
                 "buttons": ["reset", "apply"],
                 "closeOnApply": True,
@@ -50,13 +51,25 @@ def get_top_variant_column_defs(df):
         },
         {
             "field": gs.c_fitness_value,
+            "headerName": "Fitness",
+            "initialSort": "desc",
             "filter": "agNumberColumnFilter",
             "filterParams": {
                 "buttons": ["reset", "apply"],
                 "closeOnApply": True,
             },
-            "cellStyle": {"styleConditions": vis.data_bars_colorscale(df, gs.c_fitness_value)},
             "flex": 2,
+            "cellStyle": {"styleConditions": vis.data_bars_colorscale(df, gs.c_fitness_value)},
+        },
+        {
+            "field": "ratio",
+            "filter": "agNumberColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "flex": 2,
+            "cellStyle": {"styleConditions": vis.data_bars_group_mean_colorscale(df)},
         },
     ]
 
@@ -175,6 +188,8 @@ def get_table_experiment():
         },
         style={"height": "600px", "width": "100%"},
         dashGridOptions={
+            # row selection for the protein viewer
+            "rowSelection": "single",
             # https://ag-grid.com/javascript-data-grid/selection-overview/#cell-text-selection
             "enableCellTextSelection": True,
         },
