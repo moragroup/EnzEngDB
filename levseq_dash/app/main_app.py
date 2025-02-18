@@ -12,12 +12,12 @@ from levseq_dash.app import (
     layout_experiment,
     layout_landing,
     layout_upload,
+    settings,
     utils,
     vis,
 )
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app.data_manager import DataManager
-from levseq_dash.app.settings import CONFIG
 
 # Initialize the app
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
@@ -34,12 +34,11 @@ server = app.server
 
 load_figure_template(gs.dbc_template_name)
 
-app.server.config.update(SECRET_KEY=CONFIG["db-service"]["session_key"])
+app.server.config.update(SECRET_KEY=settings.load_config()["db-service"]["session_key"])
 
 # app keeps one instance of the db manager
 # TODO: this may be replaced
 data_mgr = DataManager()
-
 
 app.layout = dbc.Container(
     [
@@ -93,15 +92,15 @@ def display_page(pathname):
     # prevent_initial_call=True,
 )
 def load_landing_page(temp_text):
-    df = data_mgr.get_lab_experiments_with_meta_data()
-    rows, columns = df.shape
-    # TODO: which unique cas do we want to show here? unique files?
-    unique_call_values = set(df["substrate_cas_number"].str.split(", ").explode())
-    sorted_string = ", ".join(map(str, sorted(unique_call_values)))
+    list_of_all_lab_experiments_with_meta = data_mgr.get_lab_experiments_with_meta_data()
+
+    # extract all the uniques substrate cas in the projects
+    all_cas = utils.extract_all_unique_cas_from_lab_data(list_of_all_lab_experiments_with_meta)
+    number_of_experiments = len(list_of_all_lab_experiments_with_meta)
     return (
-        df.to_dict("records"),
-        rows,
-        sorted_string,  # comma separated string
+        list_of_all_lab_experiments_with_meta,
+        number_of_experiments,  # number of experiments
+        all_cas,  # for lab dashboard stats
     )
 
 
