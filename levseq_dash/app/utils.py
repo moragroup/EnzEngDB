@@ -1,5 +1,6 @@
 import base64
 import io
+import random
 import re
 
 import pandas as pd
@@ -143,3 +144,38 @@ def calculate_group_mean_ratios_per_cas_and_plate(df):
     df = df.merge(group_stats_ratio, on=group_cols, suffixes=("", "_group"))
 
     return df
+
+
+def generate_random_cas_numbers():
+    """
+    This method is only to be used for debugging and reading from disk and prototyping.
+    """
+    num_cas = random.randint(1, 3)  # Randomly choose between 1 and 3 CAS numbers
+    cas_list = []
+
+    for _ in range(num_cas):
+        part1 = random.randint(10000, 999999)  # 5-6 digits
+        part2 = random.randint(10, 99)  # 2 digits
+        part3 = random.randint(0, 9)  # 1-digit check number
+        cas_number = f"{part1}-{part2}-{part3}"
+        cas_list.append(cas_number)
+
+    return cas_list
+
+
+def extract_all_unique_cas_from_lab_data(list_of_all_lab_experiments_with_meta: list[{}]):
+    """
+    This method extracts all the unique substrate cas  used in the lab data.
+    The data is already pulled from the disk/db along with other metadata
+    The input is a list of dictionaries, data type used by AgGrid
+    """
+    # TODO: which unique cas do we want to show here? unique files? substrate only?
+    all_unique_cas = ""
+    if len(list_of_all_lab_experiments_with_meta) != 0:
+        unique_cas_set = set()
+        for exp in list_of_all_lab_experiments_with_meta:
+            cas_list = exp["substrate_cas_number"].split(",")
+            unique_cas_set.update(cas_list)
+        all_unique_cas = ";".join(sorted(unique_cas_set))
+
+    return all_unique_cas
