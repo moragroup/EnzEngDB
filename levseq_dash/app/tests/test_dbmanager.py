@@ -2,12 +2,9 @@ import pandas as pd
 import pytest
 
 from levseq_dash.app import utils
-from levseq_dash.app.data_manager import DataManager
 
 
-def test_db_load(mock_load_config):
-    dbmanager_read_all_from_file = DataManager()
-    assert dbmanager_read_all_from_file.use_db_web_service is False
+def test_db_load(dbmanager_read_all_from_file):
     assert len(dbmanager_read_all_from_file.experiments_dict) == 6
     assert len(dbmanager_read_all_from_file.assay_list) == 24
 
@@ -16,8 +13,7 @@ def test_db_load(mock_load_config):
     "index",
     [0, 1, 2, 3, 4, 5],
 )
-def test_db_delete(mock_load_config, index):
-    dbmanager_read_all_from_file = DataManager()
+def test_db_delete(dbmanager_read_all_from_file, index):
     assert len(dbmanager_read_all_from_file.experiments_dict) == 6
     assert dbmanager_read_all_from_file.delete_experiment(index)
     assert len(dbmanager_read_all_from_file.experiments_dict) == 5
@@ -62,48 +58,3 @@ def test_extract_all_unique_cas_from_lab_data(dbmanager_read_all_from_file, inde
     # get the substrate_cas from the test data and make sure they are found in the unique list
     cas_list = list_of_all_lab_experiments_with_meta[index]["substrate_cas_number"].split(",")
     assert (all_cas.find(c) != -1 for c in cas_list)
-
-
-# import unittest
-# from unittest.mock import patch
-# from collections import defaultdict
-#
-#
-# class TestDataManager(unittest.TestCase):
-#
-#     @patch("your_module.settings.load_config")  # Mock settings.load_config()
-#     def test_init_with_db_web_service_enabled(self, mock_load_config):
-#         """Test initialization when use_db_web_service is True"""
-#         mock_load_config.return_value = {"debug": {"use_db_web_service": True, "load_all_experiments_from_disk": False}}
-#
-#         dm = DataManager()
-#
-#         # Since database connection is not implemented, we just verify it doesn't crash
-#         self.assertTrue(dm.use_db_web_service)
-#
-#     @patch("your_module.settings.load_config")
-#     def test_init_with_db_web_service_disabled(self, mock_load_config):
-#         """Test initialization when use_db_web_service is False"""
-#         mock_load_config.return_value = {
-#             "debug": {"use_db_web_service": False, "load_all_experiments_from_disk": False}}
-#
-#         dm = DataManager()
-#
-#         self.assertFalse(dm.use_db_web_service)
-#         self.assertIsInstance(dm.experiments_dict, defaultdict)
-#         self.assertEqual(dm.experiments_dict.default_factory, Experiment)
-#
-#     @patch("your_module.settings.load_config")
-#     @patch("your_module.DataManager._DataManager__load_test_experiment_data__")  # Mock private method
-#     def test_load_all_experiments_from_disk(self, mock_load_test_experiment_data, mock_load_config):
-#         """Test initialization when load_all_experiments_from_disk is True"""
-#         mock_load_config.return_value = {"debug": {"use_db_web_service": False, "load_all_experiments_from_disk": True}}
-#
-#         dm = DataManager()
-#
-#         # Ensure the method __load_test_experiment_data__ is called
-#         mock_load_test_experiment_data.assert_called_once()
-#
-#
-# if __name__ == "__main__":
-#     unittest.main()
