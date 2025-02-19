@@ -28,17 +28,31 @@ experiment_ssm_example = Experiment(
 
 
 @pytest.fixture
-def mock_load_config(mocker):
+def mock_load_config_from_disk(mocker):
     """
     Fixture to mock a response
     """
     mock = mocker.patch("levseq_dash.app.settings.load_config")
-    mock.return_value = {"debug": {"load_all_experiments_from_disk": True, "use_db_web_service": False}}
+    mock.return_value = {"debug": {"load_all_experiments_from_disk": True,
+                                   "use_db_web_service": False}
+                         }
     return mock
 
 
 @pytest.fixture
-def dbmanager_read_all_from_file(mock_load_config):
+def mock_load_config_use_web(mocker):
+    """
+    Fixture to mock a response
+    """
+    mock = mocker.patch("levseq_dash.app.settings.load_config")
+    mock.return_value = {"debug": {"load_all_experiments_from_disk": False,
+                                   "use_db_web_service": True}
+                         }
+    return mock
+
+
+@pytest.fixture
+def dbmanager_read_all_from_file(mock_load_config_from_disk):
     from levseq_dash.app.data_manager import DataManager
 
     return DataManager()
