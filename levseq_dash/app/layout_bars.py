@@ -8,28 +8,55 @@ def get_navbar():
     return dbc.Navbar(
         dbc.Container(
             [
-                # Center Title Placeholder
-                # html.Div("App Title", className="mx-auto text-center",
-                # style={"fontSize": "24px", "fontWeight": "bold"}),
-                dbc.NavbarBrand("Levseq Dashboard", className="fs1"),
-                # Right Logo Placeholder
-                html.Img(src="https://via.placeholder.com/150", height="40px"),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                # html.Img(src="assets/caltech-new-logo.png", width="70%")
+                            ],
+                            width=2,
+                            style=vis.border_column,
+                            className="d-flex align-items-center justify-content-start",
+                        ),
+                        dbc.Col(
+                            [
+                                # "Levseq Dashboard"
+                            ],
+                            className="display-4 text-light d-flex align-items-center justify-content-center",
+                        ),
+                        dbc.Col(
+                            [
+                                # html.Img(src="assets/SSEC_horizontal_white_cropped.png", width="70%")
+                            ],
+                            width=3,
+                            className="d-flex align-items-center justify-content-end",
+                        ),
+                    ],
+                    justify="between",
+                    class_name="g-2",
+                    style=vis.border_row,
+                ),
+                # html.Img(src="https://via.placeholder.com/150", height="40px"),
             ],
-            className="d-flex justify-content-between align-items-center",
+            fluid=True,
+            # this will be the height or depth of the top bar
+            class_name="py-5",
         ),
         color="dark",
         dark=True,
-        className="text-light py-4 text-center fs-1 fw-light border-bottom",
+        # add some margin to the bottom to create some distance.
+        # we can change this number as we progress
+        className="mb-5 border-bottom",
     )
 
 
 def get_sidebar():
     return html.Div(
         [
-            html.Img(
-                src="https://via.placeholder.com/150",  # Placeholder for the logo
-                style={"width": "100%", "margin-bottom": "20px"},
-            ),
+            # html.Img(
+            #     src="https://via.placeholder.com/150",  # Placeholder for the logo
+            #     style={"width": "100%", "margin-bottom": "20px"},
+            # ),
             html.Hr(),
             html.Br(),
             dbc.Nav(
@@ -54,7 +81,7 @@ def get_sidebar():
         style={
             # "background-color": "#f8f9fa",
             "height": "100%",
-            "padding": "20px",
+            "padding": "50px",
         },
         className="p-0",
     )
