@@ -38,13 +38,15 @@ MEDIUM = 20
 SMALL = 16
 
 icon_del_exp = html.I(
-    DashIconify(icon="fa-solid:trash-alt", height=SMALL, width=SMALL),
+    DashIconify(icon="fa-solid:trash", height=SMALL, width=SMALL),
     # style={"margin-right": "8px"} # add the margin if there is text next to it
     # style={"color": "var(--bs-danger)"}
 )
-icon_go_to_next = html.I(DashIconify(icon="mdi:chart-line", height=SMALL, width=SMALL), style={"margin-left": "8px"})
-icon_home = DashIconify(icon="mdi:home", width=20)
-icon_upload = DashIconify(icon="mdi:tray-upload", width=20)
+icon_go_to_next = html.I(
+    DashIconify(icon="fa-solid:chart-line", height=SMALL, width=SMALL), style={"margin-left": "8px"}
+)
+icon_home = DashIconify(icon="fa-solid:home", width=20)
+icon_upload = DashIconify(icon="fa-solid:upload", width=20)
 
 
 # --------------------
