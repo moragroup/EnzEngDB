@@ -263,6 +263,13 @@ def redirect_to_experiment_page(n_clicks):
     Output("id-list-properties", "value"),
     # Heat map figure
     Output("id-experiment-heatmap", "figure"),
+    # Ranking plot dropdowns options and defaults
+    Output("id-list-plates-ranking-plot", "options"),
+    Output("id-list-plates-ranking-plot", "value"),
+    Output("id-list-cas-numbers-ranking-plot", "options"),
+    Output("id-list-cas-numbers-ranking-plot", "value"),
+    # Ranking plot figure
+    Output("id-experiment-ranking-plot", "figure"),
     # Output("id-store-heatmap-data", "data"),
     # Inputs
     Input("url", "pathname"),
@@ -281,6 +288,8 @@ def on_load_experiment_dashboard(pathname, experiment_id):
         default_plate = exp.plates[0]
         default_cas = exp.unique_cas_in_data[0]
         default_experiment_heatmap_properties_list = gs.experiment_heatmap_properties_list[0]
+
+        # create the heatmap with default values
         fig_experiment_heatmap = graphs.creat_heatmap(
             df=exp.data_df,
             plate_number=default_plate,
@@ -288,12 +297,18 @@ def on_load_experiment_dashboard(pathname, experiment_id):
             cas_number=default_cas,
         )
 
-        # columnDefs = components.get_top_variant_column_defs(exp.data_df)
-
         # in order to color the fitness ratio I have to calculate the mean of the parents per cas per plate.
         # coloring only works if I add the column
         df_filtered_with_ratio = utils.calculate_group_mean_ratios_per_cas_and_plate(exp.data_df)
         columnDefs_with_ratio = components.get_top_variant_column_defs(df_filtered_with_ratio)
+
+        # creat the ranking plot with default values
+        # rank plot uses the ratio data to color
+        fig_experiment_rank_plot = graphs.creat_rank_plot(
+            df=df_filtered_with_ratio,
+            plate_number=default_plate,
+            cas_number=default_cas,
+        )
 
         # heatmap_df = exp.data_df[[gs.c_cas, gs.c_plate, gs.c_well, gs.c_alignment_count,
         #                          gs.c_alignment_probability, gs.c_fitness_value]]
@@ -319,13 +334,24 @@ def on_load_experiment_dashboard(pathname, experiment_id):
             exp.substrate_cas_number,
             exp.product_cas_number,
             exp.assay,
-            exp.plates,  # Heat map figure list of plates
-            default_plate,  # dropdown default plate
-            exp.unique_cas_in_data,  # Heat map figure list of cas values
-            default_cas,  # dropdown default Cas
-            gs.experiment_heatmap_properties_list,  # Property dropdown list
-            gs.experiment_heatmap_properties_list[0],  # Property dropdown default
-            fig_experiment_heatmap,
+            # -------------------------------
+            # heatmap dropdowns and figure
+            # -------------------------------
+            exp.plates,  # Heatmap:  list of plates
+            default_plate,  # Heatmap:  default plate
+            exp.unique_cas_in_data,  # Heatmap: list of cas values
+            default_cas,  # Heatmap:  default Cas
+            gs.experiment_heatmap_properties_list,  # Heatmap: property list
+            gs.experiment_heatmap_properties_list[0],  # Heatmap: property default
+            fig_experiment_heatmap,  # Heatmap: figure
+            # -------------------------------
+            # rank plot dropdowns and figure
+            # --------------------------------
+            exp.plates,  # rank plot:  list of plates
+            default_plate,  # rank plot:  default plate
+            exp.unique_cas_in_data,  # rank plot: list of cas values
+            default_cas,  # rank plot:  default Cas
+            fig_experiment_rank_plot,  # Heatmap: figure
         )
     else:
         return no_update
@@ -335,7 +361,6 @@ def on_load_experiment_dashboard(pathname, experiment_id):
     Output("id-experiment-heatmap", "figure", allow_duplicate=True),
     Output("id-list-cas-numbers", "disabled"),
     Output("id-list-cas-numbers", "className"),
-    Input("id-experiment-selected", "data"),
     Input("id-list-plates", "value"),
     Input("id-list-cas-numbers", "value"),
     Input("id-list-properties", "value"),
@@ -343,7 +368,7 @@ def on_load_experiment_dashboard(pathname, experiment_id):
     # State("id-store-heatmap-data", "data"),
     prevent_initial_call=True,
 )
-def on_heatmap_selection(experiment_id, selected_plate, selected_cas_number, selected_stat_property, rowData):
+def update_heatmap(selected_plate, selected_cas_number, selected_stat_property, rowData):
     # TODO: does this have a performance hit? if so we can just put the 3 columns in the user session
     df = pd.DataFrame(rowData)
 
@@ -357,6 +382,22 @@ def on_heatmap_selection(experiment_id, selected_plate, selected_cas_number, sel
     else:
         class_name = "dbc"
     return stat_heatmap, not show_cas_numbers, class_name
+
+
+@app.callback(
+    Output("id-experiment-ranking-plot", "figure", allow_duplicate=True),
+    Input("id-list-plates-ranking-plot", "value"),
+    Input("id-list-cas-numbers-ranking-plot", "value"),
+    State("id-table-top-variants", "rowData"),  # TODO: does this have a performance hit?
+    # State("id-store-heatmap-data", "data"),
+    prevent_initial_call=True,
+)
+def update_rank_plot(selected_plate, selected_cas_number, rowData):
+    # TODO: does this have a performance hit? if so we can just put the 3 columns in the user session
+    df = pd.DataFrame(rowData)
+
+    rank_plot = graphs.creat_rank_plot(df, plate_number=selected_plate, cas_number=selected_cas_number)
+    return rank_plot
 
 
 @app.callback(

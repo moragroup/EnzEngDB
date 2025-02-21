@@ -1,3 +1,4 @@
+import numpy as np
 import plotly_express as px
 
 from levseq_dash.app import global_strings as gs
@@ -104,6 +105,52 @@ def creat_heatmap(df, plate_number, property, cas_number):
         )
     )
 
+    return fig
+
+
+def creat_rank_plot(df, plate_number, cas_number):
+    # Need to create a .copy() of the original df. Pandas did not like appending the columns
+    # to the original later in the code here, and it raised many warnings.
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+    filtered_df = df[(df[gs.c_cas] == cas_number) & (df[gs.c_plate] == plate_number)].copy()
+    filtered_df = filtered_df.fillna(0)
+
+    # Sort the DataFrame by 'fitness'
+    df_sorted = filtered_df.sort_values(by=gs.c_fitness_value, ascending=False).reset_index(drop=True)
+
+    # Create a rank column (1-based index)
+    df_sorted["rank"] = df_sorted.index + 1
+
+    fig = px.scatter(
+        df_sorted,
+        x="rank",
+        y=gs.c_fitness_value,
+        labels={"rank": "Rank", gs.c_fitness_value: "Fitness Value", gs.c_substitutions: "Substitutions"},
+        # title="Ranked Fitness Plot",
+        hover_data={gs.c_well: True, gs.c_substitutions: True, "rank": True},
+        # TODO:
+        #  do we want the size to be reflected or is the color enough?
+        #  remember to remove the marker size below if you enable this
+        # size="ratio",
+        color="ratio",  # Maps colors to "ratio" values
+        color_continuous_scale="RdBu_r",
+    )
+
+    # Identify parent points
+    red_mask = df_sorted[gs.c_substitutions] == "#PARENT#"
+    fig.update_traces(
+        marker=dict(
+            symbol=np.where(red_mask, "star", "circle"),  # different shape for parent, circle for others
+            # TODO:
+            #  do we want the size to be reflected or is the color enough?
+            #  remember to remove the marker size below if you enable this
+            size=12,
+            line=dict(color="rgba(0.75, 0.75, 0.75, 1)", width=1),  # remove the white boundary
+        )
+    )
+
+    fig.update_layout(margin=dict(l=0, r=0, b=0))  # Remove all margins
     return fig
 
 
@@ -225,11 +272,10 @@ def creat_heatmap(df, plate_number, property, cas_number):
 #     fig_sunburst_color_by_group_size_ice.show()
 
 
-# from levseq_dash.app.tests.conftest import experiment_ep_example
+# from levseq_dash.app.tests.conftest import my_experimnet
 #
-# # create_sunburst(experiment_ep_example.data_df)
-# fig = creat_heatmap(df=experiment_ep_example.data_df,
-#                     plate_number=experiment_ep_example.plates[0],
-#                     property=gs.experiment_heatmap_properties_list[0],
-#                     cas_number=experiment_ep_example.unique_cas_in_data[0])
-# fig.show()
+# ratio_df = utils.calculate_group_mean_ratios_per_cas_and_plate(my_experimnet.data_df)
+# creat_rank_plot(df=ratio_df,
+#                 plate_number=my_experimnet.plates[1],
+#                 property=gs.experiment_heatmap_properties_list[0],
+#                 cas_number=my_experimnet.unique_cas_in_data[0])

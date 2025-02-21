@@ -263,7 +263,65 @@ def get_experiment_page():
                         ],
                         width=6,
                         style=vis.border_column,
-                    )
+                    ),
+                    dbc.Col(
+                        [
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Fitness Value Ranking", className=vis.top_card_head),
+                                    dbc.CardBody(
+                                        [
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            html.Div(
+                                                                [
+                                                                    dbc.Label("Select Plate ID"),
+                                                                    dcc.Dropdown(id="id-list-plates-ranking-plot"),
+                                                                ],
+                                                                className="dbc",
+                                                            )
+                                                        ],
+                                                        style=vis.border_column,
+                                                    ),
+                                                    dbc.Col(
+                                                        [
+                                                            html.Div(
+                                                                [
+                                                                    dbc.Label("Select CAS number"),
+                                                                    dcc.Dropdown(id="id-list-cas-numbers-ranking-plot"),
+                                                                ],
+                                                                className="dbc",
+                                                            )
+                                                        ],
+                                                        style=vis.border_column,
+                                                    ),
+                                                ],
+                                                className="g-1",
+                                            ),
+                                            dbc.Row(
+                                                [dcc.Graph("id-experiment-ranking-plot")],
+                                                className="mb-4 g-0",
+                                                style=vis.border_row,
+                                            ),
+                                        ],
+                                        # keep this at p-1 or 2 so the figure doesn't clamp to the sides of the card
+                                        # I have set the margins on that to 0
+                                        className="p-2",
+                                        style=vis.border_card,
+                                    ),
+                                ],
+                                style={
+                                    "box-shadow": "1px 2px 7px 0px grey",
+                                    "border-radius": "5px",
+                                    # "width": "530px", "height": "630px"
+                                },
+                            )
+                        ],
+                        width=6,
+                        style=vis.border_column,
+                    ),
                 ],
                 className="mb-4",
             ),
