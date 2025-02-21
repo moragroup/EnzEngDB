@@ -93,7 +93,7 @@ class Experiment:
         if geometry_file_path and os.path.isfile(geometry_file_path):
             self.geometry_file_path = geometry_file_path
         else:
-            self.geometry_file_path = Path()
+            self.geometry_file_path = None  # Path()
 
         if geometry_base64_string:
             self.geometry_base64_string = geometry_base64_string

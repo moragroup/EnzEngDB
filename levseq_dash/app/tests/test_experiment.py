@@ -33,7 +33,7 @@ def test_experiment_empty_parent_sequence(experiment_empty):
 
 
 def test_experiment_empty_geometry_file_path(experiment_empty):
-    assert experiment_empty.geometry_file_path == Path()
+    assert experiment_empty.geometry_file_path is None
 
 
 def test_experiment_empty_geometry_base64_bytes(experiment_empty):
