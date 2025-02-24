@@ -457,6 +457,27 @@ def update_ui(selected_rows):
     return experiment_id, delete_btn_disabled, show_btn_disabled  # ,selected_row_info
 
 
+@app.callback(
+    Output("id-viewer", "selection", allow_duplicate=True),
+    Output("id-viewer", "focus", allow_duplicate=True),
+    # Input("id-switch-residue-view", "checked"), #DMC
+    Input("id-switch-residue-view", "value"),  # DBC
+    State("id-table-top-variants", "rowData"),
+    prevent_initial_call=True,
+)
+def on_view_all_residue(view, rowData):
+    if view and rowData:
+        df = pd.DataFrame(rowData)
+        residues = sorted(df[gs.c_substitutions].str.extractall(r"(\d+)")[0].unique().tolist())
+        if len(residues) != 0:
+            sel, foc = utils.get_selection_focus(residues, analyse=False)
+    else:
+        sel = utils.reset_selection()
+        foc = no_update
+
+    return sel, foc
+
+
 # Run the app
 if __name__ == "__main__":
     app.run(debug=True)

@@ -244,10 +244,10 @@ def get_protein_viewer():
         # data=data,
         style={"width": "auto", "height": "600px"},
         layout={
-            #"layoutShowControls": True,
+            # "layoutShowControls": True,
             # https://dash-molstar.readthedocs.io/en/latest/load.html#general-options
-            #‘outside’, ‘portrait’, ‘landscape’ and ‘reactive’ (default)
-            "layoutControlsDisplay": 'landscape',
-            "layoutIsExpanded": False, # if true it makes it full screen
+            # ‘outside’, ‘portrait’, ‘landscape’ and ‘reactive’ (default)
+            "layoutControlsDisplay": "landscape",
+            "layoutIsExpanded": False,  # if true it makes it full screen
         },
     )

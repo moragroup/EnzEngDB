@@ -27,7 +27,10 @@ def gather_residues_from_selection(selected_rows):
     return residues
 
 
-def get_selection_focus(residues):
+def get_selection_focus(residues, analyse=True):
+    """ "
+    https://dash-molstar.readthedocs.io/en/latest/
+    """
     target = molstar_helper.get_targets(
         chain="A",
         residue=residues,
@@ -39,12 +42,28 @@ def get_selection_focus(residues):
         target,
         # select by default, it will put a green highlight on the atoms
         # default select mode (true) or hover mode (false)
-        # select=False,  # default select mode (true) or hover mode (false)
+        # select=False,
         add=False,
     )  # TODO: do we want to add to the list?
-    foc = molstar_helper.get_focus(target, analyse=True)
+
+    # Focus the camera on the specified targets.
+    # If analyse is set to True, non-covalent interactions within 5 angstroms will be analysed.
+    # https://dash-molstar.readthedocs.io/en/latest/callbacks.html#parameter-focus
+    foc = molstar_helper.get_focus(target, analyse=analyse)
 
     return sel, foc
+
+
+def reset_selection():
+    target = {"chain_name": None, "auth": False, "residue_numbers": []}
+    sel = molstar_helper.get_selection(
+        target,
+        # select by default, it will put a green highlight on the atoms
+        # default select mode (true) or hover mode (false)
+        select=True,
+        add=False,
+    )
+    return sel
 
 
 # def get_file_size(file_bytes):

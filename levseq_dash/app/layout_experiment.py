@@ -153,7 +153,7 @@ def get_experiment_page():
                                                 # style=vis.border_table,
                                             )
                                         ],
-                                        className="p-1",  # fits to the card border
+                                        className="p-1 mt-3",  # fits to the card border
                                         # style={"height": "100%", "overflowX": "auto"}  # Allow content to expand
                                     ),
                                 ],
@@ -175,7 +175,41 @@ def get_experiment_page():
                                 [
                                     dbc.CardHeader(gs.viewer_header, className=vis.top_card_head),
                                     dbc.CardBody(
-                                        [components.get_protein_viewer()],
+                                        [
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            html.Span(
+                                                                [
+                                                                    dbc.Switch(
+                                                                        id="id-switch-residue-view",
+                                                                        value=False,
+                                                                        # className="fs-5",
+                                                                        className="custom-switch",
+                                                                    ),
+                                                                    dbc.Label(" View all residues"),
+                                                                    # dmc.Switch(
+                                                                    #     # thumbIcon=vis.icon_eye,
+                                                                    #     id="id-switch-residue-view",
+                                                                    #     label="View all residues",
+                                                                    #     onLabel="ON",#vis.icon_eye_open,
+                                                                    #     offLabel="OFF",#vis.icon_eye_closed,
+                                                                    #     size="md",
+                                                                    #     className="custom-switch",
+                                                                    #     checked=False,
+                                                                    # )
+                                                                ],
+                                                                style={"display": "flex"},
+                                                            )
+                                                        ],
+                                                        width=2,
+                                                    ),
+                                                ],
+                                                class_name="mt-3 mb-3",
+                                            ),
+                                            dbc.Row(dbc.Col(components.get_protein_viewer())),
+                                        ],
                                         style={
                                             "height": "100%",
                                             "overflowX": "auto",  # Allow content to expand

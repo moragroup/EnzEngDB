@@ -77,3 +77,20 @@
 /*    color: var(--bs-white) !important;*/
 /*    font-weight: bold;*/
 /*}*/
+
+/*
+    use with dmc switch and dbc switch
+*/
+.custom-switch .form-check-input:checked input:checked + .mantine-Switch-track{
+    background-color: #003B4C !important; /* caltech color *!*/
+    border: 0px solid #003B4C !important; /* Change border color */
+    /*font-size: 12px;*/
+}
+.custom-switch .mantine-Switch-track{
+    font-size: 12px;
+}
+
+.custom-switch .form-check-input:checked {
+    background-color: #003B4C !important; /* caltech color *!*/
+    border: 0px solid #003B4C !important; /* Change border color */
+}
