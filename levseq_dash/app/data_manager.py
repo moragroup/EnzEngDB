@@ -3,13 +3,11 @@ import random
 from collections import defaultdict
 from pathlib import Path
 
-import pandas as pd
-
-from levseq_dash.app import global_strings as gs
 from levseq_dash.app import settings, utils
 from levseq_dash.app.experiment import Experiment, MutagenesisMethod
 from levseq_dash.app.tests.conftest import test_assay_list
-from levseq_dash.app.wsexec import Query
+
+# from levseq_dash.app.wsexec import Query
 
 
 class DataManager:
@@ -280,8 +278,10 @@ class DataManager:
         """
         assay_list = []
         if self.use_db_web_service:
-            cols, rows = Query("get_assays", [])
-            assay_list = [sublist[1] for sublist in rows]
+            # this works
+            # cols, rows = Query("get_assays", [])
+            # assay_list = [sublist[1] for sublist in rows]
+            pass
 
             # df = pd.DataFrame(rows)
             # # cols, rows = Query("get_test_queries", [eid, uid, gid])  # type:ignore
