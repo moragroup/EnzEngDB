@@ -3,6 +3,7 @@
 #
 
 import re
+from typing import TypeAlias
 
 import requests
 
@@ -11,12 +12,19 @@ from levseq_dash.app import settings
 # import globals as g
 
 # handy type aliases
-type Scalar = int | float | str
-type Rowset = list[tuple]
-type Columns = list[str]
-type ResultSet = tuple[Columns, Rowset]
-type QueryResponse = ResultSet | Scalar
-type Arglist = list[Scalar]
+# type Scalar = int | float | str
+# type Rowset = list[tuple]
+# type Columns = list[str]
+# type ResultSet = tuple[Columns, Rowset]
+# type QueryResponse = ResultSet | Scalar
+# type Arglist = list[Scalar]
+# FATEMEH had to switch these, so they are compatible with 3.11
+Scalar: TypeAlias = int | float | str
+Rowset: TypeAlias = list[tuple]
+Columns: TypeAlias = list[str]
+ResultSet: TypeAlias = tuple[Columns, Rowset]
+QueryResponse: TypeAlias = ResultSet | Scalar
+Arglist: TypeAlias = list[Scalar]
 
 
 def get_db_url():
@@ -55,7 +63,8 @@ def Query(verb: str, params: list[Scalar]) -> QueryResponse:
         msg = f"LevSeq webservice response: {resp.status_code} {resp.reason}"
         if resp.text != "null":
             j = resp.json()
-            msg += f": \n{j["detail"]}"
+            # msg += f": \n{j["detail"]}"
+            msg += f": \n{j['detail']}"  # FATEMEH fixed this for 3.11
 
         raise ValueError(msg)
 
