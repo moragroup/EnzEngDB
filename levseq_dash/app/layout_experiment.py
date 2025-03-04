@@ -5,9 +5,9 @@ from levseq_dash.app import components, vis
 from levseq_dash.app import global_strings as gs
 
 
-# -------------------------------------------------------
 def get_experiment_page():
-    return html.Div(  # TODO: dbc.Container doesn't pick up the fluid container from parent
+    # dbc.Container doesn't pick up the fluid container from parent keep as html.Div
+    return html.Div(
         [
             html.Br(),
             dbc.Row(
@@ -147,7 +147,8 @@ def get_experiment_page():
                                     dbc.CardHeader(gs.top_variants, className=vis.top_card_head),
                                     dbc.CardBody(
                                         [
-                                            html.Div(  # TODO: dbc.container adds padding to the surrounding area
+                                            # keep as is,  dbc.container adds padding to the surrounding area
+                                            html.Div(
                                                 [components.get_table_experiment()],
                                                 className="dbc dbc-ag-grid",
                                                 # style=vis.border_table,
@@ -232,7 +233,7 @@ def get_experiment_page():
                         [
                             dbc.Card(
                                 [
-                                    dbc.CardHeader("Heatmap", className=vis.top_card_head),
+                                    dbc.CardHeader(gs.well_heatmap, className=vis.top_card_head),
                                     dbc.CardBody(
                                         [
                                             dbc.Row(
@@ -241,7 +242,7 @@ def get_experiment_page():
                                                         [
                                                             html.Div(
                                                                 [
-                                                                    dbc.Label("Select Property"),
+                                                                    dbc.Label(gs.select_property),
                                                                     dcc.Dropdown(id="id-list-properties"),
                                                                 ],
                                                                 className="dbc",
@@ -253,7 +254,7 @@ def get_experiment_page():
                                                         [
                                                             html.Div(
                                                                 [
-                                                                    dbc.Label("Select Plate ID"),
+                                                                    dbc.Label(gs.select_plate),
                                                                     dcc.Dropdown(id="id-list-plates"),
                                                                 ],
                                                                 className="dbc",
@@ -265,7 +266,7 @@ def get_experiment_page():
                                                         [
                                                             html.Div(
                                                                 [
-                                                                    dbc.Label("Select CAS number"),
+                                                                    dbc.Label(gs.select_cas),
                                                                     dcc.Dropdown(id="id-list-cas-numbers"),
                                                                 ],
                                                                 className="dbc",
@@ -288,11 +289,7 @@ def get_experiment_page():
                                         style=vis.border_card,
                                     ),
                                 ],
-                                style={
-                                    "box-shadow": "1px 2px 7px 0px grey",
-                                    "border-radius": "5px",
-                                    # "width": "530px", "height": "630px"
-                                },
+                                style=vis.card_shadow,
                             ),
                         ],
                         width=6,
@@ -302,7 +299,7 @@ def get_experiment_page():
                         [
                             dbc.Card(
                                 [
-                                    dbc.CardHeader("Fitness Value Ranking", className=vis.top_card_head),
+                                    dbc.CardHeader(gs.retention_function, className=vis.top_card_head),
                                     dbc.CardBody(
                                         [
                                             dbc.Row(
@@ -311,7 +308,7 @@ def get_experiment_page():
                                                         [
                                                             html.Div(
                                                                 [
-                                                                    dbc.Label("Select Plate ID"),
+                                                                    dbc.Label(gs.select_plate),
                                                                     dcc.Dropdown(id="id-list-plates-ranking-plot"),
                                                                 ],
                                                                 className="dbc",
@@ -323,7 +320,7 @@ def get_experiment_page():
                                                         [
                                                             html.Div(
                                                                 [
-                                                                    dbc.Label("Select CAS number"),
+                                                                    dbc.Label(gs.select_cas),
                                                                     dcc.Dropdown(id="id-list-cas-numbers-ranking-plot"),
                                                                 ],
                                                                 className="dbc",
@@ -346,11 +343,7 @@ def get_experiment_page():
                                         style=vis.border_card,
                                     ),
                                 ],
-                                style={
-                                    "box-shadow": "1px 2px 7px 0px grey",
-                                    "border-radius": "5px",
-                                    # "width": "530px", "height": "630px"
-                                },
+                                style=vis.card_shadow,
                             )
                         ],
                         width=6,

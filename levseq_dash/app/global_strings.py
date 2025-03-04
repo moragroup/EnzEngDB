@@ -28,7 +28,13 @@ cas_file = "Unique CAS"
 cas_sub = "Substrate CAS"
 cas_prod = "Product CAS"
 viewer_header = "Protein Structure"
+well_heatmap = "Heatmap"
 top_variants = "Top Variants"
+retention_function = "Retention Function"
+
+select_plate = "Select Plate ID"
+select_cas = "Select CAS number"
+select_property = "Select Property"
 
 # -----------------------------
 #   DO NOT CHANGE PAST HERE
