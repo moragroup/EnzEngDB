@@ -32,6 +32,7 @@ well_heatmap = "Heatmap"
 top_variants = "Top Variants"
 retention_function = "Retention Function"
 
+view_all = "View all residues"
 select_plate = "Select Plate ID"
 select_cas = "Select CAS number"
 select_property = "Select Property"

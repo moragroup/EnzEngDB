@@ -1,4 +1,5 @@
 import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 from dash import dcc, html
 
 from levseq_dash.app import components, vis
@@ -181,40 +182,74 @@ def get_experiment_page():
                                                 [
                                                     dbc.Col(
                                                         [
-                                                            html.Span(
-                                                                [
-                                                                    dbc.Switch(
-                                                                        id="id-switch-residue-view",
-                                                                        value=False,
-                                                                        # className="fs-5",
-                                                                        className="custom-switch",
-                                                                    ),
-                                                                    dbc.Label(" View all residues"),
-                                                                    # dmc.Switch(
-                                                                    #     # thumbIcon=vis.icon_eye,
-                                                                    #     id="id-switch-residue-view",
-                                                                    #     label="View all residues",
-                                                                    #     onLabel="ON",#vis.icon_eye_open,
-                                                                    #     offLabel="OFF",#vis.icon_eye_closed,
-                                                                    #     size="md",
-                                                                    #     className="custom-switch",
-                                                                    #     checked=False,
-                                                                    # )
-                                                                ],
-                                                                style={"display": "flex"},
+                                                            dmc.Switch(
+                                                                # thumbIcon=vis.icon_home,
+                                                                id="id-switch-residue-view",
+                                                                label=gs.view_all,
+                                                                onLabel="ON",  # vis.icon_eye_open,
+                                                                offLabel="OFF",  # vis.icon_eye_closed,
+                                                                size="sm",
+                                                                className="custom-switch",
+                                                                checked=False,
                                                             )
                                                         ],
-                                                        width=2,
+                                                        align="center",
+                                                        width=3,
+                                                        style=vis.border_column,
+                                                    ),
+                                                    dbc.Col(width=6),
+                                                    # dbc.Col(
+                                                    #     [
+                                                    #         html.Div(
+                                                    #             dbc.Label(gs.select_cas),
+                                                    #             style={"textAlign": "right"}
+                                                    #         )
+                                                    #     ],
+                                                    #     width=3,
+                                                    #     #align="center",
+                                                    #     style=vis.border_column,
+                                                    # ),
+                                                    dbc.Col(
+                                                        [
+                                                            dbc.Label(gs.select_cas),
+                                                            dcc.Dropdown(
+                                                                id="id-list-cas-numbers-residue-highlight",
+                                                                disabled=True,
+                                                            ),
+                                                        ],
+                                                        width=3,
+                                                        align="center",
+                                                        style=vis.border_column,
                                                     ),
                                                 ],
+                                                # if you justify the components to center then
+                                                # the text overflows to the next row
+                                                # justify="between",
                                                 class_name="mt-3 mb-3",
+                                                style=vis.border_row,
+                                            ),
+                                            dbc.Row(
+                                                dbc.Col(
+                                                    [
+                                                        dcc.RangeSlider(
+                                                            id="id-slider-ratio",
+                                                            value=[0.5, 1.5],
+                                                            min=0,
+                                                            step=0.1,
+                                                            tooltip={"always_visible": True, "placement": "top"},
+                                                            disabled=True,
+                                                            className="custom-slider",
+                                                        ),
+                                                    ],
+                                                    align="center",
+                                                ),
                                             ),
                                             dbc.Row(dbc.Col(components.get_protein_viewer())),
                                         ],
-                                        style={
-                                            "height": "100%",
-                                            "overflowX": "auto",  # Allow content to expand
-                                        },
+                                        # style={
+                                        #     "height": "100%",
+                                        #     "overflowX": "auto",  # Allow content to expand
+                                        # },
                                     ),
                                 ],
                                 className="d-flex flex-column",  # Flexbox for vertical stacking
