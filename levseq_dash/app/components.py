@@ -1,6 +1,7 @@
 import dash_ag_grid as dag
 import dash_bootstrap_components as dbc
 import dash_molstar
+from dash import html
 
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app import vis
@@ -249,4 +250,21 @@ def get_protein_viewer():
             "layoutControlsDisplay": "landscape",
             "layoutIsExpanded": False,  # if true it makes it full screen
         },
+    )
+
+
+def get_info_icon_tooltip_bundle(info_icon_id, help_string, tip_placement):
+    return html.Div(
+        [
+            dbc.Label(id=info_icon_id, children=vis.icon_info),
+            dbc.Tooltip(
+                children=help_string,
+                is_open=False,
+                target=info_icon_id,
+                placement=tip_placement,
+                # some style is overriding the tooltip and making the strings all caps
+                # overriding the text transform here
+                style={"text-transform": "none"},
+            ),
+        ]
     )

@@ -139,6 +139,7 @@ def get_experiment_page():
                 className="g-3 mb-4",
                 style=vis.border_row,
             ),
+            # top variants and viewer row
             dbc.Row(
                 [
                     dbc.Col(
@@ -180,7 +181,7 @@ def get_experiment_page():
                                         [
                                             dbc.Row(
                                                 [
-                                                    dbc.Col(
+                                                    html.Span(
                                                         [
                                                             dmc.Switch(
                                                                 # thumbIcon=vis.icon_home,
@@ -188,61 +189,65 @@ def get_experiment_page():
                                                                 label=gs.view_all,
                                                                 onLabel="ON",  # vis.icon_eye_open,
                                                                 offLabel="OFF",  # vis.icon_eye_closed,
-                                                                size="sm",
+                                                                size="md",
                                                                 className="custom-switch",
                                                                 checked=False,
-                                                            )
-                                                        ],
-                                                        align="center",
-                                                        width=3,
-                                                        style=vis.border_column,
-                                                    ),
-                                                    dbc.Col(width=6),
-                                                    # dbc.Col(
-                                                    #     [
-                                                    #         html.Div(
-                                                    #             dbc.Label(gs.select_cas),
-                                                    #             style={"textAlign": "right"}
-                                                    #         )
-                                                    #     ],
-                                                    #     width=3,
-                                                    #     #align="center",
-                                                    #     style=vis.border_column,
-                                                    # ),
-                                                    dbc.Col(
-                                                        [
-                                                            dbc.Label(gs.select_cas),
-                                                            dcc.Dropdown(
-                                                                id="id-list-cas-numbers-residue-highlight",
-                                                                disabled=True,
+                                                            ),
+                                                            components.get_info_icon_tooltip_bundle(
+                                                                info_icon_id="id-switch-residue-view-info",
+                                                                help_string="some help string",
+                                                                tip_placement="top",
                                                             ),
                                                         ],
-                                                        width=3,
-                                                        align="center",
-                                                        style=vis.border_column,
-                                                    ),
+                                                        style={"display": "flex", "gap": "5px"},
+                                                    )
+                                                ],
+                                                class_name="p-2",  # add some padding around the switch
+                                            ),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Card(
+                                                        dbc.Row(
+                                                            [
+                                                                dbc.Col(
+                                                                    [
+                                                                        dbc.Label(gs.select_cas),
+                                                                        dcc.Dropdown(
+                                                                            id="id-list-cas-numbers-residue-highlight",
+                                                                            disabled=True,
+                                                                        ),
+                                                                    ],
+                                                                    width=3,
+                                                                ),
+                                                                dbc.Col(
+                                                                    [
+                                                                        dcc.RangeSlider(
+                                                                            id="id-slider-ratio",
+                                                                            value=[0.5, 1.5],
+                                                                            min=0,
+                                                                            step=0.1,
+                                                                            tooltip={
+                                                                                "always_visible": True,
+                                                                                "placement": "bottom",
+                                                                            },
+                                                                            disabled=True,
+                                                                            # className="dbc"
+                                                                            className="custom-slider",
+                                                                        ),
+                                                                    ],
+                                                                ),
+                                                            ],
+                                                            # removing the dbc.CardBody around this row also removes
+                                                            # the padding. I am manually putting the padding back.
+                                                            class_name="p-2 align-items-center",
+                                                        )
+                                                    )
                                                 ],
                                                 # if you justify the components to center then
                                                 # the text overflows to the next row
                                                 # justify="between",
-                                                class_name="mt-3 mb-3",
+                                                class_name="mt-3 mb-3 g-0 d-flex align-items-center",
                                                 style=vis.border_row,
-                                            ),
-                                            dbc.Row(
-                                                dbc.Col(
-                                                    [
-                                                        dcc.RangeSlider(
-                                                            id="id-slider-ratio",
-                                                            value=[0.5, 1.5],
-                                                            min=0,
-                                                            step=0.1,
-                                                            tooltip={"always_visible": True, "placement": "top"},
-                                                            disabled=True,
-                                                            className="custom-slider",
-                                                        ),
-                                                    ],
-                                                    align="center",
-                                                ),
                                             ),
                                             dbc.Row(dbc.Col(components.get_protein_viewer())),
                                         ],
@@ -262,6 +267,7 @@ def get_experiment_page():
                 ],
                 className="mb-4",  # TODO: change gutter to g-1 here? or not
             ),
+            # heatmap plot and retention plots
             dbc.Row(
                 [
                     dbc.Col(
