@@ -1,7 +1,11 @@
 # app strings
-web_title = "LevSeq Dashboard"  # TODO: is this good?
+web_title = "Levseq Dashboard"
+nav_lab = "Lab Dashboard"
+nav_upload = "Upload New Experiment"
 
-# form strings
+# -----------------------------
+# Upload page strings
+# -----------------------------
 experiment_name = "Experiment Name"
 experiment_date = "Experiment Date"
 substrate_cas = "Substrate CAS Number"
@@ -17,7 +21,16 @@ experiment_name_placeholder = "Enter a name for your experiment."
 button_upload_csv = "Upload Experiment Data"
 button_upload_pdb = "Upload PDB/CIF"
 
+# -----------------------------
+# Lab Experiment page strings
+# -----------------------------
+lab_exp = "All experiments in the lab"
+go_to = "Go to Experiment Dashboard"
+lab_total = "Total Experiments"
+lab_cas = "Used CAS"
+# -----------------------------
 # Experiment Card Strings
+# -----------------------------
 sequence = "Amino Acid Sequence"
 experiment = "Experiment Name"
 date = "Experiment Date"
