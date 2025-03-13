@@ -46,21 +46,7 @@ app.layout = dbc.Container(
     [
         layout_bars.get_navbar(),
         dbc.Row(
-            [
-                # Left column with a logo
-                dbc.Col(
-                    layout_bars.get_sidebar(),
-                    width=2,
-                    style={"border-right": "1px solid #dee2e6"},
-                ),
-                # Main content
-                dbc.Col(
-                    html.Div(id="id-page-content"),
-                    width=10,
-                    style=vis.border_column,
-                ),
-            ],
-            # className="g-0",
+            [html.Div([layout_bars.get_sidebar(), html.Div(id="id-page-content", className="content")])],
         ),
         # stores
         dcc.Store(id="id-exp-upload-csv"),
@@ -322,7 +308,8 @@ def on_load_experiment_dashboard(pathname, experiment_id):
         # get the max value of the ratio column, round up
         max_value = np.ceil(df_filtered_with_ratio["ratio"].max())
         # generate the slider marks based on the max value
-        slider_marks = utils.generate_slider_marks_dict(max_value)
+        # make sure the value is an int
+        slider_marks = utils.generate_slider_marks_dict(int(max_value))
 
         # heatmap_df = exp.data_df[[gs.c_cas, gs.c_plate, gs.c_well, gs.c_alignment_count,
         #                          gs.c_alignment_probability, gs.c_fitness_value]]
@@ -514,6 +501,22 @@ def on_view_all_residue(view, slider_value, cas_value, rowData):
                 sel, foc = utils.get_selection_focus(residues, analyse=False)
 
     return sel, foc, enable_components, enable_components
+
+
+@app.callback(
+    Output("id-sidebar", "className"),
+    Input("id-menu-icon", "n_clicks"),
+    State("id-sidebar", "className"),
+    prevent_initial_call=True,
+)
+def toggle_sidebar(toggle_clicks, sidebar_class):
+    if ctx.triggered_id == "id-menu-icon":
+        if "expanded" in sidebar_class:
+            return "thin-sidebar collapsed"
+        else:
+            return "thin-sidebar expanded"
+
+    return sidebar_class  # no changes
 
 
 # Run the app

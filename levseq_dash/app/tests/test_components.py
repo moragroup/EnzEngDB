@@ -58,7 +58,7 @@ def test_get_form():
 
 
 def test_get_navar():
-    assert isinstance(layout_bars.get_navbar(), dbc.Navbar)
+    assert isinstance(layout_bars.get_navbar(), html.Div)
 
 
 def test_get_sidebar():

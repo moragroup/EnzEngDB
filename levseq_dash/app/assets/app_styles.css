@@ -3,24 +3,9 @@
     --cal-tech-color-1: #003B4C;
     --cal-tech-color-2: #FF6C0C;
     --cal-tech-color-3: #C8C8C8;
-    --cal-tech-color-4: #76777B
+    --cal-tech-color-4: #76777B;
 
 }
-.bg-dark {
-    background-color: #003B4C !important; /* caltech color */
-}
-
-/*.bg-primary {*/
-/*    background-color: #FF6C0C !important; !* caltech color *!*/
-/*}*/
-
-/*.text-primary-emphasis {*/
-/*    color: #FF6C0C !important; !* caltech color *!*/
-/*}*/
-
-/*.bg-light {*/
-/*    background-color: #C8C8C8 !important; !* caltech color *!*/
-/*}*/
 
 /* Make the card header more compact */
 .card-header {
@@ -34,54 +19,6 @@
     font-size: 14px;      /* Smaller font size for the body */
 }
 
-
-
-.sidebar-link {
-    display: block;
-    /*padding: 10px 20px;*/
-    color: white !important;
-    background-color: var(--bs-gray-500);
-    /*background-color: var(--bs-primary-bg-subtle);*/
-    /*border-radius: 8px;*/
-    /*text-decoration: none;*/
-    margin: 5px 0; /* puts a space between the buttons*/
-    text-align: center;
-    /*transition: background-color 0.3s ease-in-out;*/
-}
-
-.sidebar-link.active {
-    /*background-color: var(--bs-gray-700) !important;*/
-    background-color: #003B4C !important; /* caltech color */
-    color: white !important;
-    font-weight: bold;
-    /*border-radius: 8px;*/
-}
-.sidebar-link:hover {
-    /*background-color: var(--bs-gray-700)!important;*/
-    background-color: #003B4C !important; /* caltech color */
-}
-
 .user-alert {
-    /*border: #003B4C !important;*/
-    background-color: var(--bs-success-bg-subtle) !important;
-    color: var(--bs-success-text-emphasis) !important;
+    background-color: var(--cal-tech-color-2) !important;
 }
-
-/*.ag-header-cell{*/
-/*    background-color: var(--bs-gray-200);*/
-/*}*/
-
-/*.ag-header-cell-filtered {*/
-/*    !*background-color: var(--bs-gray-600) !important;*!*/
-/*    background-color: #76777B !important; !* caltech color *!*/
-/*}*/
-
-/*.ag-header-cell-filtered span {*/
-/*    !**/
-/*        color in ag-header-cell-filtered does not change the filtered cell text color,*/
-/*        this component does*/
-/*        https://ag-grid.com/angular-data-grid/global-style-customisation-headers/#style-header-on-filter*/
-/*    *!*/
-/*    color: var(--bs-white) !important;*/
-/*    font-weight: bold;*/
-/*}*/
