@@ -2,6 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 
 from levseq_dash.app import components, vis
+from levseq_dash.app import global_strings as gs
 
 
 # -------------------------------------------------------
@@ -13,7 +14,7 @@ def get_landing_page():
                     dbc.Col(
                         dbc.Card(
                             [
-                                dbc.CardHeader("Total Experiments", className=vis.top_card_head),
+                                dbc.CardHeader(gs.lab_total, className=vis.top_card_head),
                                 dbc.CardBody(id="id-lab-experiment-count", className=vis.top_card_body),
                             ],
                             style=vis.card_shadow,
@@ -24,7 +25,7 @@ def get_landing_page():
                     dbc.Col(
                         dbc.Card(
                             [
-                                dbc.CardHeader("Used CAS", className=vis.top_card_head),
+                                dbc.CardHeader(gs.lab_cas, className=vis.top_card_head),
                                 dbc.CardBody(id="id-lab-experiment-all-cas", className=vis.top_card_body),
                             ],
                             style=vis.card_shadow,
@@ -42,7 +43,7 @@ def get_landing_page():
                         [
                             dbc.Card(
                                 [
-                                    dbc.CardHeader("All Experiments", className=vis.top_card_head),
+                                    dbc.CardHeader(gs.lab_exp, className=vis.top_card_head),
                                     dbc.CardBody(
                                         [
                                             html.Div(  # TODO: dbc.container adds padding to the surrounding area
@@ -50,14 +51,6 @@ def get_landing_page():
                                                 className="dbc dbc-ag-grid",
                                                 style=vis.border_table,
                                             ),
-                                            # TODO: delete this later
-                                            # html.Br(),
-                                            # dbc.Alert(
-                                            #     id="id-selected-row-info",
-                                            #     color="secondary",
-                                            #     className="text-center",
-                                            #     style={"fontWeight": "bold"},
-                                            # ),
                                             html.Br(),
                                             # html.Div(
                                             #     [
@@ -96,13 +89,10 @@ def get_landing_page():
                                                     ),
                                                     dbc.Col(
                                                         dbc.Button(
-                                                            children=html.Span(
-                                                                ["Go to Experiment Dashboard", vis.icon_go_to_next]
-                                                            ),
+                                                            children=html.Span([gs.go_to, vis.icon_go_to_next]),
                                                             id="id-button-goto-experiment",
                                                             n_clicks=0,
                                                             disabled=True,
-                                                            class_name="btn-primary",
                                                         ),
                                                         width="auto",
                                                         className="text-end",

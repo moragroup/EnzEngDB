@@ -1,22 +1,24 @@
+/*
+    the slider line that connects the two range points
+*/
 .custom-slider .rc-slider-track {
     background-color: var(--cal-tech-color-3) !important;
     /*background-color: transparent !important;*/
     height:5px; /* Thicker track */
 }
 
+/*
+    the slider dots at the ends of the range
+*/
 .custom-slider .rc-slider-handle {
     background-color: var(--cal-tech-color-2) !important;
     border: 1px solid var(--cal-tech-color-2) !important;
 }
 
 
-.custom-slider .rc-slider-dot{
-    background-color: var(--cal-tech-color-3) !important; /* Change tick dot color */
-     border: 1px solid var(--cal-tech-color-3) !important;
-    /*width: 8px !important;  !* Make dots larger *!*/
-    /*height: 8px !important; !* Make dots larger *!*/
-    /*border-radius: 50%;     !* Make dots circular *!*/
-}
+/*
+    the dot in the middle of the slider
+*/
 .custom-slider .rc-slider-dot-active{
     background-color: var(--cal-tech-color-4) !important; /* Change tick dot color */
      border: 2px solid var(--cal-tech-color-4) !important;
