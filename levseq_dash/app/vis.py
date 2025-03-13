@@ -45,10 +45,9 @@ icon_del_exp = html.I(
 icon_go_to_next = html.I(
     DashIconify(icon="fa-solid:chart-line", height=SMALL, width=SMALL), style={"margin-left": "8px"}
 )
-icon_home = DashIconify(icon="fa-solid:home", width=20)
-icon_upload = DashIconify(icon="fa-solid:upload", width=20)
-# icon_eye_open = DashIconify(icon="mdi-light:eye-outline", width=20)  # mdi:eye #fa6-solid:eye
-# icon_eye_closed = DashIconify(icon="mdi-light:eye-off-outline", width=20)  # mdi:eye #fa6-solid:eye
+icon_home = DashIconify(icon="fa-solid:home", width=MEDIUM)
+icon_upload = DashIconify(icon="fa-solid:upload", width=MEDIUM)
+icon_menu = DashIconify(icon="fa-solid:bars", width=MEDIUM)
 icon_info = html.I(
     DashIconify(icon="fa6-solid:circle-info", height=SMALL, width=SMALL),
     # style={"color": "var(--bs-info)"}
