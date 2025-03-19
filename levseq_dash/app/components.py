@@ -91,7 +91,7 @@ def get_table_matched_sequences():
     """
     return dag.AgGrid(
         id="id-table-matched-sequences",
-        columnDefs=get_matched_sequences_column_defs(),
+        columnDefs=cd.get_matched_sequences_column_defs(),
         defaultColDef={
             # do NOT set "flex": 1 in default col def as it overrides all
             # the column widths
