@@ -85,6 +85,42 @@ def get_table_all_experiments():
     )
 
 
+def get_table_matched_sequences():
+    """
+    Returns dash ag grid component with settings setup for use to show all experiments
+    """
+    return dag.AgGrid(
+        id="id-table-matched-sequences",
+        columnDefs=get_matched_sequences_column_defs(),
+        defaultColDef={
+            # do NOT set "flex": 1 in default col def as it overrides all
+            # the column widths
+            "sortable": True,
+            "resizable": True,
+            "filter": True,
+            # Set BOTH items below to True for header to wrap text
+            "wrapHeaderText": True,
+            "autoHeaderHeight": True,
+            # "flex": 1,  # TODO: remove this after you put fixed width
+        },
+        style={"height": "1600px", "width": "100%"},
+        dashGridOptions={
+            # Enable multiple selection
+            "rowSelection": "multiple",
+            "suppressRowClickSelection": True,
+            "animateRows": True,
+            # https://ag-grid.com/javascript-data-grid/selection-overview/#cell-text-selection
+            "enableCellTextSelection": True,
+            "rowHeight": 30,
+            # "pagination": True,
+            # # this will set the number of items per page be a function of the height
+            # # if we load too many rows that are not visible, the graphics is not smart enough
+            # # to hide what is not visible, so it takes longer for the page to load
+            # "paginationAutoPageSize": True,
+        },
+    )
+
+
 def get_protein_viewer():
     """
     Returns the dash molstar viewer component
