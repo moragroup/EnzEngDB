@@ -164,3 +164,102 @@ def get_all_experiments_column_defs():
             "flex": 2,
         },
     ]
+
+
+def get_matched_sequences_column_defs():
+    """
+    Returns column definitions for the matched sequences
+    """
+    return [
+        {  # Checkbox column
+            "headerCheckboxSelection": True,
+            "checkboxSelection": True,
+            "headerName": "",
+            "width": 30,
+        },
+        {
+            "field": "target_name",
+            "headerName": "Experiment ID",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 150,
+        },
+        {
+            "field": "alignment_score",
+            "filter": "agNumberColumnFilter",
+            "headerName": "Raw Alignment Score",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 150,
+        },
+        {
+            "field": "norm_score",
+            "initialSort": "desc",
+            "headerName": "Normed Score",
+            "filter": "agNumberColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 150,
+        },
+        {
+            "field": "identities",
+            "filter": "agNumberColumnFilter",
+            "#headerName": "# matches",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 110,
+        },
+        {
+            "field": "gaps",
+            "filter": "agNumberColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 110,
+        },
+        {
+            "field": "mismatches",
+            "filter": "agNumberColumnFilter",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 130,
+        },
+        {
+            "field": "coordinates",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 150,
+            "cellRenderer": "addLineBreaksOnArrayRow",
+            "autoHeight": True,
+        },
+        {
+            "field": "alignment",
+            "filterParams": {
+                "buttons": ["reset", "apply"],
+                "closeOnApply": True,
+            },
+            "width": 650,
+            "cellRenderer": "addLineBreaksOnNewLines",
+            "autoHeight": True,
+        },
+        # {
+        #     "field": "indices",
+        #     "filterParams": {"buttons": ["reset", "apply"], "closeOnApply": True, },
+        #     "width": 2000,
+        #     'cellRenderer': "addLineBreaksOnArrayRow",
+        #     "autoHeight": True,
+        # },
+    ]
