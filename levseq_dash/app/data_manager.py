@@ -187,19 +187,26 @@ class DataManager:
         """
         Returns
         -------
-        | user_id | user_name| experiment_id | experiment_name | parent_sequence
+        | user | experiment_id | parent_sequence
         """
-        data_list_of_dict = []
+        seq_data = {}
         if self.use_db_web_service:
+            # TODO:
             # get all lab sequences
             pass
         else:
             # get the metadata for all the experiments
-            for key, exp in self.experiments_dict.items():
-                seq_data = {"experiment_id": key, "parent_sequence": exp.parent_sequence}
-                data_list_of_dict.append(seq_data)
+            # this make a list of dictionaries
+            # for key, exp in self.experiments_dict.items():
+            #     seq_data = {"experiment_id": key, "parent_sequence": exp.parent_sequence}
+            #     data_list_of_dict.append(seq_data)
 
-        return data_list_of_dict
+            # dictionary of "experiment id" and "experiment sequence" pairs
+            # the key of the dictionary is the experiment ID
+            for key, exp in self.experiments_dict.items():
+                seq_data.update({key: exp.parent_sequence})
+
+        return seq_data
 
     # ---------------------------
     #    DATA RETRIEVAL: PER EXPERIMENT
@@ -224,48 +231,6 @@ class DataManager:
         Returns ALL 17 columns for download
         """
         return None
-
-    # def get_experiment_meta_data(self, experiment_id: int):
-    #     """
-    #     Returns
-    #     -------
-    #     |user_id | user_name | experiment_name | upload_time_stamp | experiment_date | substrate_cas_number
-    #     | product_cas_number | assay | mutagenesis_method
-    #     """
-    #     return None
-    #
-    # def get_experiment_core_data(self, experiment_id: int):
-    #     """
-    #     Returns
-    #     -------
-    #     | cas_number | plate | well | alignment_count | amino_acid_substitutions | alignment_probability |
-    #     | average_mutation_frequency | p_value | p_adj_value | x_coordinate | y_coordinate | fitness_value
-    #     """
-    #     return None
-    #
-    # def get_experiment_parent_sequence(self, experiment_id: int) -> str:
-    #     sequence = None
-    #     if self.use_db_web_service:
-    #         pass
-    #     else:
-    #         sequence = self.experiments_dict[experiment_id].parent_sequence
-    #
-    #     return sequence
-    #
-    # def get_experiment_geometry_file(self, experiment_id: int, geometry_form):
-    #     """ "
-    #     Returns file
-    #     """
-    #     geometry = None
-    #     if self.use_db_web_service:
-    #         pass
-    #     else:
-    #         if geometry_form == "bytes":
-    #             geometry = self.experiments_dict[experiment_id].geometry_base64_bytes
-    #         elif geometry_form == "file":
-    #             geometry = self.experiments_dict[experiment_id].geometry_file_path
-    #
-    #     return geometry
 
     # ---------------------------
     #    DATA RETRIEVAL: MISC
@@ -301,9 +266,10 @@ class DataManager:
 
         return assay_list
 
-    # ---------------------------
-    #    Private functions used internally for reading from disk not the webs service
-    # ---------------------------
+    # ------------------------------------
+    #    Private functions used internally
+    #    for reading from disk not the webs service
+    # ------------------------------------
     def __gather_all_test_experiments__(self):
         """
         This method is only used for loading from disk for test purposes.
@@ -387,21 +353,3 @@ class DataManager:
         n = len(self.experiments_dict.items())
         self.experiments_dict[n] = exp
         return n
-
-
-#
-#
-#
-#
-# # experiment_files = gather_all_test_experiments()
-# # for csv_file, geometry_file in experiment_files.items():
-# #     df = pd.read_csv(csv_file)
-#
-#
-# # exp = experiment_ep_example
-# # #bytes = parser.decode_base64_string_to_base64_bytes(exp.geometry_base64_string)
-# # utf8_string = exp.geometry_base64_bytes.decode('utf-8')
-# # file_as_string = io.StringIO(utf8_string)
-# # file = exp.geometry_file
-# # pdb_cif = molstar_helper.parse_molecule(exp.geometry_base64_string, fmt="cif")
-# # print("done")
