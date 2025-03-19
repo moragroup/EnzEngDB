@@ -379,6 +379,44 @@ def get_experiment_page():
                 ],
                 className="mb-4",
             ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader(gs.top_variants, className=vis.top_card_head),
+                                    dbc.CardBody(
+                                        [
+                                            # keep as is,  dbc.container adds padding to the surrounding area
+                                            html.Div("TBD info here, query sequence,... what else? base score?"),
+                                            html.Br(),
+                                            html.Div(
+                                                [components.get_table_matched_sequences()],
+                                                className="dbc dbc-ag-grid",
+                                                # style=vis.border_table,
+                                            ),
+                                        ],
+                                        className="p-1 mt-3",  # fits to the card border
+                                        # style={"height": "100%", "overflowX": "auto"}  # Allow content to expand
+                                    ),
+                                ],
+                                # className="d-flex flex-column",  # Flexbox for vertical stacking
+                                style={
+                                    "box-shadow": "1px 2px 7px 0px grey",
+                                    "border-radius": "5px",
+                                    # "width": "530px",
+                                    # "height": "600px"
+                                },
+                            ),
+                        ],
+                        # width=6,
+                        style=vis.border_column,
+                    ),
+                    #
+                ],
+                className="mb-4",  # TODO: change gutter to g-1 here? or not
+            ),
         ],
         # className="mt-5 mb-5 bg-light"
         # fluid=True,
