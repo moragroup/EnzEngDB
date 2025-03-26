@@ -5,7 +5,17 @@ import pytest
 from dash import html
 
 from levseq_dash.app import column_definitions as cd
-from levseq_dash.app import components, graphs, layout_bars, layout_experiment, layout_landing, layout_upload, utils
+from levseq_dash.app import (
+    components,
+    graphs,
+    layout_bars,
+    layout_experiment,
+    layout_landing,
+    layout_matching_sequences,
+    layout_upload,
+    utils,
+    vis,
+)
 from levseq_dash.app import global_strings as gs
 
 
@@ -19,6 +29,16 @@ def test_get_top_variant_column_defs(experiment_ep_pcr_with_user_cas):
     )
     d = cd.get_top_variant_column_defs(df_filtered_with_ratio)
     assert len(d) == 6
+
+
+def test_get_matched_sequences_column_defs():
+    d = cd.get_matched_sequences_column_defs()
+    assert len(d) == 18
+
+
+def test_get_matched_sequences_exp_hot_cold_data_column_defs():
+    d = cd.get_matched_sequences_exp_hot_cold_data_column_defs()
+    assert len(d) == 7
 
 
 # def test_get_all_experiments_column_defs(experiment_ep_pcr_with_user_cas):
@@ -218,3 +238,11 @@ def test_creat_heatmap_figure_data(experiment_ep_pcr, cas, plate, mutation, i, j
         assert not any("4Mut*" in text for text in annotations)
     else:
         assert annotations[i][j] == "4Mut*"
+
+
+def test_get_seq_align_form():
+    assert isinstance(layout_matching_sequences.get_seq_align_form(), html.Div)
+
+
+def test_get_seq_align_layout():
+    assert isinstance(layout_matching_sequences.get_seq_align_layout(), html.Div)
