@@ -67,7 +67,7 @@ def display_page(pathname):
         return layout_experiment.get_experiment_page()
     elif pathname == "/upload":
         return layout_upload.layout
-    elif pathname == "/similar-sequences-in-lab":
+    elif pathname == "/explore-sequences":
         return layout_matching_sequences.get_seq_align_layout()
     else:
         return html.Div([html.H2("Page not found!")])

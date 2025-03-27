@@ -2,7 +2,7 @@
 web_title = "Levseq Dashboard"
 nav_lab = "Lab Dashboard"
 nav_upload = "Upload New Experiment"
-
+nav_seq = "Explore Similar Sequences"
 # -----------------------------
 # Upload page strings
 # -----------------------------
