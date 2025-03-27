@@ -22,6 +22,13 @@ upload_success = success_style = {
     "borderColor": "green",
 }
 
+# Sequence Match table and the protein viewer need to have close height
+seq_match_table_height = "700px"
+seq_match_protein_viewer_height = "700px"
+seq_match_card_height = (
+    "800px"  # this number must be seq_match_table_height + any text written above the table or viewer
+)
+
 border_row = {"border": "0px solid blue"}
 border_column = {"border": "0px solid red"}
 border_card = {"border": "0px solid cyan"}
@@ -30,11 +37,6 @@ card_shadow = {"box-shadow": "1px 2px 7px 0px grey", "border-radius": "5px"}
 
 top_card_head = "card-title fw-bold custom-card-header"
 top_card_body = "text-primary-emphasis"
-
-# Sequence Match table and the protein viewer need to have close height
-seq_match_table_height = "700px"
-seq_match_protein_viewer_height = "600px"
-
 
 # --------------------
 #   Icons
@@ -63,57 +65,58 @@ icon_sequence = DashIconify(icon="fa-solid:dna", width=MEDIUM)
 # --------------------
 #   AGGrid Cell colorings
 # --------------------
-def data_bars_colorscale(df, column):
-    """
-    colors the bars in the cells in the table
-    color max and min is based on the column values max and min
-    uses color scale
-
-    """
-    # this doesn't use the mean value as the center of the coloring
-    n_bins = 200
-    min_value = df[column].min()
-    max_value = df[column].max()
-
-    # Generate color scale from Plotly
-    color_scale = px.colors.sample_colorscale(px.colors.diverging.RdBu, [i / n_bins for i in range(n_bins)])
-    # rdbu goes from blue to red, I want it the other way
-    color_scale.reverse()
-
-    # color_scale = px.colors.sample_colorscale(color_scale, [i / n_bins for i in range(n_bins)])
-
-    # Convert to RGBA with transparency
-    alpha = 1.0
-    color_scale = [color.replace("rgb", "rgba").replace(")", f", {alpha})") for color in color_scale]
-
-    styles = []
-    for i in range(1, n_bins + 1):
-        ratio_min = min_value + (i - 1) * (max_value - min_value) / n_bins
-        ratio_max = min_value + i * (max_value - min_value) / n_bins
-        max_bound_percentage = (i / n_bins) * 100
-        color = color_scale[i - 1]  # Pick color from scale
-
-        if max_bound_percentage > 89:
-            text_color = "white"
-        else:
-            text_color = "black"
-        styles.append(
-            {
-                "condition": f"params.value >= {ratio_min}" + (f" && params.value < {ratio_max}" if i < n_bins else ""),
-                "style": {
-                    "background": f"""
-                        linear-gradient(90deg,
-                        {color} 0%,
-                        {color} {max_bound_percentage}%,
-                        white {max_bound_percentage}%,
-                        white 100%)
-                    """,
-                    "color": text_color,
-                },
-            }
-        )
-
-    return styles
+# def data_bars_colorscale(df, column):
+#     """
+#     colors the bars in the cells in the table
+#     color max and min is based on the column values max and min
+#     uses color scale
+#
+#     """
+#     # this doesn't use the mean value as the center of the coloring
+#     n_bins = 200
+#     min_value = df[column].min()
+#     max_value = df[column].max()
+#
+#     # Generate color scale from Plotly
+#     color_scale = px.colors.sample_colorscale(px.colors.diverging.RdBu, [i / n_bins for i in range(n_bins)])
+#     # rdbu goes from blue to red, I want it the other way
+#     color_scale.reverse()
+#
+#     # color_scale = px.colors.sample_colorscale(color_scale, [i / n_bins for i in range(n_bins)])
+#
+#     # Convert to RGBA with transparency
+#     alpha = 1.0
+#     color_scale = [color.replace("rgb", "rgba").replace(")", f", {alpha})") for color in color_scale]
+#
+#     styles = []
+#     for i in range(1, n_bins + 1):
+#         ratio_min = min_value + (i - 1) * (max_value - min_value) / n_bins
+#         ratio_max = min_value + i * (max_value - min_value) / n_bins
+#         max_bound_percentage = (i / n_bins) * 100
+#         color = color_scale[i - 1]  # Pick color from scale
+#
+#         if max_bound_percentage > 89:
+#             text_color = "white"
+#         else:
+#             text_color = "black"
+#         styles.append(
+#             {
+#                 "condition": f"params.value >= {ratio_min}" +
+#                              (f" && params.value < {ratio_max}" if i < n_bins else ""),
+#                 "style": {
+#                     "background": f"""
+#                         linear-gradient(90deg,
+#                         {color} 0%,
+#                         {color} {max_bound_percentage}%,
+#                         white {max_bound_percentage}%,
+#                         white 100%)
+#                     """,
+#                     "color": text_color,
+#                 },
+#             }
+#         )
+#
+#     return styles
 
 
 def data_bars_group_mean_colorscale(
