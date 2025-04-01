@@ -20,3 +20,26 @@ def test_get_alignments(index, identities, mismatches, gaps, target_sequences):
     assert results[index]["identities"] == identities
     assert results[index]["mismatches"] == mismatches
     assert results[index]["gaps"] == gaps
+
+
+def test_get_alignments_short():
+    results, base_score = get_alignments("AACTT", 0, {"target": "AATT"})
+    assert base_score == 27
+    assert results[0]["identities"] == 4
+    assert results[0]["mismatches"] == 0
+    assert results[0]["gaps"] == 1
+
+
+def test_get_alignments_empty_query():
+    with pytest.raises(Exception):
+        get_alignments("", 0, {"target": "AATT"})
+
+
+def test_get_alignments_empty_targets():
+    with pytest.raises(Exception):
+        get_alignments("AACTT", 0, {})
+
+
+def test_get_alignments_empty_everything():
+    with pytest.raises(Exception):
+        get_alignments("", 0, {})
