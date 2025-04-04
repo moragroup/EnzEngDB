@@ -53,7 +53,7 @@ def parse_alignment_pipes(alignment_str, hot_indices, cold_indices):
         # index_int can't be 0 because it comes from the experiment
         if index_int > 0:
             # NOTE: the indices on the protein start from 1 but the strings array start from 0 so subtract 1
-            hot_cold_spots[index_int - 1] = "H"
+            hot_cold_spots[index_int - 1] = gs.hot
         else:
             raise IndexError(f"Index {index_int} is out of the valid range (1 to {length})")
 
@@ -62,10 +62,10 @@ def parse_alignment_pipes(alignment_str, hot_indices, cold_indices):
         index_int = int(index)
         if index_int > 0:
             # if this is already a hot spot, put a B for both
-            if hot_cold_spots[index_int - 1] == "H":
-                hot_cold_spots[index_int - 1] = "B"
+            if hot_cold_spots[index_int - 1] == gs.hot:
+                hot_cold_spots[index_int - 1] = gs.hot_cold
             else:
-                hot_cold_spots[index_int - 1] = "C"
+                hot_cold_spots[index_int - 1] = gs.cold
         else:
             raise IndexError(f"Index {index_int - 1} is out of the valid range (1 to {length})")
 

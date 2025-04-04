@@ -68,7 +68,11 @@ seq_align_form_threshold_default = "0.8"
 seq_align_form_hot_cold = "# Hot/Cold to extract"
 seq_align_form_hot_cold_n = "2"
 seq_align_form_button_sequence_matching = "Find Matching Sequences"
-
+# if you change below, make sure you also change
+# the string lookup in js function seqAlignmentVis -> search for it in assets
+hot = "H"
+cold = "C"
+hot_cold = "B"  # both hot and cold indicator
 
 # -----------------------------
 #   DO NOT CHANGE PAST HERE
@@ -98,7 +102,6 @@ cc_seq_alignment_mismatches = "seq_align_mismatch_indices"
 cc_hot_cold_type = "variant_type"
 cc_hot = "Hot"
 cc_cold = "Cold"
-
 
 # this list is the core data that is read from the CSV files, the rest is not needed
 experiment_core_data_list = [

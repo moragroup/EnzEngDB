@@ -132,3 +132,32 @@ def list_of_residues():
     cold = "[30, 40, 50]"
     mismatch = "[25, 60]"
     return hot, cold, mismatch
+
+
+@pytest.fixture(scope="session")
+def list_of_residues_edge():
+    hot = [1, 197]
+    cold = [60]
+    # mismatch = "[25, 60]"
+    return hot, cold
+
+
+@pytest.fixture
+def alignment_string():
+    return """\
+target            0 MTPSDISGYDYGRVEKSPITDLEFDLLKKTVMLGEEDVMYLKKAADVLKDQVDEILDLMG
+                  0 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||.|
+query             0 MTPSDISGYDYGRVEKSPITDLEFDLLKKTVMLGEEDVMYLKKAADVLKDQVDEILDLAG
+
+target           60 GWAASNEHLIYYFSNPDTGAPIKEYLERVRARCVAWVLDTTCRDYNREWLDYQYEVGLRH
+                 60 ||||||||||||.|||||||||||||||||||..||||||||||||||||||||||||||
+query            60 GWAASNEHLIYYGSNPDTGAPIKEYLERVRARIGAWVLDTTCRDYNREWLDYQYEVGLRH
+
+target          120 HRSKKGVTDGVRTVPNTPLRYLIAEIYPLTATIKPFLAKKGGSPEDIEGMYNAWLKSVVL
+                120 ||||||||||||||||||||||||.|||.|||||||||||||||||||||||||||||||
+query           120 HRSKKGVTDGVRTVPNTPLRYLIAGIYPITATIKPFLAKKGGSPEDIEGMYNAWLKSVVL
+
+target          180 QVAIWSHPYTKENDRLE 197
+                180 |||||||||||||||-- 197
+query           180 QVAIWSHPYTKENDR-- 195
+"""
