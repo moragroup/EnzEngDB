@@ -3,6 +3,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from levseq_dash.app import global_strings as gs
+
 
 def test_experiment_empty_upload_timestamp(experiment_empty):
     assert experiment_empty.upload_time_stamp != ""
@@ -216,3 +218,80 @@ def test_exp_core_data_to_dict(experiment_ep_pcr_with_user_cas):
 def test_exp_core_data_to_dict_2(experiment_ep_pcr_with_user_cas, index, key, value):
     d = experiment_ep_pcr_with_user_cas.exp_core_data_to_dict()
     assert d[index][key] == value
+
+
+def test_exp_hot_cold_spots_structure(experiment_ep_pcr):
+    """Tests if the function returns dataframes with expected structure."""
+    hot_cold_spots_df, hot_cold_residue_per_cas = experiment_ep_pcr.exp_hot_cold_spots(2)
+    assert isinstance(hot_cold_spots_df, pd.DataFrame)
+    assert isinstance(hot_cold_residue_per_cas, pd.DataFrame)
+
+    # Check expected columns in hot_cold_spots_df
+    expected_cols = {
+        gs.c_cas,
+        gs.c_plate,
+        gs.c_well,
+        gs.c_substitutions,
+        gs.c_aa_sequence,
+        gs.c_fitness_value,
+        gs.cc_hot_cold_type,
+        gs.cc_ratio,
+    }
+    assert expected_cols.issubset(hot_cold_spots_df.columns)
+
+
+@pytest.mark.parametrize(
+    "n",
+    [1, 2, 3, 4, 5, 6],
+)
+def test_exp_hot_cold_spots_count(experiment_ep_pcr, n):
+    """Tests if the function returned value count is consistent with n"""
+    hot_cold_spots_df, hot_cold_residue_per_cas = experiment_ep_pcr.exp_hot_cold_spots(n)
+    count = len(experiment_ep_pcr.unique_cas_in_data) * experiment_ep_pcr.plates_count * 2 * n
+    assert count == hot_cold_spots_df.shape[0]
+
+
+def test_exp_hot_cold_spots_exception(experiment_ep_pcr):
+    with pytest.raises(Exception):
+        experiment_ep_pcr.exp_hot_cold_spots(0)
+
+
+@pytest.mark.parametrize(
+    "n",
+    [1, 2, 3, 4, 5, 6],
+)
+def test_exp_hot_cold_spots_filtering(experiment_ep_pcr, n):
+    """Tests if invalid data is removed."""
+
+    hot_cold_spots_df, _ = experiment_ep_pcr.exp_hot_cold_spots(n)
+
+    # Ensure the invalid rows are removed
+    assert not hot_cold_spots_df[gs.c_substitutions].str.contains(r"[#-]", na=True).any()
+    assert not hot_cold_spots_df[gs.c_aa_sequence].str.contains(r"[#-]", na=True).any()
+
+
+@pytest.mark.parametrize(
+    "n",
+    [1, 2, 3, 4, 5, 6],
+)
+def test_exp_hot_cold_spots_n_values(experiment_ep_pcr, n):
+    """Tests if the function correctly extracts top/bottom N residues."""
+    hot_cold_spots_df, _ = experiment_ep_pcr.exp_hot_cold_spots(n)
+
+    # Ensure we get exactly N hot and cold variants per CAS + Plate combo
+    hot_count = hot_cold_spots_df[hot_cold_spots_df[gs.cc_hot_cold_type] == gs.cc_hot].shape[0]
+    cold_count = hot_cold_spots_df[hot_cold_spots_df[gs.cc_hot_cold_type] == gs.cc_cold].shape[0]
+
+    assert hot_count == cold_count
+
+
+@pytest.mark.parametrize(
+    "n",
+    [1, 2, 3, 4, 5, 6],
+)
+def test_exp_hot_cold_spots_grouping(experiment_ep_pcr, n):
+    """Tests if the function correctly groups by CAS and extracts substitution indices."""
+    _, hot_cold_residue_per_cas = experiment_ep_pcr.exp_hot_cold_spots(n)
+
+    # Ensure extracted CAS count is consistent
+    assert len(hot_cold_residue_per_cas[gs.c_cas].unique()) == len(experiment_ep_pcr.unique_cas_in_data)

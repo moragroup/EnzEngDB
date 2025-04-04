@@ -88,12 +88,16 @@ c_fitness_value = "fitness_value"
 
 # These strings are used in various tables and dictionaries across the app > CC_*
 cc_experiment_id = "experiment_id"
+cc_ratio = "ratio"
 cc_seq_alignment = "sequence_alignment"
-cc_hot_residue_indices_per_cas = "hot_residue_indices_per_cas"
-cc_cold_residue_indices_per_cas = "cold_residue_indices_per_cas"
+cc_hot_indices_per_cas = "hot_residue_indices_per_cas"
+cc_cold_indices_per_cas = "cold_residue_indices_per_cas"
 cc_hot_and_cold_indices_per_cas = "hot_and_cold_residue_indices_per_cas"
 cc_exp_residue_per_cas = "all_exp_residue_indices_per_cas"
 cc_seq_alignment_mismatches = "seq_align_mismatch_indices"
+cc_hot_cold_type = "variant_type"
+cc_hot = "Hot"
+cc_cold = "Cold"
 
 
 # this list is the core data that is read from the CSV files, the rest is not needed
