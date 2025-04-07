@@ -249,7 +249,7 @@ def on_submit_experiment(
     Output("id-table-matched-sequences", "rowData"),
     Output("id-table-matched-sequences-exp-hot-cold-data", "rowData"),
     Output("id-div-matched-sequences-info", "children"),
-    Output("id-div-matched-sequences-notes", "children"),
+    # Output("id-div-matched-sequences-notes", "children"),
     Input("id-button-run-seq-matching", "n_clicks"),
     State("id-input-query-sequence", "value"),
     State("id-input-query-sequence-threshold", "value"),
@@ -290,23 +290,21 @@ def on_load_matching_sequences(n_clicks, query_sequence, threshold, n_top_hot_co
 
             # expand the data of each row per CAS - request by PI
             seq_match_row_data = utils_seq_alignment.gather_seq_alignment_data_per_cas(
-                hot_cold_residue_per_cas, lab_seq_match_data[i], exp.exp_meta_data_to_dict(), seq_match_row_data
+                df_hot_cold_residue_per_cas=hot_cold_residue_per_cas,
+                seq_match_data=lab_seq_match_data[i],
+                exp_meta_data=exp.exp_meta_data_to_dict(),
+                seq_match_row_data=seq_match_row_data,
             )
 
         info = f"# Matched Sequences: {n_matches}"
-        notes = """
-            * Number of matched sequences is calculated per experiment match not per cas.
-            * Each row represents experiment-cas information.
-            * An experiment _may_ have one or more alignments. Each will be represented per cas value
-        """
-        return seq_match_row_data, hot_cold_row_data.to_dict("records"), info, notes
+        return seq_match_row_data, hot_cold_row_data.to_dict("records"), info
 
     raise PreventUpdate
 
 
 @app.callback(
     Output("id-div-selected-matched-sequence-info", "children"),
-    Output("id-viewer-temp", "children"),
+    Output("id-viewer-selected-seq-matched-protein", "children"),
     Input("id-table-matched-sequences", "selectedRows"),
     prevent_initial_call=True,
 )
@@ -360,6 +358,20 @@ def display_selected_matching_sequences_protein_visualization(selected_rows):
         return notes, viewer
     else:
         raise PreventUpdate
+
+
+@app.callback(
+    Output("id-table-matched-sequences-exp-hot-cold-data", "exportDataAsCsv"),
+    Output("id-table-matched-sequences-exp-hot-cold-data", "csvExportParams"),
+    Input("id-button-download-hot-cold-results", "n_clicks"),
+    State("id-button-download-hot-cold-results-options", "value"),
+    prevent_initial_call=True,
+    # in case the download takes time this will disable the button
+    # so multiple cliks don't happen
+    running=[(Output("id-button-download-hot-cold-results", "disabled"), True, False)],  # requires the latest Dash 2.16
+)
+def export_data_as_csv_jiq(n_clicks, option):
+    return utils.export_data_as_csv(option, gs.filename_download_residue_info)
 
 
 # -------------------------------

@@ -111,11 +111,28 @@ def get_seq_align_layout():
                                     dbc.CardHeader("Matched Experiments"),
                                     dbc.CardBody(
                                         [
-                                            # TODO: maybe make this an html.P
-                                            html.H5(id="id-div-matched-sequences-info"),
-                                            dcc.Markdown(id="id-div-matched-sequences-notes"),
-                                            html.Br(),
-                                            html.Div(
+                                            dbc.Row(
+                                                [
+                                                    # this info icon uses markdown in the tooltip so we
+                                                    # must allow html and set the flag to true
+                                                    html.Div(
+                                                        [
+                                                            components.get_info_icon_tooltip_bundle(
+                                                                info_icon_id="id-info-1",
+                                                                help_string=gs.markdown_note_matched_seq,
+                                                                location="top",
+                                                                allow_html=True,
+                                                            ),
+                                                            html.P(
+                                                                id="id-div-matched-sequences-info",
+                                                                className="fw-bolder",
+                                                            ),
+                                                        ],
+                                                        style={"display": "flex", "gap": "5px"},
+                                                    ),
+                                                ],
+                                            ),
+                                            dbc.Row(
                                                 [components.get_table_matched_sequences()],
                                                 className="dbc dbc-ag-grid",
                                             ),
@@ -143,13 +160,12 @@ def get_seq_align_layout():
                                     dbc.CardHeader("Visualize Selected Experiment"),
                                     dbc.CardBody(
                                         [
-                                            html.Br(),
                                             dcc.Markdown(
                                                 id="id-div-selected-matched-sequence-info",
                                                 # style={"whiteSpace": "pre"}
                                             ),
                                             html.Br(),
-                                            html.Div(id="id-viewer-temp"),
+                                            html.Div(id="id-viewer-selected-seq-matched-protein"),
                                         ],
                                         className="p-1 mt-3",  # fits to the card border
                                     ),
@@ -173,11 +189,31 @@ def get_seq_align_layout():
                         [
                             dbc.Card(
                                 [
+                                    dbc.CardHeader("Hot and Cold residues"),
                                     dbc.CardBody(
                                         [
-                                            html.H4("TBD some title? some info?"),
-                                            html.Br(),
-                                            html.Div(
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        components.get_button_download(
+                                                            "id-button-download-hot-cold-results"
+                                                        ),
+                                                        width=2,
+                                                        align="center",
+                                                        style=vis.border_column,
+                                                    ),
+                                                    dbc.Col(
+                                                        components.get_radio_items_download_options(
+                                                            "id-button-download-hot-cold-results-options"
+                                                        ),
+                                                        width=3,
+                                                        align="center",
+                                                        style=vis.border_column,
+                                                    ),
+                                                ],
+                                                className="mb-2 g-1",
+                                            ),
+                                            dbc.Row(
                                                 [components.get_table_matched_sequences_exp_hot_cold_data()],
                                                 className="dbc dbc-ag-grid",
                                                 # style=vis.border_table,
