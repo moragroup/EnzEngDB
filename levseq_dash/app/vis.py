@@ -66,6 +66,7 @@ icon_info = html.I(
     # style={"color": "var(--bs-info)"}
 )
 icon_sequence = DashIconify(icon="fa-solid:dna", width=MEDIUM)
+icon_download = DashIconify(icon="mdi:tray-download", height=MEDIUM, width=MEDIUM)
 
 
 # --------------------
