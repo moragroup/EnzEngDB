@@ -87,7 +87,7 @@ def get_alignments(query_sequence, threshold, targets: dict):
             alignment_str = alignment.__str__()
 
             # manually calculated values
-            norm_score_ratio = np.round(alignment.score / base_score, 2)
+            norm_score_ratio = np.round(alignment.score / base_score, 4)
 
             # only return the alignments that score above a threshold
             if norm_score_ratio >= threshold:
