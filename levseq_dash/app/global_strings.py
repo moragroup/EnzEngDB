@@ -95,6 +95,8 @@ header_cas_number = "CAS"
 header_sub_cas = "Sub CAS"
 header_prod_cas = "Prod CAS"
 header_substitutions = "Substitutions"
+header_fitness = "Fitness"
+header_mutagenesis = "Mutagenesis Method"
 
 # -----------------------------
 #   DO NOT CHANGE PAST HERE
@@ -114,6 +116,10 @@ c_fitness_value = "fitness_value"
 
 # These strings are used in various tables and dictionaries across the app > CC_*
 cc_experiment_id = "experiment_id"
+cc_substrate_cas = "substrate_cas_number"
+cc_prod_cas = "product_cas_number"
+cc_mutagenesis = "mutagenesis_method"
+
 cc_ratio = "ratio"
 cc_seq_alignment = "sequence_alignment"
 cc_hot_indices_per_cas = "hot_residue_indices_per_cas"
