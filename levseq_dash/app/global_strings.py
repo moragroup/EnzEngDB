@@ -63,6 +63,7 @@ seq_align_form_input_sequence_default = (
 )
 seq_align_form_placeholder = "Enter your query sequence here."
 seq_align_form_input = "Query Sequence"
+exp_seq_align_form_input = "Experiment Parent Sequence"
 seq_align_form_threshold = "Threshold"
 seq_align_form_threshold_default = "0.8"
 seq_align_form_hot_cold = "# Hot/Cold to extract"
@@ -94,6 +95,8 @@ header_cas_number = "CAS"
 header_sub_cas = "Sub CAS"
 header_prod_cas = "Prod CAS"
 header_substitutions = "Substitutions"
+header_fitness = "Fitness"
+header_mutagenesis = "Mutagenesis Method"
 
 # -----------------------------
 #   DO NOT CHANGE PAST HERE
@@ -113,6 +116,10 @@ c_fitness_value = "fitness_value"
 
 # These strings are used in various tables and dictionaries across the app > CC_*
 cc_experiment_id = "experiment_id"
+cc_substrate_cas = "substrate_cas_number"
+cc_prod_cas = "product_cas_number"
+cc_mutagenesis = "mutagenesis_method"
+
 cc_ratio = "ratio"
 cc_seq_alignment = "sequence_alignment"
 cc_hot_indices_per_cas = "hot_residue_indices_per_cas"
