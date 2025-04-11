@@ -403,7 +403,7 @@ def get_seq_align_form_exp():
                     dbc.Col(
                         [
                             html.Div(
-                                id="id-input-query-sequence-exp",
+                                id="id-input-exp-related-variants-query-sequence",
                                 style={
                                     "width": "750px",
                                     "height": "100px",
@@ -425,7 +425,7 @@ def get_seq_align_form_exp():
                     dbc.Col(
                         [
                             dbc.Input(
-                                id="id-input-query-sequence-threshold-exp",
+                                id="id-input-exp-related-variants-threshold",
                                 value=gs.seq_align_form_threshold_default,
                                 type="text",
                                 debounce=True,
@@ -443,7 +443,7 @@ def get_seq_align_form_exp():
                     dbc.Col(
                         [
                             dbc.Input(
-                                id="id-input-num-hot-cold-exp",
+                                id="id-input-exp-related-variants-hot-cold",
                                 value=gs.seq_align_form_hot_cold_n,
                                 type="text",
                                 debounce=True,
@@ -485,103 +485,114 @@ def get_experiment_tab_related_seq():
         [
             dbc.Row(html.P("Some instructions here...")),
             dbc.Row(get_seq_align_form_exp()),
-            dbc.Row(
-                dbc.Col(
-                    [
-                        dbc.Card(
+            html.Div(
+                id="id-div-exp-related-variants-section",
+                children=[
+                    dbc.Row(
+                        dbc.Col(
                             [
-                                dbc.CardHeader("Related Experiments"),
-                                dbc.CardBody(
+                                dbc.Card(
                                     [
-                                        # dbc.Row(
-                                        #     [
-                                        #         # this info icon uses markdown in the tooltip so we
-                                        #         # must allow html and set the flag to true
-                                        #         html.Div(
-                                        #             [
-                                        #                 components.get_info_icon_tooltip_bundle(
-                                        #                     info_icon_id="id-info-1",
-                                        #                     help_string=gs.markdown_note_matched_seq,
-                                        #                     location="top",
-                                        #                     allow_html=True,
-                                        #                 ),
-                                        #                 html.P(
-                                        #                     id="id-div-matched-sequences-info",
-                                        #                     className="fw-bolder",
-                                        #                 ),
-                                        #             ],
-                                        #             style={"display": "flex", "gap": "5px"},
-                                        #         ),
-                                        #     ],
-                                        # ),
-                                        dbc.Row(
-                                            [components.get_table_experiment_matched_sequences()],
-                                            className="dbc dbc-ag-grid",
+                                        dbc.CardHeader("Related Experiments"),
+                                        dbc.CardBody(
+                                            [
+                                                # dbc.Row(
+                                                #     [
+                                                #         # this info icon uses markdown in the tooltip so we
+                                                #         # must allow html and set the flag to true
+                                                #         html.Div(
+                                                #             [
+                                                #                 components.get_info_icon_tooltip_bundle(
+                                                #                     info_icon_id="id-info-1",
+                                                #                     help_string=gs.markdown_note_matched_seq,
+                                                #                     location="top",
+                                                #                     allow_html=True,
+                                                #                 ),
+                                                #                 html.P(
+                                                #                     id="id-div-matched-sequences-info",
+                                                #                     className="fw-bolder",
+                                                #                 ),
+                                                #             ],
+                                                #             style={"display": "flex", "gap": "5px"},
+                                                #         ),
+                                                #     ],
+                                                # ),
+                                                dbc.Row(
+                                                    [components.get_table_experiment_related_variants()],
+                                                    className="dbc dbc-ag-grid",
+                                                ),
+                                            ],
+                                            className="p-1 mt-3",  # fits to the card border
                                         ),
                                     ],
-                                    className="p-1 mt-3",  # fits to the card border
+                                    className="d-flex flex-column",  # Flexbox for vertical stacking
+                                    style={
+                                        "box-shadow": "1px 2px 7px 0px grey",
+                                        "border-radius": "5px",
+                                        "height": vis.seq_match_card_height,
+                                    },
                                 ),
                             ],
-                            className="d-flex flex-column",  # Flexbox for vertical stacking
-                            style={
-                                "box-shadow": "1px 2px 7px 0px grey",
-                                "border-radius": "5px",
-                                "height": vis.seq_match_card_height,
-                            },
+                            # width=8,
+                            style=vis.border_column,
+                            # remove all gutters from the col to snap to the card
+                            # className="g-3"
                         ),
-                    ],
-                    # width=8,
-                    style=vis.border_column,
-                    # remove all gutters from the col to snap to the card
-                    # className="g-3"
-                ),
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(
-                        [
-                            dbc.Card(
-                                [
-                                    dbc.CardHeader("Query Protein"),
-                                    dbc.CardBody(
-                                        [
-                                            html.Div(id="id-viewer-query-protein-exp"),
-                                        ],
-                                        className="p-1 mt-3",
-                                    ),
-                                ],
-                                style={
-                                    "box-shadow": "1px 2px 7px 0px grey",
-                                    "border-radius": "5px",
-                                    "height": vis.seq_match_card_height,
-                                },
-                            )
-                        ],
-                        width=6,
                     ),
-                    dbc.Col(
+                    dbc.Row(
                         [
-                            dbc.Card(
+                            dbc.Col(
                                 [
-                                    dbc.CardHeader("Selected Protein"),
-                                    dbc.CardBody(
+                                    dbc.Card(
                                         [
-                                            html.Div(id="id-viewer-selected-seq-matched-protein-exp"),
+                                            dbc.CardHeader("Query Protein"),
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Markdown(id="id-div-exp-related-variants-query-protein-info"),
+                                                    html.Div(id="id-viewer-exp-related-variants-query-protein"),
+                                                ],
+                                                className="p-1 mt-3",
+                                            ),
                                         ],
-                                        className="p-1 mt-3",
-                                    ),
+                                        style={
+                                            "box-shadow": "1px 2px 7px 0px grey",
+                                            "border-radius": "5px",
+                                            "height": vis.seq_match_card_height,
+                                        },
+                                    )
                                 ],
-                                style={
-                                    "box-shadow": "1px 2px 7px 0px grey",
-                                    "border-radius": "5px",
-                                    "height": vis.seq_match_card_height,
-                                },
-                            )
+                                width=6,
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Selected Protein"),
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Markdown(
+                                                        id="id-div-exp-related-variants-selected-match-protein-info"
+                                                    ),
+                                                    html.Div(
+                                                        id="id-viewer-exp-related-variants-selected-match-protein"
+                                                    ),
+                                                ],
+                                                className="p-1 mt-3",
+                                            ),
+                                        ],
+                                        style={
+                                            "box-shadow": "1px 2px 7px 0px grey",
+                                            "border-radius": "5px",
+                                            "height": vis.seq_match_card_height,
+                                        },
+                                    )
+                                ],
+                                width=6,
+                            ),
                         ],
-                        width=6,
+                        className="g-2 mt-4 mb-4",
                     ),
-                ],
-                className="g-2 mt-4 mb-4",
+                ],  # html.Div
             ),
         ],
         className="mt-4",

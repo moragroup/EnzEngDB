@@ -16,24 +16,6 @@ class MutagenesisMethod(StrEnum):
 
 
 class Experiment:
-    # data_df = pd.DataFrame()
-    # experiment_name = ""
-    # upload_time_stamp = ""
-    # experiment_date = ""
-    # substrate_cas_number = []
-    # product_cas_number = []
-    # assay = ""
-    # mutagenesis_method = ""
-    #
-    # geometry_file_path = Path()
-    # geometry_base64_string = ""
-    # geometry_base64_bytes = bytes()
-    #
-    # unique_cas_in_data = []
-    # plates = []
-    # plates_count = 0
-    # parent_sequence = ""
-
     def __init__(
         self,
         experiment_data_file_path=None,
@@ -122,6 +104,10 @@ class Experiment:
             self.geometry_file_format = ""
 
     def exp_to_dict(self):
+        """
+        Utility function to convert the data in the experiment object into a dictionary of records
+        """
+        # TODO: clean up this function if it end up not being used with JSON
         result = {}
         for attr, value in self.__dict__.items():
             if isinstance(value, pd.DataFrame):
@@ -133,11 +119,19 @@ class Experiment:
         return result
 
     def exp_core_data_to_dict(self):
-        return self.data_df.to_dict("records")
+        """
+        Utility function to convert the core stat data in the experiment object into a dictionary of records
+        """
+        # TODO: clean up this function if it end up not being used with JSON
+        if not self.data_df.empty:
+            return self.data_df.to_dict("records")
+        raise Exception("Experiment data is empty!")
 
     def exp_meta_data_to_dict(self):
-        # this extracts a bit more than metadata. it extracts all attributes.
-        # this is easier to do as it is dynamic with any changes in attributes
+        """
+        This extracts a bit more than metadata. It extracts all attributes.
+        This is easier to do as it is dynamic with any changes in attributes.
+        """
         result = {}
         for attr, value in self.__dict__.items():
             if (
@@ -152,18 +146,15 @@ class Experiment:
                 result[attr] = value  # Keep other types as is
         return result
 
-    def exp_hot_cold_spots(self, n):
+    def exp_get_processed_core_data_for_valid_mutation_extractions(self):
         """
-        This function extracts the top/bottom N residues for the experiment.
-        It filters and cleans all data so the extracted values are valid experiment results
-        The results are extracted per CAS of the experiment.
-        Each values, norm ratio with respect to parent sequence is also appended to the data.
-        Args:
-            n: top N that we want to extract
+        This function cleans and preprocesses the core data for use in mostly the sequence alignments and
+        ration calculations. It filters and cleans all data so the extracted values are valid experiment
+        results for the sake of the sequence alignment and ratio calculations. The results are extracted per
+        CAS of the experiment. Each values, norm ratio with respect to parent sequence is also appended
+        to the data.
         """
-        if n > 0:
-            # calculate the experiments group mean and ratio values
-            # ratio is determined within a cas+plate combo
+        if not self.data_df.empty:
             df = utils.calculate_group_mean_ratios_per_cas_and_plate(self.data_df)
 
             # truncate the columns, we only need the columns below
@@ -180,65 +171,89 @@ class Experiment:
             # and drop rows where column 'F' has NaN values
             df = df.dropna(subset=[gs.c_fitness_value])
 
-            hot_n = pd.DataFrame()
-            cold_n = pd.DataFrame()
-            for cas_number in self.unique_cas_in_data:
-                for plate_number in self.plates:
-                    # for this cas number and this plate of the experiment sorted by fitness values...
-                    df_per_cas_plate = df[(df[gs.c_cas] == cas_number) & (df[gs.c_plate] == plate_number)].sort_values(
-                        by=gs.c_fitness_value, ascending=False
-                    )
-
-                    # ... extract top/bottom N
-                    df_hot_n = df_per_cas_plate.head(n)
-                    df_cold_n = df_per_cas_plate.tail(n)
-
-                    # ... concatenate to previous results
-                    hot_n = pd.concat([hot_n, df_hot_n])
-                    cold_n = pd.concat([cold_n, df_cold_n])
-
-            def extract_substitution_indices_per_cas(df, new_column_name):
-                """
-                This is an internal python function used only below. The function extracts the substitution indices
-                of the dataframe input grouped by the CAS numbers for te experiment
-                """
-                df_result = (
-                    # group by cas
-                    df.groupby(gs.c_cas)[gs.c_substitutions]
-                    # and extract the unique indices form the substitutions column
-                    # ...sort it as well
-                    .apply(lambda x: sorted(x.str.extractall(r"(\d+)")[0].unique().tolist(), key=int))
-                    # Generate a new DataFrame or Series with the index reset.
-                    # https://pandas.pydata.org/docs/reference/api/pandas.Series.reset_index.html
-                    # This is useful when the index needs to be treated as a column,
-                    # or when the index is meaningless and needs to be reset to the default before another operation.
-                    .reset_index()
-                    # results will be applied with the same column name so need to rename the final column
-                    .rename(columns={gs.c_substitutions: new_column_name})
-                )
-                return df_result
-
-            # extract indices per CAS
-            hot_per_cas = extract_substitution_indices_per_cas(df=hot_n, new_column_name=gs.cc_hot_indices_per_cas)
-            cold_per_cas = extract_substitution_indices_per_cas(df=cold_n, new_column_name=gs.cc_cold_indices_per_cas)
-
-            # merge result columns, all rows are exactly the same because the original data was the same
-            hot_cold_residue_per_cas = hot_per_cas.merge(cold_per_cas, how="left")
-
-            # TODO: Note:These lines may be added/deleted in the future, keep an eye on it
-            sub_per_cas = extract_substitution_indices_per_cas(df=df, new_column_name=gs.cc_exp_residue_per_cas)
-            hot_cold_residue_per_cas = hot_cold_residue_per_cas.merge(sub_per_cas, how="left")
-
-            # add a column to identify results
-            hot_n[gs.cc_hot_cold_type] = gs.cc_hot
-            cold_n[gs.cc_hot_cold_type] = gs.cc_cold
-
-            # merge the hot and the cold together
-            hot_cold_spots_merged_df = pd.concat([hot_n, cold_n], ignore_index=True)
-
-            return hot_cold_spots_merged_df, hot_cold_residue_per_cas
+            return df
         else:
-            raise Exception("A number greater than 0 must be provided.")
+            raise Exception("Experiment data is empty!")
+
+    def exp_hot_cold_spots(self, n):
+        """
+        This function extracts the top/bottom N residues for the experiment.
+        It filters and cleans all data so the extracted values are valid experiment results
+        The results are extracted per CAS of the experiment.
+        Each values, norm ratio with respect to parent sequence is also appended to the data.
+        Args:
+            n: top N that we want to extract
+        """
+        if not self.data_df.empty:
+            if n > 0:
+                df = self.exp_get_processed_core_data_for_valid_mutation_extractions()
+
+                hot_n = pd.DataFrame()
+                cold_n = pd.DataFrame()
+                for cas_number in self.unique_cas_in_data:
+                    for plate_number in self.plates:
+                        # for this cas number and this plate of the experiment sorted by fitness values...
+                        df_per_cas_plate = df[
+                            (df[gs.c_cas] == cas_number) & (df[gs.c_plate] == plate_number)
+                        ].sort_values(by=gs.c_fitness_value, ascending=False)
+
+                        # ... extract top/bottom N
+                        df_hot_n = df_per_cas_plate.head(n)
+                        df_cold_n = df_per_cas_plate.tail(n)
+
+                        # ... concatenate to previous results
+                        hot_n = pd.concat([hot_n, df_hot_n])
+                        cold_n = pd.concat([cold_n, df_cold_n])
+
+                def extract_substitution_indices_per_cas(df_in, new_column_name):
+                    """
+                    This is an internal python function used only below. The function extracts the substitution indices
+                    of the dataframe input grouped by the CAS numbers for te experiment
+                    """
+                    df_result = (
+                        # group by cas
+                        df_in.groupby(gs.c_cas)[gs.c_substitutions]
+                        # and extract the unique indices form the substitutions column
+                        # ...sort it as well
+                        .apply(lambda x: sorted(x.str.extractall(r"(\d+)")[0].unique().tolist(), key=int))
+                        # Generate a new DataFrame or Series with the index reset.
+                        # https://pandas.pydata.org/docs/reference/api/pandas.Series.reset_index.html
+                        # This is useful when the index needs to be treated as a column,
+                        # or when the index is meaningless and needs to be reset to the default
+                        # before another operation.
+                        .reset_index()
+                        # results will be applied with the same column name so need to rename the final column
+                        .rename(columns={gs.c_substitutions: new_column_name})
+                    )
+                    return df_result
+
+                # extract indices per CAS
+                hot_per_cas = extract_substitution_indices_per_cas(
+                    df_in=hot_n, new_column_name=gs.cc_hot_indices_per_cas
+                )
+                cold_per_cas = extract_substitution_indices_per_cas(
+                    df_in=cold_n, new_column_name=gs.cc_cold_indices_per_cas
+                )
+
+                # merge result columns, all rows are exactly the same because the original data was the same
+                hot_cold_residue_per_cas = hot_per_cas.merge(cold_per_cas, how="left")
+
+                # TODO: Note:These lines may be added/deleted in the future, keep an eye on it
+                sub_per_cas = extract_substitution_indices_per_cas(df_in=df, new_column_name=gs.cc_exp_residue_per_cas)
+                hot_cold_residue_per_cas = hot_cold_residue_per_cas.merge(sub_per_cas, how="left")
+
+                # add a column to identify results
+                hot_n[gs.cc_hot_cold_type] = gs.cc_hot
+                cold_n[gs.cc_hot_cold_type] = gs.cc_cold
+
+                # merge the hot and the cold together
+                hot_cold_spots_merged_df = pd.concat([hot_n, cold_n], ignore_index=True)
+
+                return hot_cold_spots_merged_df, hot_cold_residue_per_cas
+            else:
+                raise Exception("A number greater than 0 must be provided.")
+        else:
+            raise Exception("Experiment data is empty!")
 
 
 # # def read_structure_file(file_path):
