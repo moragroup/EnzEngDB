@@ -403,7 +403,7 @@ def get_seq_align_form_exp():
                     dbc.Col(
                         [
                             html.Div(
-                                id="id-input-query-sequence-exp",
+                                id="id-input-exp-related-variants-query-sequence",
                                 style={
                                     "width": "750px",
                                     "height": "100px",
@@ -425,7 +425,7 @@ def get_seq_align_form_exp():
                     dbc.Col(
                         [
                             dbc.Input(
-                                id="id-input-query-sequence-threshold-exp",
+                                id="id-input-exp-related-variants-threshold",
                                 value=gs.seq_align_form_threshold_default,
                                 type="text",
                                 debounce=True,
@@ -443,7 +443,7 @@ def get_seq_align_form_exp():
                     dbc.Col(
                         [
                             dbc.Input(
-                                id="id-input-num-hot-cold-exp",
+                                id="id-input-exp-related-variants-hot-cold",
                                 value=gs.seq_align_form_hot_cold_n,
                                 type="text",
                                 debounce=True,
@@ -515,7 +515,7 @@ def get_experiment_tab_related_seq():
                                         #     ],
                                         # ),
                                         dbc.Row(
-                                            [components.get_table_experiment_matched_sequences()],
+                                            [components.get_table_experiment_related_variants()],
                                             className="dbc dbc-ag-grid",
                                         ),
                                     ],
@@ -545,7 +545,8 @@ def get_experiment_tab_related_seq():
                                     dbc.CardHeader("Query Protein"),
                                     dbc.CardBody(
                                         [
-                                            html.Div(id="id-viewer-query-protein-exp"),
+                                            dcc.Markdown(id="id-div-exp-related-variants-query-protein-info"),
+                                            html.Div(id="id-viewer-exp-related-variants-query-protein"),
                                         ],
                                         className="p-1 mt-3",
                                     ),
@@ -566,7 +567,8 @@ def get_experiment_tab_related_seq():
                                     dbc.CardHeader("Selected Protein"),
                                     dbc.CardBody(
                                         [
-                                            html.Div(id="id-viewer-selected-seq-matched-protein-exp"),
+                                            dcc.Markdown(id="id-div-exp-related-variants-selected-match-protein-info"),
+                                            html.Div(id="id-viewer-exp-related-variants-selected-match-protein"),
                                         ],
                                         className="p-1 mt-3",
                                     ),
