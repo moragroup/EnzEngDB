@@ -1,8 +1,11 @@
-# app strings
+# -----------------------------
+# General App Strings
+# -----------------------------
 web_title = "Levseq Dashboard"
 nav_lab = "Lab Dashboard"
 nav_upload = "Upload New Experiment"
 nav_seq = "Explore Similar Sequences"
+
 # -----------------------------
 # Upload page strings
 # -----------------------------
@@ -28,8 +31,9 @@ lab_exp = "All experiments in the lab"
 go_to = "Go to Experiment Dashboard"
 lab_total = "Total Experiments"
 lab_cas = "Used CAS"
+
 # -----------------------------
-# Experiment Card Strings
+# Experiment Page Strings
 # -----------------------------
 sequence = "Amino Acid Sequence"
 experiment = "Experiment Name"
@@ -45,6 +49,8 @@ well_heatmap = "Plate Map"
 top_variants = "Top Variants"
 retention_function = "Retention Function"
 
+tab_1 = "Experiment Dashboard"
+tab_2 = "Related Variants"
 view_all = "View all residues"
 select_plate = "Select Plate ID"
 select_cas = "Select CAS number"
@@ -54,6 +60,7 @@ select_property = "Select Property"
 # -----------------------------
 # Sequence Alignment - Related Variants specific
 # -----------------------------
+
 exp_seq_align_blurb = "Some instructions here..."
 exp_seq_align_form_input = "Experiment Parent Sequence"
 exp_seq_align_residue = "Residue for Lookup"
