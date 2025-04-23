@@ -46,6 +46,21 @@ def test_experiment_empty_geometry_base64_string(experiment_empty):
     assert experiment_empty.geometry_base64_string == ""
 
 
+def test_experiment_empty_exceptions_1(experiment_empty):
+    with pytest.raises(Exception):
+        experiment_empty.exp_get_processed_core_data_for_valid_mutation_extractions()
+
+
+def test_experiment_empty_exceptions_2(experiment_empty):
+    with pytest.raises(Exception):
+        experiment_empty.exp_core_data_to_dict()
+
+
+def test_experiment_empty_exceptions_3(experiment_empty):
+    with pytest.raises(Exception):
+        experiment_empty.exp_hot_cold_spots(3)
+
+
 @pytest.mark.parametrize(
     "index, cas_number",
     [(0, "345905-97-7"), (1, "395683-37-1")],
