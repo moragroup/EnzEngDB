@@ -81,6 +81,7 @@ class Experiment:
             self.geometry_base64_string = geometry_base64_string
             self.geometry_base64_bytes = base64.b64decode(geometry_base64_string)
         else:
+            # TODO: below should be None, check throughout code later
             self.geometry_base64_string = ""
             self.geometry_base64_bytes = bytes()
 

@@ -676,6 +676,8 @@ def on_exp_related_variants(
     if n_clicks != 0 and ctx.triggered_id == "id-button-run-seq-matching-exp":
         # get all the lab sequences
         all_lab_sequences = data_mgr.get_lab_sequences()
+        # gather the information for this query experiment
+        # query_exp = data_mgr.get_experiment(experiment_id)
 
         # get the alignment and the base score
         lab_seq_match_data, base_score = bio_python_pairwise_aligner.get_alignments(
@@ -685,9 +687,9 @@ def on_exp_related_variants(
         n_matches = len(lab_seq_match_data)
 
         # gather the information for this query experiment
-        query_exp = data_mgr.get_experiment(experiment_id)
+        # query_exp = data_mgr.get_experiment(experiment_id)
         # _, query_exp_hot_cold_residue_per_cas = query_exp.exp_hot_cold_spots(int(n_top_hot_cold))
-        query_protein_file = query_exp.geometry_file_path
+        # query_protein_file = query_exp.geometry_file_path
         lookup_residues_list = lookup_residues.split(",")
 
         # gather final list of records data for table here
@@ -703,29 +705,12 @@ def on_exp_related_variants(
             # does my experiments variant show up in the other experiment
             # get the experiment core data from the db
             match_exp = data_mgr.get_experiment(mathc_exp_id)
-
-            # preprocess the data for residue extraction
-            df_match_exp = match_exp.exp_get_processed_core_data_for_valid_mutation_extractions()
-
-            df_exp_results = pd.DataFrame()
-            # iterate over the residue list and find matches
-            for index in lookup_residues_list:
-                # extract all rows in the dataframe which have this index in their residue
-                mask = df_match_exp[gs.c_substitutions].apply(lambda x: utils.is_target_index_in_string(x, index))
-                df_gathered_rows = df_match_exp[mask]
-                if not df_gathered_rows.empty:
-                    # concatenate the results with previous findings
-                    df_exp_results = pd.concat([df_exp_results, df_gathered_rows], ignore_index=True)
-
-            # add the experiment id to the data
-            df_exp_results[gs.cc_experiment_id] = mathc_exp_id
-
-            # gather results and append metadata, ...
-            exp_results_row_data = utils_seq_alignment.gather_seq_alignment_data_for_experiment(
-                df=df_exp_results,
+            exp_results_row_data = utils_seq_alignment.search_and_gather_variant_info_for_matching_experiment(
+                experiment=match_exp,
+                experiment_id=mathc_exp_id,
+                lookup_residues_list=lookup_residues_list,
                 seq_match_data=lab_seq_match_data[i],
-                exp_meta_data=match_exp.exp_meta_data_to_dict(),
-                seq_match_row_data=exp_results_row_data,
+                exp_results_row_data=exp_results_row_data,
             )
 
         # only show the protein if there is data to be shown
