@@ -238,8 +238,9 @@ def seq_align_data():
         "experiment_id": 1,
         "sequence": "MAVPGYDFGKVPDAPISDADFESLKKTVMWGEEDEKYRKMACEALKGQVEDILDLWYGLQGSNQHLIYYFGDKSGRPIPQYLEAVRKRFGLWIIDTL"
         "CKPLDRQWLNYMYEIGLRHHRTKKGKTDGVDTVEHIPLRYMIAFIAPIGLTIKPILEKSGHPPEAVERMWAAWVKLVVLQVAIWSYPYAKTGEWLE",
-        "sequence_alignment": "target            0 MAVPGYDFGKVPDAPISDADFESLKKTVMWGEEDEKYRKMACEALKGQVEDILDLWYGLQ\n          "
-        "        0 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n"
+        "sequence_alignment":
+        "target            0 MAVPGYDFGKVPDAPISDADFESLKKTVMWGEEDEKYRKMACEALKGQVEDILDLWYGLQ\n"
+        "                  0 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n"
         "query             0 MAVPGYDFGKVPDAPISDADFESLKKTVMWGEEDEKYRKMACEALKGQVEDILDLWYGLQ\n"
         "\n"
         "target           60 GSNQHLIYYFGDKSGRPIPQYLEAVRKRFGLWIIDTLCKPLDRQWLNYMYEIGLRHHRTK\n"
