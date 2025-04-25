@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from levseq_dash.app import global_strings as gs
 from levseq_dash.app import settings, utils
 from levseq_dash.app.experiment import Experiment, MutagenesisMethod
 
@@ -28,7 +29,7 @@ class DataManager:
             # ideally defined in the config file
             # BUT for now we can hardcode it here
             # connect_to_db( host, port, username, password)
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             self.experiments_dict = defaultdict(Experiment)
 
             # this is test data so assign random assay and cas numbers
@@ -44,6 +45,8 @@ class DataManager:
             # function below will load test data files and their geometry from the
             # data folder and fill self.experiments_dict
             self.__load_test_experiment_data__(data_directory=data_path)
+        else:
+            raise Exception(gs.error_app_mode)
 
     # -----------------------
     #       ADD DATA
@@ -88,7 +91,7 @@ class DataManager:
             #
             # cb_csv = Query("load_file", [uid, eid, "test_csv.csv", experiment_content_base64_string])
             # cb_cif = Query("load_file", [uid, eid, "test_cif.cif", geometry_content])
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             exp = Experiment(
                 experiment_csv_data_base64_string=experiment_content_base64_string,
                 experiment_name=experiment_name,
@@ -101,7 +104,8 @@ class DataManager:
                 geometry_base64_string=geometry_content_base64_string,
             )
             n = self.__add_experiment__(exp)
-
+        else:
+            raise Exception(gs.error_app_mode)
         return n
 
     # ---------------------------
@@ -119,10 +123,11 @@ class DataManager:
         success = False
         if self.use_db_web_service == AppMode.db.value:
             pass
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             del self.experiments_dict[experiment_id]
             success = True
-
+        else:
+            raise Exception(gs.error_app_mode)
         return success
 
     # ---------------------------
@@ -181,7 +186,7 @@ class DataManager:
             #  OR: this can be bundled into 1 function
             #  put data together
             pass
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             # get the metadata for all the experiments
             for key, exp in self.experiments_dict.items():
                 exp_data = exp.exp_meta_data_to_dict()
@@ -193,7 +198,8 @@ class DataManager:
             #     {"experiment_id": key, **exp.exp_meta_data_to_dict()}
             #     for key, exp in self.experiments_dict.items()
             # ]
-
+        else:
+            raise Exception(gs.error_app_mode)
         return data_list_of_dict
 
     def get_lab_sequences(self):
@@ -207,7 +213,7 @@ class DataManager:
             # TODO:
             # get all lab sequences
             pass
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             # get the metadata for all the experiments
             # this make a list of dictionaries
             # for key, exp in self.experiments_dict.items():
@@ -218,7 +224,8 @@ class DataManager:
             # the key of the dictionary is the experiment ID
             for key, exp in self.experiments_dict.items():
                 seq_data.update({key: exp.parent_sequence})
-
+        else:
+            raise Exception(gs.error_app_mode)
         return seq_data
 
     # ---------------------------
@@ -235,8 +242,10 @@ class DataManager:
             #  get_experiment_geometry_file
             #  return Experiment
             pass
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             exp = self.experiments_dict[experiment_id]
+        else:
+            raise Exception(gs.error_app_mode)
         return exp
 
     def get_experiment_all(self, experiment_id: int):
@@ -274,9 +283,10 @@ class DataManager:
             # # cols, rows = Query("get_user_info", [uid])  # type:ignore
             #
             # cols, rows = Query("get_variant_sequences", [1, gid])  # type:ignore
-        else:
+        elif self.use_db_web_service == AppMode.disk.value:
             assay_list = self.assay_list
-
+        else:
+            raise Exception(gs.error_app_mode)
         return assay_list
 
     # ------------------------------------
@@ -289,7 +299,7 @@ class DataManager:
         It is not to be used outside of this context.
         """
         if self.use_db_web_service == AppMode.db.value:
-            raise Exception
+            raise Exception(gs.error_wrong_mode)
 
         experiments = {}
         # folder_path = Path(__file__).parent / "tests/data/"
@@ -329,7 +339,7 @@ class DataManager:
         It is not to be used outside of this context.
         """
         if self.use_db_web_service == AppMode.db.value:
-            raise Exception
+            raise Exception(gs.error_wrong_mode)
 
         experiment_data_geometry_dict = self.__gather_all_test_experiments__(data_directory)
         for key in experiment_data_geometry_dict.keys():
@@ -361,7 +371,7 @@ class DataManager:
 
     def __add_experiment__(self, exp: Experiment):
         if self.use_db_web_service == AppMode.db.value:
-            raise Exception("Shouldn't be using this function with db!")
+            raise Exception(gs.error_wrong_mode)
 
         n = len(self.experiments_dict.items())
         self.experiments_dict[n] = exp
