@@ -635,24 +635,44 @@ def get_experiment_page():
     """This defines the tab layout."""
     return html.Div(
         [
-            dbc.Tabs(
+            # dbc.Tabs(
+            #     [
+            #         # Experiment dashboard
+            #         dbc.Tab(
+            #             get_experiment_tab_dash(),
+            #             label=gs.tab_1,
+            #             activeTabClassName="fw-bold",
+            #             tab_id="id-tab-exp-dash",
+            #         ),
+            #         # Gene Expression Query Tab
+            #         dbc.Tab(
+            #             get_experiment_tab_related_seq(),
+            #             label=gs.tab_2,
+            #             activeTabClassName="fw-bold",
+            #             # tab_id="id-tab-horizontal-bootstrap-geq",
+            #         ),
+            #     ],
+            #     active_tab="id-tab-exp-dash",
+            #     className="dbc nav-fill",  # Use Bootstrap's nav-fill class to fill the tab_horizontal_bootstrap space
+            # )
+            # TODO: replacing dbc.tabs with dcc ones as they created a glitch when dockerized!
+            # debug this later or add better styling
+            dcc.Tabs(
                 [
                     # Experiment dashboard
-                    dbc.Tab(
+                    dcc.Tab(
                         get_experiment_tab_dash(),
                         label=gs.tab_1,
-                        activeTabClassName="fw-bold",
-                        tab_id="id-tab-exp-dash",
+                        value="id-tab-exp-dash",
                     ),
                     # Gene Expression Query Tab
-                    dbc.Tab(
+                    dcc.Tab(
                         get_experiment_tab_related_seq(),
                         label=gs.tab_2,
-                        activeTabClassName="fw-bold",
-                        # tab_id="id-tab-horizontal-bootstrap-geq",
+                        value="id-tab-exp-variants",
                     ),
                 ],
-                active_tab="id-tab-exp-dash",
+                value="id-tab-exp-dash",
                 className="dbc nav-fill",  # Use Bootstrap's nav-fill class to fill the tab_horizontal_bootstrap space
             )
         ]
