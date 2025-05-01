@@ -8,7 +8,9 @@ db-service:
   port: 8051
   session_key: "\xd6\x70\x04\xab\xd2\x08\x42\xe1\xa3\x5d\xfe\x1c\xce\x78\xd4\x7a"  # uuid.uuid4().hex
 
-#use these settings for loading from disk
+
 load-from-disk:
-  #data_path: "../app/data"  # use this for curated data load
-  data_path: "../app/tests/test_data" # use this for dev mode
+  # use this for loading from disk for playground mode
+  # these files MUST be embedded in the repo for the docker file to work
+  # define from package root here
+  data_path: "/app/tests/test_data/" # use this for dev mode
