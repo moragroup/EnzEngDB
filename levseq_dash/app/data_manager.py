@@ -10,7 +10,6 @@ from levseq_dash.app import global_strings as gs
 from levseq_dash.app import settings, utils
 from levseq_dash.app.experiment import Experiment, MutagenesisMethod
 
-
 # from levseq_dash.app.wsexec import Query
 
 
@@ -83,17 +82,17 @@ class DataManager:
     # -----------------------
 
     def add_experiment_from_ui(
-            self,
-            user_id,
-            experiment_name,
-            experiment_date,
-            substrate_cas_number: list[str],
-            product_cas_number: list[str],
-            assay,
-            mutagenesis_method: MutagenesisMethod,  # epPCR or SSM
-            experiment_content_base64_string,
-            geometry_content_base64_string,
-            # parent_sequence=None,  # processed
+        self,
+        user_id,
+        experiment_name,
+        experiment_date,
+        substrate_cas_number: list[str],
+        product_cas_number: list[str],
+        assay,
+        mutagenesis_method: MutagenesisMethod,  # epPCR or SSM
+        experiment_content_base64_string,
+        geometry_content_base64_string,
+        # parent_sequence=None,  # processed
     ) -> int:
         """
         Returns
