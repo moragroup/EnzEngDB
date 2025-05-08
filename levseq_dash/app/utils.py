@@ -255,7 +255,6 @@ def generate_random_smiles():
         "CCO.CC(=O)O",  # ethanol + acetic acid
         "N#N.CC(C)O",  # nitrogen + isopropanol
         "O=C=O.CN(C)C",  # CO2 + dimethylamine
-
         "C1=CC=C(C=C1)C=O",
         "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
     ]
@@ -274,8 +273,8 @@ def extract_all_unique_smiles_from_lab_data(list_of_all_lab_experiments_with_met
     if len(list_of_all_lab_experiments_with_meta) != 0:
         unique_smiles_set = set()
         for exp in list_of_all_lab_experiments_with_meta:
-            unique_smiles_set.update(exp[gs.cc_substrate].split(","))
-            unique_smiles_set.update(exp[gs.cc_product].split(","))
+            unique_smiles_set.update(exp[gs.cc_substrate])
+            unique_smiles_set.update(exp[gs.cc_product])
         all_unique_smiles = ";  ".join(sorted(unique_smiles_set))
 
     return all_unique_smiles

@@ -206,7 +206,7 @@ def test_experiment_ep_pcr_geometry_base64_string(experiment_ep_pcr):
 
 
 def test_experiment_ep_pcr_substrate(experiment_ep_pcr_with_user_smiles):
-    assert experiment_ep_pcr_with_user_smiles.substrate == "CC(=O)C1=CC=CC=C1, C1=CC=C2C(=C1)C=CC=C2"
+    assert experiment_ep_pcr_with_user_smiles.substrate == "CC(C)(C)C(=O)O[NH3+].CCC#CCCOCC.O=S(=O)([O-])C(F)(F)F"
 
 
 def test_experiment_ep_pcr_product(experiment_ep_pcr_with_user_smiles):
@@ -227,7 +227,7 @@ def test_exp_to_dict_plates_count(experiment_ep_pcr_with_user_smiles):
 
 def test_exp_to_dict_substrate_smiles(experiment_ep_pcr_with_user_smiles):
     d = experiment_ep_pcr_with_user_smiles.exp_to_dict()
-    assert d[gs.cc_substrate] == "CC(=O)C1=CC=CC=C1, C1=CC=C2C(=C1)C=CC=C2"
+    assert d[gs.cc_substrate] == "CC(C)(C)C(=O)O[NH3+].CCC#CCCOCC.O=S(=O)([O-])C(F)(F)F"
 
 
 def test_exp_to_dict_assay(experiment_ep_pcr_with_user_smiles):
@@ -242,7 +242,7 @@ def test_exp_meta_data_plates_count(experiment_ep_pcr_with_user_smiles):
 
 def test_exp_meta_data_substrate_smiles(experiment_ep_pcr_with_user_smiles):
     d = experiment_ep_pcr_with_user_smiles.exp_meta_data_to_dict()
-    assert d[gs.cc_substrate] == "CC(=O)C1=CC=CC=C1, C1=CC=C2C(=C1)C=CC=C2"
+    assert d[gs.cc_substrate] == "CC(C)(C)C(=O)O[NH3+].CCC#CCCOCC.O=S(=O)([O-])C(F)(F)F"
 
 
 def test_exp_meta_data_assay(experiment_ep_pcr_with_user_smiles):

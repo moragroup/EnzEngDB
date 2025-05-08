@@ -54,19 +54,20 @@ class Experiment:
         )
         self.assay = assay if assay else ""
         self.mutagenesis_method = mutagenesis_method if mutagenesis_method else ""
+        self.substrate = substrate if substrate else ""
+        self.product = product if product else ""
 
-        # TODO: substrate and product should be whatever the user provided. don't fill it with unique, that
         # can be separate
         # keep the list as a comma delimited string
-        if substrate is None:
-            self.substrate = []  # ", ".join(self.unique_smiles_in_data)
-        else:
-            self.substrate = ", ".join(substrate)
-
-        if product is None:
-            self.product = []
-        else:
-            self.product = ", ".join(product)
+        # if substrate is None:
+        #     self.substrate = []  # ", ".join(self.unique_smiles_in_data)
+        # else:
+        #     self.substrate = ", ".join(substrate)
+        #
+        # if product is None:
+        #     self.product = []
+        # else:
+        #     self.product = ", ".join(product)
 
         # ------------------
         # process geometry data

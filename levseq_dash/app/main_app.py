@@ -454,7 +454,7 @@ def load_experiment_page(pathname, experiment_id):
         default_plate = exp.plates[0]
         default_smiles = exp.unique_smiles_in_data[0]
         default_experiment_heatmap_properties_list = gs.experiment_heatmap_properties_list[0]
-        unique_smiles_in_data = ", ".join(exp.unique_smiles_in_data)
+        unique_smiles_in_data = "; ".join(exp.unique_smiles_in_data)
 
         # create the heatmap with default values
         fig_experiment_heatmap = graphs.creat_heatmap(

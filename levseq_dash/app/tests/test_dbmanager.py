@@ -62,7 +62,7 @@ def test_extract_all_unique_smiles_from_lab_data(dbmanager_read_all_from_file, i
     all_smiles = utils.extract_all_unique_smiles_from_lab_data(list_of_all_lab_experiments_with_meta)
     assert len(all_smiles) != 0
     # get the substrate from the test data and make sure they are found in the unique list
-    smiles_list = list_of_all_lab_experiments_with_meta[index][gs.cc_substrate].split(",")
+    smiles_list = list_of_all_lab_experiments_with_meta[index][gs.cc_substrate]
     assert (all_smiles.find(c) != -1 for c in smiles_list)
 
 

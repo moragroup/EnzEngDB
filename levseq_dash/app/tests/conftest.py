@@ -120,8 +120,8 @@ def experiment_ep_pcr_with_user_smiles(assay_list, path_exp_ep_data, path_exp_ep
         experiment_name="ep_file",
         experiment_date="TBD",
         # these are RANDOM for test only
-        substrate=["CC(=O)C1=CC=CC=C1", "C1=CC=C2C(=C1)C=CC=C2"],
-        product=["C1=CC=C2C(=C1)C=CC=C2"],
+        substrate="CC(C)(C)C(=O)O[NH3+].CCC#CCCOCC.O=S(=O)([O-])C(F)(F)F",
+        product="C1=CC=C2C(=C1)C=CC=C2",
         mutagenesis_method=MutagenesisMethod.epPCR,
         geometry_file_path=path_exp_ep_cif,
         assay=assay_list[3],
