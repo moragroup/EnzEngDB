@@ -80,8 +80,8 @@ def display_page(pathname):
 # -------------------------------
 @app.callback(
     Output("id-table-all-experiments", "rowData"),
-    Output("id-lab-experiment-count", "children"),
-    Output("id-lab-experiment-all-smiles", "children"),
+    Output("id-lab-substrate", "src"),
+    Output("id-lab-product", "src"),
     Input("id-table-all-experiments", "columnDefs"),
     # prevent_initial_call=True,
 )
@@ -89,12 +89,17 @@ def load_landing_page(temp_text):
     list_of_all_lab_experiments_with_meta = data_mgr.get_lab_experiments_with_meta_data()
 
     # extract all the uniques substrate in the projects
-    all_smiles = utils.extract_all_unique_smiles_from_lab_data(list_of_all_lab_experiments_with_meta)
+    # all_smiles = utils.extract_all_unique_smiles_from_lab_data(list_of_all_lab_experiments_with_meta)
     number_of_experiments = len(list_of_all_lab_experiments_with_meta)
+    all_substrate, all_product = utils.extract_all_substrate_product_smiles_from_lab_data(
+        list_of_all_lab_experiments_with_meta
+    )
+    substrate_svg_image = u_reaction.create_mols_grid(all_substrate)
+    product_svg_image = u_reaction.create_mols_grid(all_product)
     return (
         list_of_all_lab_experiments_with_meta,
-        number_of_experiments,  # number of experiments
-        all_smiles,  # for lab dashboard stats
+        substrate_svg_image,
+        product_svg_image,
     )
 
 
@@ -300,8 +305,11 @@ def on_load_matching_sequences(n_clicks, query_sequence, threshold, n_top_hot_co
 
 
 @app.callback(
-    Output("id-div-selected-matched-sequence-info", "children"),
+    # Output("id-div-selected-matched-sequence-info", "children"),
     Output("id-viewer-selected-seq-matched-protein", "children"),
+    Output("id-selected-seq-matched-reaction-image", "src"),
+    Output("id-selected-seq-matched-substrate", "children"),
+    Output("id-selected-seq-matched-product", "children"),
     Input("id-table-matched-sequences", "selectedRows"),
     prevent_initial_call=True,
 )
@@ -312,10 +320,16 @@ def display_selected_matching_sequences_protein_visualization(selected_rows):
         hot_spots = f"{selected_rows[0][gs.cc_hot_indices_per_smiles]}"
         cold_spots = f"{selected_rows[0][gs.cc_cold_indices_per_smiles]}"
         experiment_id = selected_rows[0][gs.cc_experiment_id]
+        experiment_smiles = selected_rows[0][gs.c_smiles]
+        # TODO: this should not be a list, where is it getting a list??
+        substrate = selected_rows[0][gs.cc_substrate][0]
+        product = selected_rows[0][gs.cc_product][0]
 
         # get the experiment info from the db
         exp = data_mgr.get_experiment(experiment_id)
         geometry_file = exp.geometry_file_path
+
+        svg_src_image = u_reaction.create_reaction_image(substrate, product)
 
         # if there is no geometry for the file ignore it
         if geometry_file:
@@ -340,19 +354,24 @@ def display_selected_matching_sequences_protein_visualization(selected_rows):
                     # focus=analyse,
                 )
             ]
-            notes = f"""
-                     **ExperimentID:** {experiment_id}
-                     **SMILES:** {selected_rows[0][gs.c_smiles]}
-                    """
+            # notes = f"""
+            #          **ExperimentID:** {experiment_id}
+            #          **SMILES:** {experiment_smiles}
+            #         """
         else:
             viewer = no_update
-            notes = f"""
-                     **ExperimentID:** {experiment_id}
-                     **SMILES:** {selected_rows[0][gs.c_smiles]}
-                     **No geometry file was found for the selected experiment:**
-                    """
+            # notes = f"""
+            #          **ExperimentID:** {experiment_id}
+            #          **SMILES:** {experiment_smiles}
+            #          **No geometry file was found for the selected experiment:**
+            #         """
 
-        return notes, viewer
+        return (  # notes,
+            viewer,
+            svg_src_image,
+            substrate,
+            product,
+        )
     else:
         raise PreventUpdate
 
@@ -505,9 +524,9 @@ def load_experiment_page(pathname, experiment_id):
 
         # exp_dict = json.loads(exp_json)
         # exp = Experiment.exp_from_dict(exp_dict)
-        # substrate = "CC(C)(C)C(=O)ON.CCC#Cc1ccccc1.O=S(=O)(O)C(F)(F)F"
+        # TODO: fix this list issue
         substrate = exp.substrate[0]
-        product = exp.product[0]  # "CN(c1ccccc1)[C@H]1CCOC1=O"
+        product = exp.product[0]
         svg_src_image = u_reaction.create_reaction_image(substrate, product)
 
         return (
@@ -680,7 +699,7 @@ def on_view_all_residue(view, slider_value, selected_smiles, rowData):
 
 @app.callback(
     Output("id-table-exp-related-variants", "rowData"),
-    # Output("id-viewer-exp-related-variants-query-protein", "children"),
+    # Output("id-exp-related-variants-protein-viewer", "children"),
     # Output("id-div-exp-related-variants-section", "style"),
     # inputs
     Input("id-button-run-seq-matching-exp", "n_clicks"),
@@ -772,10 +791,19 @@ def on_exp_related_variants(
 
 
 @app.callback(
-    Output("id-viewer-exp-related-variants-selected-match-protein", "children", allow_duplicate=True),
-    Output("id-div-exp-related-variants-selected-match-protein-info", "children"),
-    Output("id-viewer-exp-related-variants-query-protein", "children", allow_duplicate=True),
-    Output("id-div-exp-related-variants-query-protein-info", "children"),
+    Output("id-exp-related-variants-selected-subs", "children"),
+    # selected protein related
+    Output("id-exp-related-variants-selected-protein-viewer", "children", allow_duplicate=True),
+    Output("id-exp-related-variants-selected-id", "children"),
+    Output("id-exp-related-variants-selected-reaction-image", "src"),
+    Output("id-exp-related-variants-selected-substrate", "children"),
+    Output("id-exp-related-variants-selected-product", "children"),
+    # Query protein related
+    Output("id-exp-related-variants-protein-viewer", "children", allow_duplicate=True),
+    Output("id-exp-related-variants-id", "children"),
+    Output("id-exp-related-variants-reaction-image", "src"),
+    Output("id-exp-related-variants-substrate", "children"),
+    Output("id-exp-related-variants-product", "children"),
     Input("id-table-exp-related-variants", "selectedRows"),
     State("id-experiment-selected", "data"),
     prevent_initial_call=True,
@@ -787,6 +815,9 @@ def display_selected_matching_sequences_protein_visualization_exp(selected_rows,
         selected_smiles = f"{selected_rows[0][gs.c_smiles]}"
         selected_substitutions = f"{selected_rows[0][gs.c_substitutions]}"
         selected_substitutions_list = utils.extract_all_indices(selected_substitutions)
+        # TODO: fix the list issue here
+        selected_substrate = f"{selected_rows[0][gs.cc_substrate][0]}"
+        selected_product = f"{selected_rows[0][gs.cc_product][0]}"
 
         # experiment we're on
         # experiment_substitution = int(f"{selected_rows[0][gs.cc_experiment_id]}".split(",")[1].strip())
@@ -842,19 +873,37 @@ def display_selected_matching_sequences_protein_visualization_exp(selected_rows,
                 )
             ]
 
-            selected_experiment_info = f"""
-                                 **{gs.exp_seq_align_query_info_1}:** {selected_experiment_id}
-                                 &nbsp;&nbsp;&nbsp;&nbsp; **{gs.header_substitutions}** {selected_substitutions}
-                                 &nbsp;&nbsp;&nbsp;&nbsp; **{gs.header_smiles}:** {selected_smiles}
-                                """
-            query_experiment_viewer_info = f"""
-                                 **{gs.exp_seq_align_query_info_2}:** {experiment_id}
-                                """
+            # selected_experiment_info = f"""
+            #                      **{gs.exp_seq_align_query_info_1}:** {selected_experiment_id}
+            #                      &nbsp;&nbsp;&nbsp;&nbsp; **{gs.header_substitutions}** {selected_substitutions}
+            #                      &nbsp;&nbsp;&nbsp;&nbsp; **{gs.header_smiles}:** {selected_smiles}
+            #                     """
+            # query_experiment_viewer_info = f"""
+            #                      **{gs.exp_seq_align_query_info_2}:** {experiment_id}
+            #                     """
+            # create the reaction image
+            selected_svg_src = u_reaction.create_reaction_image(selected_substrate, selected_product)
+            # TODO: fix the list here
+            experiment_substrate = experiment.substrate[0]
+            experiment_product = experiment.product[0]
+            experiment_svg_src = u_reaction.create_reaction_image(experiment_substrate, experiment_product)
             return (
+                # both
+                selected_substitutions,
+                # selected experiment related
                 selected_experiment_viewer,
-                selected_experiment_info,
+                # selected_experiment_info,
+                selected_experiment_id,
+                selected_svg_src,
+                selected_substrate,
+                selected_product,
+                # query protein related
                 query_experiment_viewer,
-                query_experiment_viewer_info,
+                # query_experiment_viewer_info,
+                experiment_id,
+                experiment_svg_src,
+                experiment_substrate,
+                experiment_product,
             )
 
     raise PreventUpdate

@@ -50,6 +50,7 @@ def get_table_experiment_top_variants():
             "enableCellTextSelection": True,
             "rowHeight": 30,
             "headerHeight": 50,
+            "pagination": True,
         },
         rowClassRules={
             # "bg-secondary": "params.data.well == 'A2'",
@@ -99,12 +100,13 @@ def get_table_experiment_related_variants():
             "rowSelection": "single",
             # https://ag-grid.com/javascript-data-grid/selection-overview/#cell-text-selection
             "enableCellTextSelection": True,
-            "rowHeight": 30,  # TODO: is this overwritten by the alignnmnet width
+            "rowHeight": 30,  # TODO: is this overwritten by the alignment width
             # "pagination": True,
             # # this will set the number of items per page be a function of the height
             # # if we load too many rows that are not visible, the graphics is not smart enough
             # # to hide what is not visible, so it takes longer for the page to load
             # "paginationAutoPageSize": True,
+            "pagination": True,
         },
         # className="ag-theme-alpine",
     )
@@ -143,6 +145,7 @@ def get_table_all_experiments():
             "animateRows": True,
             # https://ag-grid.com/javascript-data-grid/selection-overview/#cell-text-selection
             "enableCellTextSelection": True,
+            "pagination": True,
         },
     )
 
@@ -335,3 +338,116 @@ def get_button_download(button_id):
         ),
         get_tooltip(button_id, gs.help_download, "top"),
     ]
+
+
+def generate_label_with_info(label, id_info):
+    return html.Span(
+        [
+            html.Span(label, style=vis.experiment_info),
+            html.Span(
+                id=id_info,
+                # style={"marginRight": "15px"},
+            ),
+        ],
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center",
+        },
+    )
+
+
+# def create_layout_reaction_image(id_img):
+#     return html.Div(
+#         html.Img(
+#             id=id_img,
+#             style={"maxWidth": "100%", "height": "auto"},
+#         ),
+#         style={
+#             "display": "flex",
+#             "justifyContent": "center",
+#             "alignItems": "center",
+#         },
+#     )
+
+
+def create_layout_reaction(id_image, id_substrate_smiles, id_product_smiles):
+    return dbc.Container(
+        [
+            html.Img(id=id_image, style={"maxWidth": "100%", "height": "auto"}),
+            html.Div(
+                [
+                    html.Div(
+                        [html.Span("Substrate SMILES:", style=vis.experiment_info), html.Span(id=id_substrate_smiles)],
+                        style={"marginRight": "15px"},
+                    ),
+                    html.Div(
+                        [html.Span("Product SMILES:", style=vis.experiment_info), html.Span(id=id_product_smiles)]
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "flexDirection": "row",
+                    "justifyContent": "center",
+                    "alignItems": "center",
+                    "width": "100%",
+                },
+            ),
+        ],
+        # className="border",
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",
+            # "margin": "1rem",  # space *outside* the border
+            # "border": "1px solid var(--cal-tech-color-3)",  # Subtle border
+            "width": "100%",  # ensures it doesn’t overflow
+            # "boxSizing": "inherit"  # includes padding in width
+        },
+    )
+
+    # return html.Div([
+    #     html.Img(id=id_image, style={"maxWidth": "100%", "height": "auto"}),
+    #     html.Span(
+    #         [
+    #             html.Span(
+    #                 [
+    #                     html.Span(
+    #                         "Substrate SMILES:",  # gs.substrate_smiles_input,
+    #                         style=vis.experiment_info
+    #                     ),
+    #                     html.Span(
+    #                         # id="id-exp-related-variants-selected-substrate",
+    #                         id=id_substrate_smiles,
+    #                         style={
+    #                             "marginRight": "15px"},
+    #                     ),
+    #                 ]
+    #             ),
+    #             html.Span(
+    #                 [
+    #                     html.Span(
+    #                         "Product SMILES:",  # gs.product_smiles_input,
+    #                         style=vis.experiment_info
+    #                     ),
+    #                     html.Span(
+    #                         # id="id-exp-related-variants-selected-product"
+    #                         id=id_product_smiles
+    #                     ),
+    #                 ]
+    #             ),
+    #         ],
+    #         style={
+    #             "display": "flex",
+    #             "justifyContent": "center",
+    #             "alignItems": "center",
+    #             "width": "100%",
+    #         },
+    #     )
+    # ],
+    #     style={
+    #         "display": "flex",
+    #         "justifyContent": "center",
+    #         "alignItems": "center",
+    #     },
+    # )

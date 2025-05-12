@@ -24,7 +24,7 @@ upload_success = success_style = {
 
 # Sequence Match table and the protein viewer need to have close height
 seq_match_table_height = "650px"
-seq_match_protein_viewer_height = "700px"
+seq_match_protein_viewer_height = "600px"
 seq_match_card_height = (
     "850px"  # this number must be seq_match_table_height + any text written above the table or viewer
 )
