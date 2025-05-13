@@ -29,6 +29,12 @@ seq_match_card_height = (
     "850px"  # this number must be seq_match_table_height + any text written above the table or viewer
 )
 
+# related variants of an experiment table and protein viewer need to have clode height
+# it depends on components above the table and or the viewer
+related_variants_table_height = "750px"
+related_variants_card_height = "950px"
+related_protein_viewer_height = "600px"  # you rarely need to change this
+
 border_row = {"border": "0px solid blue"}
 border_column = {"border": "0px solid red"}
 border_card = {"border": "0px solid cyan"}

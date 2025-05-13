@@ -848,7 +848,7 @@ def display_selected_matching_sequences_protein_visualization_exp(selected_rows,
             selected_experiment_viewer = [
                 dash_molstar.MolstarViewer(
                     data=pdb_cif_selection,
-                    style={"width": "auto", "height": vis.seq_match_protein_viewer_height},
+                    style={"width": "auto", "height": vis.related_protein_viewer_height},
                     # focus=analyse,
                 )
             ]
@@ -868,7 +868,7 @@ def display_selected_matching_sequences_protein_visualization_exp(selected_rows,
             query_experiment_viewer = [
                 dash_molstar.MolstarViewer(
                     data=pdb_cif_query,
-                    style={"width": "auto", "height": vis.seq_match_protein_viewer_height},
+                    style={"width": "auto", "height": vis.related_protein_viewer_height},
                     # focus=analyse,
                 )
             ]

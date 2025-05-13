@@ -93,7 +93,7 @@ def get_table_experiment_related_variants():
             "autoHeight": True,  # Adjusts row height to fit wrapped text
             "tooltipComponent": "agTooltipComponent",
         },
-        style={"height": vis.seq_match_table_height, "width": "100%"},
+        style={"height": vis.related_variants_table_height, "width": "100%"},
         dashGridOptions={
             # Enable multiple selection
             "alwaysShowHorizontalScroll": True,  # TODO: does this work on mac?
@@ -341,18 +341,23 @@ def get_button_download(button_id):
 
 
 def generate_label_with_info(label, id_info):
-    return html.Span(
+    return html.Div(
         [
             html.Span(label, style=vis.experiment_info),
             html.Span(
                 id=id_info,
-                # style={"marginRight": "15px"},
+                style={"maxWidth": "100%"},
             ),
         ],
         style={
-            "display": "flex",
+            "whiteSpace": "normal",  # text wrap onto the next line.
+            "wordWrap": "break-word",  # ensures long strings (like one very long word or URL) break properly.
+            # below combo won't allow for word break
+            # "display": "flex",
+            # "alignItems": "center",
+            # "display": "flex",
+            # "flexWrap": "wrap",
             "justifyContent": "center",
-            "alignItems": "center",
         },
     )
 
