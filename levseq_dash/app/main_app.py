@@ -80,17 +80,17 @@ def display_page(pathname):
 # -------------------------------
 @app.callback(
     Output("id-table-all-experiments", "rowData"),
+    # image of all the substrate and products in the lab
     Output("id-lab-substrate", "src"),
     Output("id-lab-product", "src"),
     Input("id-table-all-experiments", "columnDefs"),
-    # prevent_initial_call=True,
 )
 def load_landing_page(temp_text):
     list_of_all_lab_experiments_with_meta = data_mgr.get_lab_experiments_with_meta_data()
 
     # extract all the uniques substrate in the projects
     # all_smiles = utils.extract_all_unique_smiles_from_lab_data(list_of_all_lab_experiments_with_meta)
-    number_of_experiments = len(list_of_all_lab_experiments_with_meta)
+    # number_of_experiments = len(list_of_all_lab_experiments_with_meta)
     all_substrate, all_product = utils.extract_all_substrate_product_smiles_from_lab_data(
         list_of_all_lab_experiments_with_meta
     )
