@@ -52,20 +52,6 @@ def test_db_get_lab_experiments_with_meta_data_data(dbmanager_read_all_from_file
     assert len(sorted_list[index]["unique_smiles_in_data"]) == n_unique
 
 
-# @pytest.mark.parametrize(
-#     "index",
-#     [0, 1, 2, 3, 4, 5],
-# )
-# def test_extract_all_unique_smiles_from_lab_data(dbmanager_read_all_from_file, index):
-#     list_of_all_lab_experiments_with_meta = dbmanager_read_all_from_file.get_lab_experiments_with_meta_data()
-#
-#     all_smiles = utils.extract_all_unique_smiles_from_lab_data(list_of_all_lab_experiments_with_meta)
-#     assert len(all_smiles) != 0
-#     # get the substrate from the test data and make sure they are found in the unique list
-#     smiles_list = list_of_all_lab_experiments_with_meta[index][gs.cc_substrate]
-#     assert (all_smiles.find(c) != -1 for c in smiles_list)
-
-
 @pytest.mark.parametrize(
     "index",
     [0, 1, 2, 3, 4, 5],
