@@ -500,133 +500,159 @@ def get_experiment_tab_related_seq():
                 id="id-div-exp-related-variants-section",
                 children=[
                     dbc.Row(
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    [
-                                        dbc.CardHeader("Related Experiments", className=vis.top_card_head),
-                                        dbc.CardBody(
-                                            [
-                                                dbc.Row(
-                                                    [components.get_table_experiment_related_variants()],
-                                                    className="dbc dbc-ag-grid",
-                                                ),
-                                            ],
-                                            className="p-1 mt-3",  # fits to the card border
-                                        ),
-                                    ],
-                                    className="d-flex flex-column",  # Flexbox for vertical stacking
-                                    style={
-                                        "box-shadow": "1px 2px 7px 0px grey",
-                                        "border-radius": "5px",
-                                        # "height": vis.seq_match_card_height,
-                                    },
-                                ),
-                            ],
-                            # width=8,
-                            style=vis.border_column,
-                            # remove all gutters from the col to snap to the card
-                            # className="g-3"
-                        ),
-                    ),
-                    dbc.Row(
                         [
-                            dbc.Card(
+                            dbc.Col(
                                 [
-                                    dbc.CardHeader(
-                                        "Query Protein vs. Selected Related Variant Protein",
-                                        className=vis.top_card_head,
-                                    ),
-                                    dbc.CardBody(
+                                    dbc.Card(
                                         [
-                                            # specify the substitutions that are being visualized
-                                            dbc.Row(
+                                            dbc.CardHeader("Related Experiments", className=vis.top_card_head),
+                                            dbc.CardBody(
                                                 [
-                                                    dbc.Col(
+                                                    dbc.Row(
                                                         [
-                                                            components.generate_label_with_info(
-                                                                label="Selected Substitutions: ",
-                                                                id_info="id-exp-related-variants-selected-subs",
+                                                            html.P(
+                                                                "TBD: (placeholder) We need some instructions "
+                                                                "here for "
+                                                                "the user, on what are they are seeing and "
+                                                                "to know that they can click on a row...."
                                                             )
-                                                        ]
-                                                    )
-                                                ],
-                                                # justify="center",
-                                                className="justify-content-center",
-                                            ),
-                                            # experiment id of the comparison
-                                            dbc.Row(
-                                                [
-                                                    dbc.Col(
-                                                        [
-                                                            components.generate_label_with_info(
-                                                                label="Query Experiment ID: ",
-                                                                id_info="id-exp-related-variants-id",
-                                                            )
-                                                        ]
-                                                    ),
-                                                    dbc.Col(
-                                                        [
-                                                            components.generate_label_with_info(
-                                                                label="Selected Experiment ID: ",
-                                                                id_info="id-exp-related-variants-selected-id",
-                                                            )
-                                                        ]
-                                                    ),
-                                                ]
-                                            ),
-                                            # reaction image and the substrate and product strings of the comparison
-                                            dbc.Row(
-                                                [
-                                                    dbc.Col(
-                                                        [
-                                                            components.create_layout_reaction(
-                                                                "id-exp-related-variants-reaction-image",
-                                                                "id-exp-related-variants-substrate",
-                                                                "id-exp-related-variants-product",
-                                                            )
-                                                        ]
-                                                    ),
-                                                    dbc.Col(
-                                                        [
-                                                            components.create_layout_reaction(
-                                                                "id-exp-related-variants-selected-reaction-image",
-                                                                "id-exp-related-variants-selected-substrate",
-                                                                "id-exp-related-variants-selected-product",
-                                                            )
-                                                        ]
-                                                    ),
-                                                ]
-                                            ),
-                                            dbc.Row(
-                                                [
-                                                    dbc.Col(
-                                                        [
-                                                            html.Div(id="id-exp-related-variants-protein-viewer"),
                                                         ],
-                                                        width=6,
+                                                        className="mt-3",  # fits to the card border
                                                     ),
-                                                    dbc.Col(
-                                                        [
-                                                            html.Div(
-                                                                id="id-exp-related-variants-selected-protein-viewer"
-                                                            ),
-                                                        ]
+                                                    dbc.Row(
+                                                        [components.get_table_experiment_related_variants()],
+                                                        className="dbc dbc-ag-grid mt-3",
                                                     ),
-                                                ]
+                                                ],
+                                                className="p-1 mt-3",  # fits to the card border
                                             ),
                                         ],
-                                        className="p-1 mt-3",
+                                        className="d-flex flex-column",  # Flexbox for vertical stacking
+                                        style={
+                                            "box-shadow": "1px 2px 7px 0px grey",
+                                            "border-radius": "5px",
+                                            "height": vis.related_variants_card_height,
+                                        },
                                     ),
                                 ],
-                                style={
-                                    "box-shadow": "1px 2px 7px 0px grey",
-                                    "border-radius": "5px",
-                                    # "height": vis.seq_match_card_height,
-                                },
-                            )
-                        ],
-                        className="g-2 mt-4 mb-4",
+                                width=6,
+                                style=vis.border_column,
+                                # remove all gutters from the col to snap to the card
+                                # className="g-3"
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                " Query Protein vs. Selected Protein Substitutions",
+                                                className=vis.top_card_head,
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    # experiment id of the comparison
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                [
+                                                                    components.generate_label_with_info(
+                                                                        label="Query Experiment ID: ",
+                                                                        id_info="id-exp-related-variants-id",
+                                                                    )
+                                                                ],
+                                                                className="text-center",
+                                                            ),
+                                                            dbc.Col(
+                                                                [
+                                                                    components.generate_label_with_info(
+                                                                        label="Selected Experiment ID: ",
+                                                                        id_info="id-exp-related-variants-selected-id",
+                                                                    )
+                                                                ],
+                                                                className="text-center",
+                                                            ),
+                                                        ],
+                                                        className="mb-3",
+                                                    ),
+                                                    # reaction image and the substrate and product
+                                                    # strings of the comparison
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                [
+                                                                    components.create_layout_reaction(
+                                                                        "id-exp-related-variants-reaction-image",
+                                                                        "id-exp-related-variants-substrate",
+                                                                        "id-exp-related-variants-product",
+                                                                    )
+                                                                ],
+                                                                className="text-center",
+                                                            ),
+                                                            dbc.Col(
+                                                                [
+                                                                    components.create_layout_reaction(
+                                                                        "id-exp-related-variants-selected-reaction-image",
+                                                                        "id-exp-related-variants-selected-substrate",
+                                                                        "id-exp-related-variants-selected-product",
+                                                                    )
+                                                                ],
+                                                                className="text-center",
+                                                            ),
+                                                        ],
+                                                        className="mb-3",
+                                                    ),
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                [
+                                                                    html.Div(
+                                                                        id="id-exp-related-variants-protein-viewer"
+                                                                    ),
+                                                                ],
+                                                                width=6,
+                                                                className="text-center",
+                                                            ),
+                                                            dbc.Col(
+                                                                [
+                                                                    html.Div(
+                                                                        id="id-exp-related-variants-selected-protein-viewer"
+                                                                    ),
+                                                                ],
+                                                                className="text-center",
+                                                            ),
+                                                        ],
+                                                        className="p-0 mb-3",
+                                                    ),
+                                                    # specify the substitutions that are being visualized
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                [
+                                                                    components.generate_label_with_info(
+                                                                        label="Selected Substitutions: ",
+                                                                        id_info="id-exp-related-variants-selected-subs",
+                                                                    )
+                                                                ]
+                                                            )
+                                                        ],
+                                                        className="justify-content-center",
+                                                    ),
+                                                ],
+                                                className="p-1 mt-3",
+                                            ),
+                                        ],
+                                        style={
+                                            "box-shadow": "1px 2px 7px 0px grey",
+                                            "border-radius": "5px",
+                                            # Leave this commented so the card height
+                                            # can grow since there are dynamic components in it
+                                            # "height": vis.related_variants_card_height,
+                                        },
+                                    )
+                                ],
+                                width=6,
+                            ),
+                        ]
                     ),
                 ],  # html.Div
             ),
