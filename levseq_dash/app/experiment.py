@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.utils import u_protein_viewer, utils, u_reaction
+from levseq_dash.app.utils import u_protein_viewer, u_reaction, utils
 
 
 class MutagenesisMethod(StrEnum):
