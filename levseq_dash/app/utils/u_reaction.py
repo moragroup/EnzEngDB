@@ -70,7 +70,7 @@ def create_reaction_image(substrate_smiles: str, product_smiles: str):
     """
     # verify the smiles string
     if not is_valid_smiles(substrate_smiles) or not is_valid_smiles(product_smiles):
-        raise Exception("Smiles String is not valid for creating an image.")
+        raise ValueError("Smiles String is not valid for creating an image.")
 
     rxn_smarts = f"{substrate_smiles}>>{product_smiles}"
     rxn = rdChemReactions.ReactionFromSmarts(rxn_smarts, useSmiles=True)
