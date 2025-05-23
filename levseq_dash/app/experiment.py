@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.utils import u_protein_viewer, utils
+from levseq_dash.app.utils import u_protein_viewer, utils, u_reaction
 
 
 class MutagenesisMethod(StrEnum):
@@ -34,15 +34,21 @@ class Experiment:
         # ----------------------------
         # process the core data first
         # ----------------------------
-        self.data_df = pd.DataFrame()
-        if experiment_data_file_path and os.path.isfile(experiment_data_file_path):
-            self.data_df = pd.read_csv(experiment_data_file_path, usecols=gs.experiment_core_data_list)
-        elif experiment_csv_data_base64_string:
-            self.data_df = utils.decode_csv_file_base64_string_to_dataframe(experiment_csv_data_base64_string)
 
-        # TODO: do we want to rais an exception if empty?
-        # if self.data_df.empty:
-        #    raise Exception("Experiment Core Data is empty!")
+        # read th input data
+        input_df = pd.DataFrame()
+        if experiment_data_file_path and os.path.isfile(experiment_data_file_path):
+            input_df = pd.read_csv(experiment_data_file_path)
+        elif experiment_csv_data_base64_string:
+            input_df = utils.decode_csv_file_base64_string_to_dataframe(experiment_csv_data_base64_string)
+
+        # run all the sanity checks on this file
+        # sanity checks will raise Exceptions
+        # check that the df is not empty, check for missing columns, check for presence of '#PARENT#' and in combos,
+        # check all the smiles strings are valid
+        self.data_df = pd.DataFrame()
+        if run_sanity_checks_on_experiment_file(input_df):
+            self.data_df = input_df[gs.experiment_core_data_list].copy()
 
         # ------------------
         # process meta data
@@ -95,11 +101,10 @@ class Experiment:
         self.unique_smiles_in_data = list(self.data_df[gs.c_smiles].unique()) if not self.data_df.empty else []
         self.plates = list(self.data_df[gs.c_plate].unique()) if not self.data_df.empty else []
         self.plates_count = len(self.plates)
-        self.parent_sequence = (
-            self.data_df[self.data_df[gs.c_substitutions] == "#PARENT#"][gs.c_aa_sequence].iloc[0]
-            if not self.data_df.empty
-            else ""
-        )
+
+        # sanity check already checks that such a row exists
+        self.parent_sequence = self.data_df[self.data_df[gs.c_substitutions] == "#PARENT#"][gs.c_aa_sequence].iloc[0]
+
         if self.geometry_file_path:
             self.geometry_file_format = self.geometry_file_path.suffix
         else:
@@ -271,6 +276,40 @@ class Experiment:
                 raise Exception("A number greater than 0 must be provided.")
         else:
             raise Exception("Experiment data is empty!")
+
+
+def run_sanity_checks_on_experiment_file(df: pd.DataFrame):
+    # check that the df is not empty
+    if df.empty:
+        raise Exception("Experiment file has no data.")
+
+    # check for missing columns
+    df_columns_set = set(df.columns)
+    column_names_set = set(gs.experiment_core_data_list)
+    missing_columns = list(column_names_set - df_columns_set)
+
+    if len(missing_columns) != 0:
+        raise ValueError(f"Experiment file is missing required columns: {', '.join(missing_columns)}")
+
+    # check for presence of '#PARENT#' in 'amino_acid_substitutions' column
+    if "#PARENT#" not in df[gs.c_substitutions].values:
+        raise ValueError(f"Experiment file does not contain any '#PARENT#' entry in the {gs.c_substitutions} column.")
+
+    # check all the smiles strings are valid in the file
+    invalid_smiles_rows = df[~df[gs.c_smiles].apply(u_reaction.is_valid_smiles)]
+    if not invalid_smiles_rows.empty:
+        invalid_indices = invalid_smiles_rows.index.tolist()
+        raise ValueError(f"Experiment file has invalid SMILES found at rows: {invalid_indices}")
+
+    # check any smiles-plate column combo has a #PARENT# in its gs.c_substitution column
+    for (s, p), group in df.groupby([gs.c_smiles, gs.c_plate]):
+        if "#PARENT#" not in group[gs.c_substitutions].values:
+            raise ValueError(
+                f"Experiment file has missing '#PARENT#' in combo: {gs.c_smiles}='{s}' and {gs.c_plate}='{p}'"
+            )
+
+    # you passed all checks
+    return True
 
 
 # # def read_structure_file(file_path):

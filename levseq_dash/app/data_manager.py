@@ -386,18 +386,24 @@ class DataManager:
 
             assay_index = random.randrange(len(self.assay_list))
             assay = self.assay_list[assay_index]
-
-            exp = Experiment(
-                experiment_data_file_path=exp_file_path,
-                experiment_name=filename,
-                experiment_date="01-01-2025",
-                substrate=utils.generate_random_smiles(),
-                product=utils.generate_random_smiles(),
-                assay=assay,
-                mutagenesis_method=mutagenesis_method,
-                geometry_file_path=geometry_file_path,
-            )
-            self.__add_experiment__(exp)
+            try:
+                exp = Experiment(
+                    experiment_data_file_path=exp_file_path,
+                    experiment_name=filename,
+                    experiment_date="01-01-2025",
+                    substrate=utils.generate_random_smiles(),
+                    product=utils.generate_random_smiles(),
+                    assay=assay,
+                    mutagenesis_method=mutagenesis_method,
+                    geometry_file_path=geometry_file_path,
+                )
+                self.__add_experiment__(exp)
+            except Exception as e:
+                # if something was not right with the experiment file
+                # print out the exception, so we can fix the data and skip it for now
+                # ideally the data set should not throw an exception
+                # this here is to aid in fixing the issues through the dataset
+                print(str(e))
 
     def __add_experiment__(self, exp: Experiment):
         if self.use_db_web_service == AppMode.db.value:

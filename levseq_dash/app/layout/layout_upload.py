@@ -169,7 +169,8 @@ def get_form():
                             class_name="btn-primary",
                             size="md",
                             children="Submit",
-                            # disabled="True",  # TODO: must be disabled at first
+                            # submit button will start out disabled until all files are uploaded and verified
+                            disabled="True",
                         ),
                         width=6,
                         className="d-grid gap-2 col-12 mx-auto",
