@@ -4,61 +4,12 @@ import pandas as pd
 import pytest
 
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.experiment import Experiment
 
 
-def test_experiment_empty_upload_timestamp(experiment_empty):
-    assert experiment_empty.upload_time_stamp != ""
-
-
-def test_experiment_empty_substrate_smiles(experiment_empty):
-    assert len(experiment_empty.substrate) == 0
-
-
-def test_experiment_empty_product_smiles(experiment_empty):
-    assert len(experiment_empty.product) == 0
-
-
-def test_experiment_empty_mutagenesis_method(experiment_empty):
-    assert experiment_empty.mutagenesis_method == ""
-
-
-def test_experiment_empty_plates(experiment_empty):
-    assert len(experiment_empty.plates) == 0
-
-
-def test_experiment_empty_plates_count(experiment_empty):
-    assert experiment_empty.plates_count == 0
-
-
-def test_experiment_empty_parent_sequence(experiment_empty):
-    assert experiment_empty.parent_sequence == ""
-
-
-def test_experiment_empty_geometry_file_path(experiment_empty):
-    assert experiment_empty.geometry_file_path is None
-
-
-def test_experiment_empty_geometry_base64_bytes(experiment_empty):
-    assert experiment_empty.geometry_base64_bytes == bytes()
-
-
-def test_experiment_empty_geometry_base64_string(experiment_empty):
-    assert experiment_empty.geometry_base64_string == ""
-
-
-def test_experiment_empty_exceptions_1(experiment_empty):
+def test_experiment_empty_error():
     with pytest.raises(Exception):
-        experiment_empty.exp_get_processed_core_data_for_valid_mutation_extractions()
-
-
-def test_experiment_empty_exceptions_2(experiment_empty):
-    with pytest.raises(Exception):
-        experiment_empty.exp_core_data_to_dict()
-
-
-def test_experiment_empty_exceptions_3(experiment_empty):
-    with pytest.raises(Exception):
-        experiment_empty.exp_hot_cold_spots(3)
+        exp = Experiment()
 
 
 @pytest.mark.parametrize(

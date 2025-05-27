@@ -13,6 +13,7 @@ from levseq_dash.app import column_definitions as cd
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app import graphs, settings, vis
 from levseq_dash.app.data_manager import DataManager
+from levseq_dash.app.experiment import run_sanity_checks_on_experiment_file
 from levseq_dash.app.layout import (
     layout_bars,
     layout_experiment,
@@ -155,26 +156,57 @@ def set_assay_list(assay_list):
 )
 def on_upload_experiment_file(dash_upload_string_contents, filename, last_modified):
     if not dash_upload_string_contents:
-        # TODO add the alert
         return "No file uploaded.", no_update
     else:
         base64_encoded_string = utils.decode_dash_upload_data_to_base64_encoded_string(dash_upload_string_contents)
 
+        # convert the bytes string into a data frame
         df = utils.decode_csv_file_base64_string_to_dataframe(base64_encoded_string)
-        rows, cols = df.shape
-        info = (
-            f"Uploaded File: {filename} --- "
-            # f"Size:{parser.get_file_size(base64_encoded_bytes)} --- "
-            f"Rows:{rows} "
-            f"Columns:{cols}"
-        )
-
-        return info, base64_encoded_string
+        try:
+            # sanity check will raise exceptions if any check is not passed
+            checks_passed = run_sanity_checks_on_experiment_file(df)
+            if checks_passed:
+                rows, cols = df.shape
+                # checks have passed so we can extract this info
+                unique_smiles_in_data = ".".join(df[gs.c_smiles].unique().tolist())
+                info = [
+                    html.Div(
+                        [
+                            html.Span("Uploaded Experiment: ", style={"fontWeight": "bold"}),
+                            html.Span(filename, style={"color": "var(--cal-tech-color-2)"}),
+                        ]
+                    ),
+                    html.Div(
+                        [
+                            html.Span("# Rows: ", style={"fontWeight": "bold"}),
+                            html.Span(rows, style={"color": "var(--cal-tech-color-2)"}),
+                        ]
+                    ),
+                    html.Div(
+                        [
+                            html.Span("# Columns: ", style={"fontWeight": "bold"}),
+                            html.Span(cols, style={"color": "var(--cal-tech-color-2)"}),
+                        ]
+                    ),
+                    html.Div(
+                        [
+                            html.Span("SMILEs in file: ", style={"fontWeight": "bold"}),
+                            html.Span(unique_smiles_in_data, style={"color": "var(--cal-tech-color-2)"}),
+                        ]
+                    ),
+                ]
+                return info, base64_encoded_string
+        except Exception as e:
+            # a check did not pass
+            info = [
+                html.Div("Error found in file: ", style={"fontWeight": "bold", "color": "red"}),
+                html.Div(str(e), style={"color": "red"}),
+            ]
+            return info, no_update
 
 
 @app.callback(
     Output("id-button-upload-structure-info", "children"),
-    # Output("id-button-upload-structure", "style"),
     Output("id-exp-upload-structure", "data"),
     Input("id-button-upload-structure", "contents"),
     State("id-button-upload-structure", "filename"),
@@ -182,17 +214,34 @@ def on_upload_experiment_file(dash_upload_string_contents, filename, last_modifi
 )
 def on_upload_structure_file(dash_upload_string_contents, filename, last_modified):
     if not dash_upload_string_contents:
-        # TODO add the alert
         return "No file uploaded.", no_update
     else:
         base64_encoded_string = utils.decode_dash_upload_data_to_base64_encoded_string(dash_upload_string_contents)
-
-        info = (
-            f"Uploaded File: {filename}  "
-            # f"Size:{parser.get_file_size(base64_encoded_string)}"
-        )
-
+        info = [
+            html.Div(
+                [
+                    html.Span("Uploaded Structure: ", style={"fontWeight": "bold"}),
+                    html.Span(filename, style={"color": "var(--cal-tech-color-2)"}),
+                ]
+            ),
+        ]
         return info, base64_encoded_string
+
+
+@app.callback(
+    Output("id-button-submit", "disabled"),
+    Input("id-exp-upload-csv", "data"),
+    Input("id-exp-upload-structure", "data"),
+    prevent_initial_call=True,
+)
+def enable_submit_experiment(experiment_success, structure_success):
+    """
+    This callback is used to enable the submit button once all requirements are met
+    """
+    if experiment_success and structure_success:
+        return False
+    else:
+        return True
 
 
 @app.callback(
@@ -222,24 +271,28 @@ def on_submit_experiment(
 ):
     if n_clicks > 0 and ctx.triggered_id == "id-button-submit":
         # TODO: verify the smiles numbers somewhere or in another callback
+        try:
+            experiment_id = data_mgr.add_experiment_from_ui(
+                user_id="some_user_name",
+                experiment_name=experiment_name,
+                experiment_date=experiment_date,
+                substrate=substrate,
+                product=product,
+                assay=assay,
+                mutagenesis_method=mutagenesis_method,
+                experiment_content_base64_string=experiment_content_base64_encoded_string,
+                geometry_content_base64_string=geometry_content_base64_encoded_string,
+            )
 
-        experiment_id = data_mgr.add_experiment_from_ui(
-            user_id="some_user_name",
-            experiment_name=experiment_name,
-            experiment_date=experiment_date,
-            substrate=substrate,
-            product=product,
-            assay=assay,
-            mutagenesis_method=mutagenesis_method,
-            experiment_content_base64_string=experiment_content_base64_encoded_string,
-            geometry_content_base64_string=geometry_content_base64_encoded_string,
-        )
+            # you can verify the information here
+            # exp = data_mgr.get_experiment(index)
+            # TODO: return a success alert here
+            success = f"Experiment {experiment_id} has been added successfully!"
+            return success, True
+        except Exception as e:
+            error_message = str(e)
+            return error_message, True
 
-        # you can verify the information here
-        # exp = data_mgr.get_experiment(index)
-        # TODO: return a success alert here
-        success = f"Experiment {experiment_id} has been added successfully!"
-        return success, True
     else:
         raise PreventUpdate
 
