@@ -133,14 +133,14 @@ def decode_csv_file_base64_string_to_dataframe(base64_encoded_string):
 def calculate_group_mean_ratios_per_smiles_and_plate(df):
     # df = df.loc[:, ["smiles", gs.c_plate, "well", "amino_acid_substitutions", "fitness_value"]]
     group_cols = [gs.c_smiles, gs.c_plate]
-    value_col = "fitness_value"
+    value_col = gs.c_fitness_value
 
     # Compute min and max fitness for each group
     group_stats = df.groupby(group_cols)[value_col].agg(["min", "max"]).reset_index()
 
     # Compute mean ONLY for rows where parent_col == parent_value, per group
     parent_mean = (
-        df[df["amino_acid_substitutions"] == "#PARENT#"]
+        df[df[gs.c_substitutions] == "#PARENT#"]
         .groupby(group_cols)[value_col]
         .mean()
         .reset_index()
@@ -152,10 +152,10 @@ def calculate_group_mean_ratios_per_smiles_and_plate(df):
     df = df.merge(parent_mean, on=group_cols, how="left")  # Keeps all rows, even if no mean exists
 
     # Compute fitness ratio relative to the mean
-    df["ratio"] = df[value_col] / df["mean"]
+    df[gs.cc_ratio] = df[value_col] / df["mean"]
     # TODO: rounding creates an error
-    # df["ratio"] = df["ratio"].round(2)
-    group_stats_ratio = df.groupby(group_cols)["ratio"].agg(["min", "max"]).reset_index()
+    # df[gs.cc_ratio] = df[gs.cc_ratio].round(2)
+    group_stats_ratio = df.groupby(group_cols)[gs.cc_ratio].agg(["min", "max"]).reset_index()
     df = df.merge(group_stats_ratio, on=group_cols, suffixes=("", "_group"))
 
     return df
