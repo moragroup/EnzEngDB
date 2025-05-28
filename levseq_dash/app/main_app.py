@@ -229,16 +229,58 @@ def on_upload_structure_file(dash_upload_string_contents, filename, last_modifie
 
 
 @app.callback(
+    Output("id-input-substrate", "valid"),
+    Output("id-input-substrate", "invalid"),
+    Input("id-input-substrate", "value"),
+    prevent_initial_call=True,
+)
+def validate_substrate_smiles(substrate):
+    valid = False
+    invalid = True
+    try:
+        if u_reaction.is_valid_smiles(substrate):
+            valid = True
+            invalid = False
+    except Exception as e:
+        # if any exception is thrown, it's still invalid
+        pass
+
+    return valid, invalid
+
+
+@app.callback(
+    Output("id-input-product", "valid"),
+    Output("id-input-product", "invalid"),
+    Input("id-input-product", "value"),
+    prevent_initial_call=True,
+)
+def validate_product_smiles(product):
+    valid = False
+    invalid = True
+    try:
+        if u_reaction.is_valid_smiles(product):
+            valid = True
+            invalid = False
+    except Exception as e:
+        # if any exception is thrown, it's still invalid
+        pass
+
+    return valid, invalid
+
+
+@app.callback(
     Output("id-button-submit", "disabled"),
     Input("id-exp-upload-csv", "data"),
     Input("id-exp-upload-structure", "data"),
+    Input("id-input-substrate", "valid"),
+    Input("id-input-product", "valid"),
     prevent_initial_call=True,
 )
-def enable_submit_experiment(experiment_success, structure_success):
+def enable_submit_experiment(experiment_success, structure_success, valid_substrate, valid_product):
     """
     This callback is used to enable the submit button once all requirements are met
     """
-    if experiment_success and structure_success:
+    if experiment_success and structure_success and valid_substrate and valid_product:
         return False
     else:
         return True
