@@ -110,9 +110,8 @@ def mock_load_using_existing_env_data_path(mock_load_config_from_disk, monkeypat
     Fixture to mock a DATA_PATH env with a temp_path
     """
     # using monkeypatch for env variables
-    test_path = Path(tmp_path)
-    test_path.mkdir(parents=True, exist_ok=True)  # Ensure the path exists
-    monkeypatch.setenv("DATA_PATH", str(test_path))
+    # Note: tmp_path fixture already exists
+    monkeypatch.setenv("DATA_PATH", str(tmp_path))
 
 
 @pytest.fixture

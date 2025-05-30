@@ -235,15 +235,7 @@ def on_upload_structure_file(dash_upload_string_contents, filename, last_modifie
     prevent_initial_call=True,
 )
 def validate_substrate_smiles(substrate):
-    valid = False
-    invalid = True
-    try:
-        if u_reaction.is_valid_smiles(substrate):
-            valid = True
-            invalid = False
-    except Exception as e:
-        # if any exception is thrown, it's still invalid
-        pass
+    valid, invalid = utils.validate_smiles_string(substrate)
 
     return valid, invalid
 
@@ -255,15 +247,7 @@ def validate_substrate_smiles(substrate):
     prevent_initial_call=True,
 )
 def validate_product_smiles(product):
-    valid = False
-    invalid = True
-    try:
-        if u_reaction.is_valid_smiles(product):
-            valid = True
-            invalid = False
-    except Exception as e:
-        # if any exception is thrown, it's still invalid
-        pass
+    valid, invalid = utils.validate_smiles_string(product)
 
     return valid, invalid
 

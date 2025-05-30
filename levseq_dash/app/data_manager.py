@@ -56,8 +56,6 @@ class DataManager:
                 assays = pd.read_csv(settings.assay_file_path, encoding="utf-8", usecols=["Technique"])
                 self.assay_list = assays["Technique"].tolist()
                 print(f"[LOG] Read assay file at: {settings.assay_file_path} with size {len(self.assay_list)}")
-            else:
-                raise FileNotFoundError(f"[LOG] Assay file does not exist at: {settings.assay_file_path}")
 
             # use this flag for debugging multiple files.
             # This will load all csv files in test/data
@@ -252,7 +250,7 @@ class DataManager:
     # ---------------------------
     #    DATA RETRIEVAL: PER EXPERIMENT
     # ---------------------------
-    def get_experiment(self, experiment_id: int) -> Experiment:
+    def get_experiment(self, experiment_id: int) -> Experiment | None:
         # helper function
         exp = None
         if self.use_db_web_service == AppMode.db.value:
@@ -363,23 +361,19 @@ class DataManager:
         if self.use_db_web_service == AppMode.db.value:
             raise Exception(gs.error_wrong_mode)
 
-        EXPERIMENTS_DIR = data_directory / "experiments"
-        STRUCTURES_DIR = data_directory / "structures"
-        METADATA_FILE = data_directory / "meta_data.csv"
+        experiment_dir = data_directory / "experiments"
+        structures_dir = data_directory / "structures"
+        meta_data_file = data_directory / "meta_data.csv"
 
         # validate required directories
-        for directory in [data_directory, EXPERIMENTS_DIR, STRUCTURES_DIR]:
+        for directory in [data_directory, experiment_dir, structures_dir]:
             if not directory.is_dir():
                 raise FileNotFoundError(f"Required directory does not exist: {directory}")
-
-        # make sure the meta_data file is there
-        if not METADATA_FILE.is_file():
-            raise FileNotFoundError(f"Metadata file not found: {METADATA_FILE}")
 
         print(f"[LOG] Found all data at: {data_directory}")
 
         # read the file and iterate through metadata rows
-        metadata_df = pd.read_csv(METADATA_FILE)
+        metadata_df = pd.read_csv(meta_data_file)
         for idx, row in metadata_df.iterrows():
             experiment_id = row["experiment_id"]
             experiment_name = row["experiment_name"]
@@ -387,8 +381,8 @@ class DataManager:
             experiment_substrate = row["substrate_smiles"]
             experiment_product = row["product_smiles"]
             assay = row["assay_technique"]
-            exp_file_path = EXPERIMENTS_DIR / f"{experiment_id}.csv"
-            geometry_file_path = STRUCTURES_DIR / f"{row['cif_filename']}"
+            exp_file_path = experiment_dir / f"{experiment_id}.csv"
+            geometry_file_path = structures_dir / f"{row['cif_filename']}"
 
             # .get(..., '') defaults to an empty string ('') if the column is missing
             # but if it's empty it will return Nan
@@ -397,12 +391,6 @@ class DataManager:
                 mutagenesis_method = MutagenesisMethod.SSM
             else:
                 mutagenesis_method = MutagenesisMethod.epPCR
-
-            if not exp_file_path.is_file():
-                raise FileNotFoundError(f"Experiment data file not found: {exp_file_path}")
-
-            if not geometry_file_path.is_file():
-                raise FileNotFoundError(f"Geometry file not found: {geometry_file_path}")
 
             # Create the Experiment object
             try:

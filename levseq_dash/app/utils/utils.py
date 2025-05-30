@@ -8,6 +8,7 @@ import pandas as pd
 
 from levseq_dash.app import components
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.utils import u_reaction
 from levseq_dash.app.utils.u_protein_viewer import substitution_indices_pattern
 
 # def gather_residues_from_selection(selected_rows):
@@ -204,3 +205,22 @@ def export_data_as_csv(option, file_name):
 
     # https://ag-grid.com/javascript-data-grid/csv-export/#reference-CsvExportParams-exportedRows
     return True, {"fileName": f"{file_name}_{exported_rows}_{timestamp}.csv", "exportedRows": exported_rows}
+
+
+def validate_smiles_string(smiles_string):
+    """
+    This function is a helper function to show the substrate and product text boxes
+    as valid or invalid text boxes in the UI.
+    """
+    # set the defaults
+    valid = False
+    invalid = True
+    try:
+        if u_reaction.is_valid_smiles(smiles_string):
+            valid = True
+            invalid = False
+    except Exception as e:
+        # if any exception is thrown, it's still invalid
+        pass
+    # TODO: look into reducing this into either valid or invalid
+    return valid, invalid
