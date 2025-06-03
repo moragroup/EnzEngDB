@@ -11,7 +11,8 @@ from dash_molstar.utils import molstar_helper
 
 from levseq_dash.app import column_definitions as cd
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app import graphs, settings, vis
+from levseq_dash.app import graphs, vis
+from levseq_dash.app.config import settings
 from levseq_dash.app.data_manager import DataManager
 from levseq_dash.app.experiment import run_sanity_checks_on_experiment_file
 from levseq_dash.app.layout import (

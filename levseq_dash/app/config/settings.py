@@ -1,8 +1,9 @@
+from enum import Enum
 from pathlib import Path
 
 import yaml
 
-package_root = Path(__file__).resolve().parent.parent
+package_root = Path(__file__).resolve().parent.parent.parent
 package_app_path = package_root / "app"
 
 config_path = package_app_path / "config" / "config.yaml"
@@ -11,6 +12,11 @@ config_path = package_app_path / "config" / "config.yaml"
 assay_directory = package_app_path / "tests" / "test_data" / "assay"
 assay_file_name = "assay_measure_list.csv"
 assay_file_path = assay_directory / assay_file_name
+
+
+class AppMode(Enum):
+    db = "db"
+    disk = "disk"
 
 
 def load_config():

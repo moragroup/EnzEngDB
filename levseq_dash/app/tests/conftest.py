@@ -6,6 +6,8 @@ import pytest
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app.experiment import Experiment, MutagenesisMethod
 
+load_config_mock_string = "levseq_dash.app.config.settings.load_config"
+
 
 @pytest.fixture(scope="session")
 def package_root():
@@ -58,7 +60,7 @@ def mock_load_config_from_disk(mocker, test_data_path):
     Fixture to mock a response for load config from disk
     """
     # data_path = test_data_path / "data"
-    mock = mocker.patch("levseq_dash.app.settings.load_config")
+    mock = mocker.patch(load_config_mock_string)
     data_path = test_data_path / "data"
     mock.return_value = {
         "app-mode": "disk",
@@ -72,7 +74,7 @@ def mock_load_config_use_web(mocker):
     """
     Fixture to mock a response
     """
-    mock = mocker.patch("levseq_dash.app.settings.load_config")
+    mock = mocker.patch(load_config_mock_string)
     mock.return_value = {"app-mode": "db"}
     return mock
 
@@ -82,7 +84,7 @@ def mock_load_config_invalid(mocker):
     """
     Fixture to mock a config file in disk mode with an invalid path
     """
-    mock = mocker.patch("levseq_dash.app.settings.load_config")
+    mock = mocker.patch(load_config_mock_string)
     mock.return_value = {
         "app-mode": "disk",
         "load-from-disk": {"data_path": "non/existent/path"},
@@ -95,7 +97,7 @@ def mock_load_config_app_mode_error(mocker):
     """
     Fixture to mock a config file in an invalid app-mode
     """
-    mock = mocker.patch("levseq_dash.app.settings.load_config")
+    mock = mocker.patch(load_config_mock_string)
     mock.return_value = {
         "app-mode": "invalid_string",
         # path is not important here
