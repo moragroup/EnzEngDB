@@ -1,8 +1,8 @@
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import html
 
-from levseq_dash.app import components, vis
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.components import vis, widgets
 
 
 def get_seq_align_form():
@@ -10,7 +10,7 @@ def get_seq_align_form():
         [
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.seq_align_form_input),
+                    widgets.get_label_fixed_for_form(gs.seq_align_form_input),
                     dbc.Col(
                         [
                             dbc.Textarea(
@@ -29,7 +29,7 @@ def get_seq_align_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.seq_align_form_threshold),
+                    widgets.get_label_fixed_for_form(gs.seq_align_form_threshold),
                     dbc.Col(
                         [
                             dbc.Input(
@@ -47,7 +47,7 @@ def get_seq_align_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.seq_align_form_hot_cold),
+                    widgets.get_label_fixed_for_form(gs.seq_align_form_hot_cold),
                     dbc.Col(
                         [
                             dbc.Input(
@@ -123,7 +123,7 @@ def get_seq_align_layout():
                                                             # must allow html and set the flag to true
                                                             html.Div(
                                                                 [
-                                                                    components.get_info_icon_tooltip_bundle(
+                                                                    widgets.get_info_icon_tooltip_bundle(
                                                                         info_icon_id="id-info-1",
                                                                         help_string=gs.markdown_note_matched_seq,
                                                                         location="top",
@@ -139,7 +139,7 @@ def get_seq_align_layout():
                                                         ],
                                                     ),
                                                     dbc.Row(
-                                                        [components.get_table_matched_sequences()],
+                                                        [widgets.get_table_matched_sequences()],
                                                         className="dbc dbc-ag-grid",
                                                     ),
                                                 ],
@@ -170,7 +170,7 @@ def get_seq_align_layout():
                                                 [
                                                     dbc.Row(
                                                         [
-                                                            components.create_layout_reaction(
+                                                            widgets.create_layout_reaction(
                                                                 "id-selected-seq-matched-reaction-image",
                                                                 "id-selected-seq-matched-substrate",
                                                                 "id-selected-seq-matched-product",
@@ -208,7 +208,7 @@ def get_seq_align_layout():
                                                     dbc.Row(
                                                         [
                                                             dbc.Col(
-                                                                components.get_button_download(
+                                                                widgets.get_button_download(
                                                                     "id-button-download-hot-cold-results"
                                                                 ),
                                                                 width=2,
@@ -216,7 +216,7 @@ def get_seq_align_layout():
                                                                 style=vis.border_column,
                                                             ),
                                                             dbc.Col(
-                                                                components.get_radio_items_download_options(
+                                                                widgets.get_radio_items_download_options(
                                                                     "id-button-download-hot-cold-results-options"
                                                                 ),
                                                                 width=3,
@@ -227,7 +227,7 @@ def get_seq_align_layout():
                                                         className="mb-2 g-1",
                                                     ),
                                                     dbc.Row(
-                                                        [components.get_table_matched_sequences_exp_hot_cold_data()],
+                                                        [widgets.get_table_matched_sequences_exp_hot_cold_data()],
                                                         className="dbc dbc-ag-grid",
                                                         # style=vis.border_table,
                                                     ),

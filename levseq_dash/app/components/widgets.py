@@ -5,9 +5,9 @@ import dash_bootstrap_components as dbc
 import dash_molstar
 from dash import dcc, html
 
-from levseq_dash.app import column_definitions as cd
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app import vis
+from levseq_dash.app.components import column_definitions as cd
+from levseq_dash.app.components import vis
 
 
 # ----------------------------------------

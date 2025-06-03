@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app import settings
+from levseq_dash.app.config import settings
 from levseq_dash.app.utils import utils
 
 num_samples = 12  # change this if more data is added
@@ -116,7 +116,7 @@ def test_use_web_exceptions(mock_load_config_use_web, experiment_ep_pcr):
     I need to control the order of the mock before the DataManager so I am putting the code
     here instead of using the fixture
     """
-    from levseq_dash.app.data_manager import DataManager
+    from levseq_dash.app.data_manager.manager import DataManager
 
     dm = DataManager()
     with pytest.raises(Exception):
@@ -128,7 +128,7 @@ def test_use_web_exceptions_2(mock_load_config_use_web):
     I need to control the order of the mock before the DataManager so I am putting the code
     here instead of using the ficture
     """
-    from levseq_dash.app.data_manager import DataManager
+    from levseq_dash.app.data_manager.manager import DataManager
 
     dm = DataManager()
     with pytest.raises(Exception):
@@ -145,14 +145,14 @@ def test_load_config():
 
 
 def test_load_config_invalid(mock_load_config_invalid):
-    from levseq_dash.app.data_manager import DataManager
+    from levseq_dash.app.data_manager.manager import DataManager
 
     with pytest.raises(Exception):
         DataManager()
 
 
 def test_load_config_app_mode_error(mock_load_config_app_mode_error):
-    from levseq_dash.app.data_manager import DataManager
+    from levseq_dash.app.data_manager.manager import DataManager
 
     with pytest.raises(Exception):
         DataManager()
@@ -164,7 +164,7 @@ def test_load_config_env(mock_load_using_existing_env_data_path):
     but will throw an exception because it can't find the experiment files in
     _load_test_experiment_data
     """
-    from levseq_dash.app.data_manager import DataManager
+    from levseq_dash.app.data_manager.manager import DataManager
 
     with pytest.raises(Exception):
         DataManager()

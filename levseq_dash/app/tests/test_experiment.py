@@ -1,10 +1,8 @@
-from pathlib import Path
-
 import pandas as pd
 import pytest
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.experiment import Experiment
+from levseq_dash.app.data_manager.experiment import Experiment
 
 
 def test_experiment_empty_error():
@@ -45,7 +43,7 @@ def test_experiment_with_geometry_in_bytes(path_exp_ep_data, path_cif_bytes_stri
     """
 
     # load as bytes
-    from levseq_dash.app.experiment import Experiment, MutagenesisMethod
+    from levseq_dash.app.data_manager.experiment import Experiment, MutagenesisMethod
 
     # read the file as bytes
     with open(path_cif_bytes_string_file_sample, "rb") as f:
@@ -73,7 +71,7 @@ def test_experiment_with_geometry_in_bytes_string(path_exp_ep_data, path_cif_byt
     everything else should be none
     """
     # load as bytes
-    from levseq_dash.app.experiment import Experiment, MutagenesisMethod
+    from levseq_dash.app.data_manager.experiment import Experiment, MutagenesisMethod
 
     # read the file as string
     with open(path_cif_bytes_string_file_sample, "r") as f:

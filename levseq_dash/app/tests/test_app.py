@@ -3,8 +3,8 @@ import base64
 import pandas as pd
 import pytest
 
-from levseq_dash.app import components
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.components.widgets import DownloadType
 from levseq_dash.app.utils import utils
 
 
@@ -139,10 +139,10 @@ def test_generate_slider_marks_dict(max, slider_marks):
 @pytest.mark.parametrize(
     "option, sub_string",
     [
-        (components.DownloadType.FILTERED.value, "filteredAndSorted"),
-        (components.DownloadType.ORIGINAL.value, "all"),
-        (components.DownloadType.FILTERED.value, "filteredAndSorted"),
-        (components.DownloadType.ORIGINAL.value, "all"),
+        (DownloadType.FILTERED.value, "filteredAndSorted"),
+        (DownloadType.ORIGINAL.value, "all"),
+        (DownloadType.FILTERED.value, "filteredAndSorted"),
+        (DownloadType.ORIGINAL.value, "all"),
     ],
 )
 def test_export_data_as_csv(option, sub_string):

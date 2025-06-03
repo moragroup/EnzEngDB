@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app import vis
+from levseq_dash.app.components import vis
 
 
 def get_navbar():
@@ -23,8 +23,8 @@ def get_navbar():
                         dbc.Col(
                             [
                                 html.Img(
-                                    src="../assets/Caltech Logo 2017/"
-                                    "LOGO-WHITE/LOGO-WHITE-RGB/Caltech_LOGO-WHITE-RGB.png",
+                                    src="../../assets/Caltech Logo 2017/LOGO-WHITE/LOGO-WHITE-RGB/Caltech_LOGO-WHITE"
+                                    "-RGB.png",
                                     width="80%",
                                 ),
                             ],
@@ -40,7 +40,7 @@ def get_navbar():
                             className="display-4 d-flex align-items-center justify-content-center",
                         ),
                         dbc.Col(
-                            [html.Img(src="../assets/SSEC_horizontal_white_cropped.png", width="60%")],
+                            [html.Img(src="../../assets/SSEC_horizontal_white_cropped.png", width="60%")],
                             width=3,
                             style=vis.border_column,
                             # justify the logo to the right (end)

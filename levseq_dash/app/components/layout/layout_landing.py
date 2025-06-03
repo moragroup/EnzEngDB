@@ -1,8 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from levseq_dash.app import components, vis
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.components import vis, widgets
 
 
 # -------------------------------------------------------
@@ -102,7 +102,7 @@ def get_landing_page():
                                     dbc.CardBody(
                                         [
                                             html.Div(  # TODO: dbc.container adds padding to the surrounding area
-                                                [components.get_table_all_experiments()],
+                                                [widgets.get_table_all_experiments()],
                                                 className="dbc dbc-ag-grid",
                                                 style=vis.border_table,
                                             ),

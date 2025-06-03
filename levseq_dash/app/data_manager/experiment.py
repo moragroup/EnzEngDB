@@ -302,12 +302,13 @@ def run_sanity_checks_on_experiment_file(df: pd.DataFrame):
         invalid_indices = invalid_smiles_rows.index.tolist()
         raise ValueError(f"Experiment file has invalid SMILES found at rows: {invalid_indices}")
 
-    # check any smiles-plate column combo has a #PARENT# in its gs.c_substitution column
-    for (s, p), group in df.groupby([gs.c_smiles, gs.c_plate]):
-        if "#PARENT#" not in group[gs.c_substitutions].values:
-            raise ValueError(
-                f"Experiment file has missing '#PARENT#' in combo: {gs.c_smiles}='{s}' and {gs.c_plate}='{p}'"
-            )
+    # # Relaxing parent-smiles combo requirement
+    # # check any smiles-plate column combo has a #PARENT# in its gs.c_substitution column
+    # for (s, p), group in df.groupby([gs.c_smiles, gs.c_plate]):
+    #     if "#PARENT#" not in group[gs.c_substitutions].values:
+    #         raise ValueError(
+    #             f"Experiment file has missing '#PARENT#' in combo: {gs.c_smiles}='{s}' and {gs.c_plate}='{p}'"
+    #         )
 
     # you passed all checks
     return True

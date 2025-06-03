@@ -1,5 +1,5 @@
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app import vis
+from levseq_dash.app.components import vis
 
 
 def get_checkbox():
