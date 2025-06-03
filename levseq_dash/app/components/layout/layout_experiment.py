@@ -2,8 +2,8 @@ import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 from dash import dcc, html
 
-from levseq_dash.app import components, vis
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.components import vis, widgets
 
 
 def get_experiment_tab_dash():
@@ -103,7 +103,7 @@ def get_experiment_tab_dash():
                                 dbc.CardBody(
                                     [
                                         dbc.Row(
-                                            components.create_layout_reaction(
+                                            widgets.create_layout_reaction(
                                                 "id-experiment-reaction-image",
                                                 "id-experiment-substrate",
                                                 "id-experiment-product",
@@ -132,7 +132,7 @@ def get_experiment_tab_dash():
                                         [
                                             # keep as is,  dbc.container adds padding to the surrounding area
                                             html.Div(
-                                                [components.get_table_experiment_top_variants()],
+                                                [widgets.get_table_experiment_top_variants()],
                                                 className="dbc dbc-ag-grid",
                                                 # style=vis.border_table,
                                             )
@@ -174,7 +174,7 @@ def get_experiment_tab_dash():
                                                                 className="custom-switch",
                                                                 checked=False,
                                                             ),
-                                                            components.get_info_icon_tooltip_bundle(
+                                                            widgets.get_info_icon_tooltip_bundle(
                                                                 info_icon_id="id-switch-residue-view-info",
                                                                 help_string="some help string",
                                                                 location="top",
@@ -230,7 +230,7 @@ def get_experiment_tab_dash():
                                                 class_name="mt-3 mb-3 g-0 d-flex align-items-center",
                                                 style=vis.border_row,
                                             ),
-                                            dbc.Row(dbc.Col(components.get_protein_viewer())),
+                                            dbc.Row(dbc.Col(widgets.get_protein_viewer())),
                                         ],
                                         # style={
                                         #     "height": "100%",
@@ -379,7 +379,7 @@ def get_seq_align_form_exp():
         [
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.exp_seq_align_form_input, w=3),
+                    widgets.get_label_fixed_for_form(gs.exp_seq_align_form_input, w=3),
                     # don't remove this dbc.Col, it creates a nice padding
                     dbc.Col(
                         [
@@ -402,7 +402,7 @@ def get_seq_align_form_exp():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.seq_align_form_threshold),
+                    widgets.get_label_fixed_for_form(gs.seq_align_form_threshold),
                     dbc.Col(
                         [
                             dbc.Input(
@@ -438,7 +438,7 @@ def get_seq_align_form_exp():
             # ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.exp_seq_align_residue),
+                    widgets.get_label_fixed_for_form(gs.exp_seq_align_residue),
                     dbc.Col(
                         [
                             dbc.Input(
@@ -452,7 +452,7 @@ def get_seq_align_form_exp():
                     ),
                     dbc.Col(
                         [
-                            components.get_info_icon_tooltip_bundle(
+                            widgets.get_info_icon_tooltip_bundle(
                                 info_icon_id="id-exp-seq-align-info",
                                 help_string=gs.exp_seq_align_residue_help,
                                 location="top",
@@ -520,7 +520,7 @@ def get_experiment_tab_related_seq():
                                                         className="mt-3",  # fits to the card border
                                                     ),
                                                     dbc.Row(
-                                                        [components.get_table_experiment_related_variants()],
+                                                        [widgets.get_table_experiment_related_variants()],
                                                         className="dbc dbc-ag-grid mt-3",
                                                     ),
                                                 ],
@@ -555,7 +555,7 @@ def get_experiment_tab_related_seq():
                                                         [
                                                             dbc.Col(
                                                                 [
-                                                                    components.generate_label_with_info(
+                                                                    widgets.generate_label_with_info(
                                                                         label="Query Experiment ID: ",
                                                                         id_info="id-exp-related-variants-id",
                                                                     )
@@ -564,7 +564,7 @@ def get_experiment_tab_related_seq():
                                                             ),
                                                             dbc.Col(
                                                                 [
-                                                                    components.generate_label_with_info(
+                                                                    widgets.generate_label_with_info(
                                                                         label="Selected Experiment ID: ",
                                                                         id_info="id-exp-related-variants-selected-id",
                                                                     )
@@ -580,7 +580,7 @@ def get_experiment_tab_related_seq():
                                                         [
                                                             dbc.Col(
                                                                 [
-                                                                    components.create_layout_reaction(
+                                                                    widgets.create_layout_reaction(
                                                                         "id-exp-related-variants-reaction-image",
                                                                         "id-exp-related-variants-substrate",
                                                                         "id-exp-related-variants-product",
@@ -590,7 +590,7 @@ def get_experiment_tab_related_seq():
                                                             ),
                                                             dbc.Col(
                                                                 [
-                                                                    components.create_layout_reaction(
+                                                                    widgets.create_layout_reaction(
                                                                         "id-exp-related-variants-selected-reaction-image",
                                                                         "id-exp-related-variants-selected-substrate",
                                                                         "id-exp-related-variants-selected-product",
@@ -628,7 +628,7 @@ def get_experiment_tab_related_seq():
                                                         [
                                                             dbc.Col(
                                                                 [
-                                                                    components.generate_label_with_info(
+                                                                    widgets.generate_label_with_info(
                                                                         label="Selected Substitutions: ",
                                                                         id_info="id-exp-related-variants-selected-subs",
                                                                     )

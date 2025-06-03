@@ -1,9 +1,9 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from levseq_dash.app import components, vis
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.experiment import MutagenesisMethod
+from levseq_dash.app.components import vis, widgets
+from levseq_dash.app.data_manager.experiment import MutagenesisMethod
 
 # TODO: all placeholders must be in strings file
 
@@ -15,7 +15,7 @@ def get_form():
             html.Br(),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.experiment_name),
+                    widgets.get_label_fixed_for_form(gs.experiment_name),
                     dbc.Col(
                         dbc.Input(
                             type="text",
@@ -29,7 +29,7 @@ def get_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.experiment_date),
+                    widgets.get_label_fixed_for_form(gs.experiment_date),
                     dbc.Col(
                         [
                             dcc.DatePickerSingle(
@@ -46,7 +46,7 @@ def get_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.substrate_smiles_input),
+                    widgets.get_label_fixed_for_form(gs.substrate_smiles_input),
                     dbc.Col(
                         dbc.Textarea(
                             # type="text",
@@ -63,7 +63,7 @@ def get_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.product_smiles_input),
+                    widgets.get_label_fixed_for_form(gs.product_smiles_input),
                     dbc.Col(
                         dbc.Textarea(
                             # type="text",
@@ -80,7 +80,7 @@ def get_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.assay),
+                    widgets.get_label_fixed_for_form(gs.assay),
                     dbc.Col(
                         [
                             # html.Div(
@@ -113,7 +113,7 @@ def get_form():
             ),
             dbc.Row(
                 [
-                    components.get_label_fixed_for_form(gs.tech),
+                    widgets.get_label_fixed_for_form(gs.tech),
                     dbc.Col(
                         [
                             html.Div(

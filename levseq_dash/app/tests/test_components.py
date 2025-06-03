@@ -4,10 +4,10 @@ import dash_molstar
 import pytest
 from dash import html
 
-from levseq_dash.app import column_definitions as cd
-from levseq_dash.app import components, graphs
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.layout import (
+from levseq_dash.app.components import column_definitions as cd
+from levseq_dash.app.components import graphs, widgets
+from levseq_dash.app.components.layout import (
     layout_bars,
     layout_experiment,
     layout_landing,
@@ -18,7 +18,7 @@ from levseq_dash.app.utils import utils
 
 
 def test_get_label():
-    assert isinstance(components.get_label_fixed_for_form("random_string"), dbc.Label)
+    assert isinstance(widgets.get_label_fixed_for_form("random_string"), dbc.Label)
 
 
 def test_get_top_variant_column_defs(experiment_ep_pcr_with_user_smiles):
@@ -47,7 +47,7 @@ def test_get_matched_sequences_exp_hot_cold_data_column_defs():
 
 
 def test_get_table_experiment_top_variants():
-    table = components.get_table_experiment_top_variants()
+    table = widgets.get_table_experiment_top_variants()
     assert isinstance(table, dag.AgGrid)  # Ensure it's an AgGrid component
     assert table.id == "id-table-exp-top-variants"  # Check ID
     assert "rowSelection" in table.dashGridOptions  # Ensure row selection exists
@@ -56,7 +56,7 @@ def test_get_table_experiment_top_variants():
 
 # Test if `get_table_all_experiments` returns a valid AgGrid component
 def test_get_table_all_experiments():
-    table = components.get_table_all_experiments()
+    table = widgets.get_table_all_experiments()
     assert isinstance(table, dag.AgGrid)  # Ensure it's an AgGrid component
     assert table.id == "id-table-all-experiments"  # Check ID
     assert "rowSelection" in table.dashGridOptions  # Ensure row selection exists
@@ -65,7 +65,7 @@ def test_get_table_all_experiments():
 
 # Test if `get_protein_viewer` returns a valid MolstarViewer component
 def test_get_protein_viewer():
-    viewer = components.get_protein_viewer()
+    viewer = widgets.get_protein_viewer()
     assert isinstance(viewer, dash_molstar.MolstarViewer)  # Ensure it's a MolstarViewer
     assert viewer.id == "id-viewer"  # Check ID
     # assert viewer.style["height"] == "600px"  # Ensure height is set

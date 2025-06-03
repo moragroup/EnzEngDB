@@ -1,13 +1,12 @@
 import base64
 import io
-import random
 import re
 from datetime import datetime
 
 import pandas as pd
 
-from levseq_dash.app import components
 from levseq_dash.app import global_strings as gs
+from levseq_dash.app.components.widgets import DownloadType
 from levseq_dash.app.utils import u_reaction
 from levseq_dash.app.utils.u_protein_viewer import substitution_indices_pattern
 
@@ -195,7 +194,7 @@ def export_data_as_csv(option, file_name):
     This method is a helper function to generate download parameters for an aggrid-table
     The download operation is handled by the grid itself. Client just provides params
     """
-    if option == components.DownloadType.FILTERED.value:
+    if option == DownloadType.FILTERED.value:
         exported_rows = "filteredAndSorted"
     else:
         exported_rows = "all"

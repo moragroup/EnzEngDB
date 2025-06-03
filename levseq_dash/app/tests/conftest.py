@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from levseq_dash.app import global_strings as gs
-from levseq_dash.app.experiment import Experiment, MutagenesisMethod
+from levseq_dash.app.data_manager.experiment import Experiment, MutagenesisMethod
 
 load_config_mock_string = "levseq_dash.app.config.settings.load_config"
 
@@ -118,7 +118,7 @@ def mock_load_using_existing_env_data_path(mock_load_config_from_disk, monkeypat
 
 @pytest.fixture
 def dbmanager_read_all_from_file(mock_load_config_from_disk):
-    from levseq_dash.app.data_manager import DataManager
+    from levseq_dash.app.data_manager.manager import DataManager
 
     return DataManager()
 

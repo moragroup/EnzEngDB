@@ -7,7 +7,7 @@ import pandas as pd
 from levseq_dash.app import global_strings as gs
 from levseq_dash.app.config import settings
 from levseq_dash.app.config.settings import AppMode
-from levseq_dash.app.experiment import Experiment, MutagenesisMethod
+from levseq_dash.app.data_manager.experiment import Experiment, MutagenesisMethod
 
 # from levseq_dash.app.wsexec import Query
 
