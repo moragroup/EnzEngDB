@@ -48,6 +48,7 @@ def get_tab_experiment_main():
                                                 generate_label_with_info(gs.plates_count, "id-experiment-plate-count"),
                                                 generate_label_with_info(gs.smiles_file, "id-experiment-file-smiles"),
                                             ],
+                                            className="overflow-auto",  # enables scroll if needed
                                             style={
                                                 # the smiles strings are very long at times,
                                                 # we need them to break if they can to allow
@@ -59,6 +60,9 @@ def get_tab_experiment_main():
                                                 # image is too long, so keep a min width for the info,
                                                 # if it doesn't work out let the connects flow into the next row
                                                 "minWidth": "150px",
+                                                # the smiles strings are too long. Capping out the height,
+                                                # so it doesn't create a long card
+                                                "maxHeight": "280px",  # limit height of the content
                                             },
                                         )
                                     ],
@@ -660,13 +664,14 @@ def get_tab_experiment_related_variants():
                     style=vis.display_none,
                     children=[get_card_experiment_related_variants_result()],
                 ),
+                target_components={"id-table-exp-related-variants": "rowData"},
             ),
         ],
         className="mt-4",
     )
 
 
-def get_experiment_page():
+def get_layout():
     """This defines the tab layout."""
     return html.Div(
         [
@@ -692,5 +697,6 @@ def get_experiment_page():
                 className="custom-tab-container",
                 value="id-tab-exp-dash",
             )
-        ]
+        ],
+        className=vis.main_page_class,
     )

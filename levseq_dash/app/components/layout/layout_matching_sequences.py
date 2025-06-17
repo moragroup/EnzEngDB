@@ -160,7 +160,7 @@ def get_se_alignment_results_layout():
                                         [
                                             dbc.Row(
                                                 [
-                                                    # this info icon uses markdown in the tooltip so we
+                                                    # this info icon uses markdown in the tooltip, so we
                                                     # must allow html and set the flag to true
                                                     html.Div(
                                                         [
@@ -285,17 +285,17 @@ def get_se_alignment_results_layout():
     )
 
 
-def get_seq_align_layout():
+def get_layout():
     return html.Div(
         [
             html.Div(
                 [
-                    html.H4(gs.nav_seq, style=vis.level_4_titles),
+                    html.H4(gs.nav_find_seq, className="page-title"),
                     html.Hr(),
                     # add some left and right padding -> px-5
                     html.P(gsh.seq_align_blurb, className="px-5 text-primary text-wrap"),
                 ],
-                className="p-5",
+                # className="p-5",
             ),
             # the form row
             dbc.Row(
@@ -329,4 +329,5 @@ def get_seq_align_layout():
                 children=get_se_alignment_results_layout(),
             ),
         ],
+        className=vis.main_page_class,
     )
