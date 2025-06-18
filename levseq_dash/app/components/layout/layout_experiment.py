@@ -188,6 +188,7 @@ def get_tab_experiment_main():
                                                                 location="top",
                                                             ),
                                                         ],
+                                                        # keep the spans horizontally in one row
                                                         style={"display": "flex", "gap": "5px"},
                                                     )
                                                 ],
@@ -572,7 +573,22 @@ def get_card_experiment_related_variants_result():
                             # table with all related variants results
                             # -----------------------------
                             dbc.Col(
-                                [widgets.get_table_experiment_related_variants()],
+                                [
+                                    # download button row
+                                    dbc.Row(
+                                        [
+                                            dbc.Col(
+                                                widgets.get_download_radio_combo(
+                                                    "id-button-download-related-variants-results",
+                                                    "id-button-download-related-variants-results-options",
+                                                ),
+                                                width="auto",
+                                            )
+                                        ],
+                                        className="mb-2 g-1",
+                                    ),
+                                    widgets.get_table_experiment_related_variants(),
+                                ],
                                 width=6,
                                 className="p-1 dbc dbc-ag-grid",
                                 style=vis.border_column,
