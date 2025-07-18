@@ -8,8 +8,10 @@ from levseq_dash.app import global_strings as gs
 from levseq_dash.app.components import column_definitions as cd
 from levseq_dash.app.components import graphs, widgets
 from levseq_dash.app.components.layout import (
+    layout_about,
     layout_bars,
     layout_experiment,
+    layout_explore,
     layout_landing,
     layout_matching_sequences,
     layout_upload,
@@ -68,7 +70,6 @@ def test_get_protein_viewer():
     viewer = widgets.get_protein_viewer()
     assert isinstance(viewer, dash_molstar.MolstarViewer)  # Ensure it's a MolstarViewer
     assert viewer.id == "id-viewer"  # Check ID
-    # assert viewer.style["height"] == "600px"  # Ensure height is set
 
 
 def test_get_form():
@@ -277,3 +278,95 @@ def test_get_seq_align_form():
 
 def test_get_seq_align_layout():
     assert isinstance(layout_matching_sequences.get_layout(), html.Div)
+
+
+def test_get_table_experiment_top_variants():
+    table = widgets.get_table_experiment_top_variants()
+    assert table.dashGridOptions["rowSelection"] == "single"
+    assert table.defaultColDef["sortable"] is True
+
+
+def test_get_table_experiment_related_variants():
+    table = widgets.get_table_experiment_related_variants()
+    assert table.dashGridOptions["pagination"] is True
+    assert table.defaultColDef["filter"] is True
+
+
+def test_get_alert_error():
+    alert = widgets.get_alert("Test error message", error=True)
+    assert alert.children == "Test error message"
+    assert alert.className == "p-3 user-alert-error"
+
+
+def test_get_alert():
+    alert = widgets.get_alert("Test error message", error=False)
+    assert alert.children == "Test error message"
+    assert alert.className == "p-3 user-alert"
+
+
+def test_get_label_fixed_for_form():
+    label = widgets.get_label_fixed_for_form("Test Label", w=3)
+    assert label.children == "Test Label"
+    assert label.width == 3
+
+
+def test_get_tooltip():
+    tooltip = widgets.get_tooltip("test-target", "Test Tooltip", "top")
+    assert tooltip.target == "test-target"
+    assert tooltip.children == "Test Tooltip"
+    assert tooltip.placement == "top"
+
+
+def test_download_type_enum():
+    assert widgets.DownloadType.ORIGINAL.value == 1
+    assert widgets.DownloadType.FILTERED.value == 2
+
+
+def test_get_radio_items_download_options():
+    radio_id = "test-radio-id"
+    components = widgets.get_radio_items_download_options(radio_id)
+
+    # Check the RadioItems component
+    radio_items = components[0]
+    assert isinstance(radio_items, dbc.RadioItems)
+    assert radio_items.id == radio_id
+    assert radio_items.value == widgets.DownloadType.ORIGINAL.value
+    assert len(radio_items.options) == 2
+
+    # Check the first option
+    option_1 = radio_items.options[0]
+    assert "label" in option_1
+    assert "value" in option_1
+    assert option_1["value"] == widgets.DownloadType.ORIGINAL.value
+
+    # Check the tooltips
+    tooltip_1 = components[1]
+    tooltip_2 = components[2]
+    assert tooltip_1.target == f"{radio_id}_1"
+    assert tooltip_2.target == f"{radio_id}_2"
+
+
+def test_get_button_download():
+    button_id = "test-button-id"
+    components = widgets.get_button_download(button_id)
+
+    # Check the Button component
+    button = components[0]
+    assert isinstance(button, dbc.Button)
+    assert button.id == button_id
+    assert button.n_clicks == 0
+
+    # Check the Tooltip component
+    tooltip = components[1]
+    assert tooltip.target == button_id
+    assert tooltip.children == gs.help_download
+
+
+def test_about_page_layout():
+    """Test if the about page layout is correctly generated."""
+    assert isinstance(layout_about.get_layout(), html.Div)
+
+
+def test_explore_layout():
+    """Test if the about page layout is correctly generated."""
+    assert isinstance(layout_explore.get_layout(), html.Div)
