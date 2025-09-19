@@ -1,7 +1,9 @@
 import os
 import random
 import re
+import shutil
 import string
+import tempfile
 
 import pandas as pd
 
@@ -255,9 +257,9 @@ def generate_dataset(parent_dna, num_plates, cas_numbers, fitness_min, fitness_m
             # Generate alignment probability
             alignment_probability = random.uniform(0.7, 1.0)
 
-            # Generate coordinates
-            x_coordinate = random.uniform(0, 100)
-            y_coordinate = random.uniform(0, 100)
+            # # Generate coordinates
+            # x_coordinate = random.uniform(0, 100)
+            # y_coordinate = random.uniform(0, 100)
 
             # Create ID
             id_value = f"{plate_name}-{well}"
@@ -295,7 +297,7 @@ def generate_dataset(parent_dna, num_plates, cas_numbers, fitness_min, fitness_m
                 row = {
                     "id": id_value,
                     "barcode_plate": barcode_plate,
-                    "cas_number": cas_number,
+                    "smiles_string": cas_number,
                     "plate": plate_name,
                     "well": well,
                     "alignment_count": alignment_count,
@@ -304,8 +306,8 @@ def generate_dataset(parent_dna, num_plates, cas_numbers, fitness_min, fitness_m
                     "alignment_probability": round(alignment_probability, 4),
                     "nt_sequence": mutated_dna,
                     "aa_sequence": mutated_protein,
-                    "x_coordinate": round(x_coordinate, 4),
-                    "y_coordinate": round(y_coordinate, 4),
+                    # "x_coordinate": round(x_coordinate, 4),
+                    # "y_coordinate": round(y_coordinate, 4),
                     "fitness_value": round(fitness_value, 2),
                 }
 
@@ -320,6 +322,62 @@ def validate_dna_sequence(sequence):
     """Validate that a string is a valid DNA sequence"""
     valid_nucleotides = set(NUCLEOTIDES)
     return all(nucleotide in valid_nucleotides for nucleotide in sequence.upper())
+
+
+def create_experiment_test_file(cas_input, num_plates, parents_per_plate):
+    if parents_per_plate < 0 or parents_per_plate > 96:
+        raise ValueError
+    parent_dna = generate_random_dna(300)
+    fitness_min = 500
+    fitness_max = 1000
+
+    df = generate_dataset(parent_dna, num_plates, cas_input, fitness_min, fitness_max, parents_per_plate)
+
+    return df
+
+
+def generate_temp_test_experiment_files(temp_dir, base_csv_path, num_plates):
+    # Read the base CSV file
+    cas_input = [
+        "C1=CC=CC=C1",
+        "C1=CC=CN=C1",
+        "[*:1]C(N[C@@H](C(N[C@@H](C([*:2])=O)[*:4])=O)[*:3])=O.O",
+        "[*:1]C(N[C@@H](C(O)=O)[*:3])=O.N[C@@H](C([*:2])=O)[*:4]",
+        "C1=CC=CC=C1.O=C(O)C(F)(F)F",
+    ]
+    df = create_experiment_test_file(cas_input, num_plates, 5)
+
+    # Create temporary directory
+    # temp_dir = tempfile.mkdtemp(prefix="levseq_test_")
+
+    # Generate a unique experiment ID based on the temp directory
+    experiment_id = f"MYTEST-{os.path.basename(temp_dir)}"
+
+    # Create the experiment directory structure
+    experiment_dir = os.path.join(temp_dir, experiment_id)
+    os.makedirs(experiment_dir, exist_ok=True)
+
+    # Save the CSV file with the same base name as experiment_id
+    csv_filename = f"{experiment_id}.csv"
+    csv_path = os.path.join(experiment_dir, csv_filename)
+    df.to_csv(csv_path, index=False)
+
+    # Copy supporting files (JSON and CIF) from the original directory
+    # these files don't matter as long as there is something in the directory
+    base_dir = os.path.dirname(base_csv_path)
+    base_filename = os.path.splitext(os.path.basename(base_csv_path))[0]  # Get base filename without extension
+
+    # Copy the corresponding JSON and CIF files with the experiment_id as base name
+    for file_ext in [".json", ".cif"]:
+        original_file = os.path.join(base_dir, f"{base_filename}{file_ext}")
+        if os.path.exists(original_file):
+            new_filename = f"{experiment_id}{file_ext}"
+            new_file_path = os.path.join(experiment_dir, new_filename)
+            shutil.copy2(original_file, new_file_path)
+        else:
+            raise Exception(f"Warning: {file_ext} file not found: {original_file}")
+
+    return csv_path, experiment_id
 
 
 def main():
