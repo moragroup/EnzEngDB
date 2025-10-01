@@ -110,6 +110,7 @@ def get_tab_experiment_main():
                                         html.Div(
                                             [
                                                 generate_label_with_info(gs.experiment, "id-experiment-name"),
+                                                generate_label_with_info(gs.paper_doi, "id-experiment-doi"),
                                                 generate_label_with_info(gs.date, "id-experiment-date"),
                                                 generate_label_with_info(gs.upload_date, "id-experiment-upload"),
                                                 generate_label_with_info(
