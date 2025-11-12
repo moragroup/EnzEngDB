@@ -48,9 +48,34 @@ def run_callback_update_explore_page_buttons(selected_rows):
 @pytest.mark.parametrize(
     "selected_rows, output_0, output_1, output_2, output_3",
     [
-        ([{"experiment_id": 2}], 2, True, False, False),
-        ([{"experiment_id": 2}, {"experiment_id": 4}], no_update, True, True, False),
-        (None, no_update, True, True, True),
+        (
+            [
+                # single selection
+                {"experiment_id": 2}
+            ],
+            2,
+            False,
+            False,
+            False,
+        ),
+        (
+            [
+                # multiple selection
+                {"experiment_id": 2},
+                {"experiment_id": 4},
+            ],
+            no_update,
+            True,
+            True,
+            False,
+        ),
+        (
+            None,  # no selection
+            no_update,
+            True,
+            True,
+            True,
+        ),
     ],
 )
 def test_callback_update_explore_page_buttons(
@@ -59,10 +84,10 @@ def test_callback_update_explore_page_buttons(
     ctx = copy_context()
     output = ctx.run(run_callback_update_explore_page_buttons, selected_rows)
     assert len(output) == 4
-    assert output[0] == output_0
-    assert output[1] == output_1
-    assert output[2] == output_2
-    assert output[3] == output_3
+    assert output[0] == output_0  # experiment_id or no_update
+    assert output[1] == output_1  # delete_btn_disabled
+    assert output[2] == output_2  # go_to_experiment_btn_disabled
+    assert output[3] == output_3  # download_btn_disabled
 
 
 # ------------------------------------------------
@@ -715,3 +740,125 @@ def test_callback_display_selected_exp_related_variants(
     assert output[4] == substrate  # selected_substrate
     assert output[5] == product  # selected_product
     assert isinstance(output[6][0], dash_molstar.MolstarViewer)  # query_experiment_viewer
+
+
+# ------------------------------------------------
+def run_callback_on_delete_experiment_open_modal(selected_rows):
+    from levseq_dash.app.main_app import on_delete_experiment_open_modal
+
+    context_value.set(AttributeDict(**{"triggered_inputs": [{"prop_id": "id-button-delete-experiment.n_clicks"}]}))
+    return on_delete_experiment_open_modal(delete_clicks=1, selected_rows=selected_rows)
+
+
+@pytest.mark.parametrize(
+    "experiment_id,experiment_name",
+    [
+        ("any-id", "Test Experiment 1"),
+        ("any-id-2", "Test Experiment 2"),
+    ],
+)
+def test_callback_on_delete_experiment_open_modal(mock_load_config_from_test_data_path, experiment_id, experiment_name):
+    """Test on_delete_experiment_open_modal opens modal with experiment details."""
+    selected_rows = [{"experiment_id": experiment_id, "experiment_name": experiment_name}]
+
+    ctx = copy_context()
+    output = ctx.run(run_callback_on_delete_experiment_open_modal, selected_rows)
+
+    assert len(output) == 2
+    assert output[0] is True  # Modal should be open
+    assert isinstance(output[1], html.Div)  # Modal body should be a Div
+    # Verify experiment name and ID are in the modal message
+    modal_children = output[1].children
+    assert any(experiment_name in str(child) for child in modal_children)
+    assert any(experiment_id in str(child) for child in modal_children)
+
+
+def test_callback_on_delete_experiment_open_modal_no_update():
+    ctx = copy_context()
+    with pytest.raises(PreventUpdate):
+        ctx.run(run_callback_on_delete_experiment_open_modal, [])
+
+
+# ------------------------------------------------
+def run_callback_on_delete_experiment_modal_cancel(cancel_clicks):
+    from levseq_dash.app.main_app import on_delete_experiment_modal_cancel
+
+    context_value.set(AttributeDict(**{"triggered_inputs": [{"prop_id": "id-delete-modal-cancel.n_clicks"}]}))
+    return on_delete_experiment_modal_cancel(cancel_clicks=cancel_clicks)
+
+
+@pytest.mark.parametrize("cancel_clicks", [1, 2, 5])
+def test_callback_on_delete_experiment_modal_cancel(mock_load_config_from_test_data_path, cancel_clicks):
+    """Test on_delete_experiment_modal_cancel closes the modal."""
+    ctx = copy_context()
+    output = ctx.run(run_callback_on_delete_experiment_modal_cancel, cancel_clicks)
+
+    assert output is False  # Modal should be closed
+
+
+# ------------------------------------------------
+def run_callback_on_delete_experiment_modal_confirmed(selected_rows, confirm_clicks=1):
+    from levseq_dash.app.main_app import on_delete_experiment_modal_confirmed
+
+    context_value.set(AttributeDict(**{"triggered_inputs": [{"prop_id": "id-delete-modal-confirm.n_clicks"}]}))
+    return on_delete_experiment_modal_confirmed(confirm_clicks, selected_rows=selected_rows)
+
+
+def test_callback_on_delete_experiment_modal_confirmed(mocker, temp_experiment_to_delete, disk_manager_from_temp_data):
+    """Test on_delete_experiment_modal_confirmed deletes experiment and closes modal."""
+    # Mock the singleton to use temp data manager
+    mocker.patch("levseq_dash.app.main_app.singleton_data_mgr_instance", disk_manager_from_temp_data)
+
+    # Get the experiment ID from the fixture
+    exp_id = temp_experiment_to_delete
+
+    # Verify it exists before deletion
+    assert disk_manager_from_temp_data.get_experiment_metadata(exp_id) is not None
+
+    selected_rows = [{"experiment_id": exp_id, "experiment_name": "Temp Delete Test"}]
+
+    ctx = copy_context()
+    aggrid_deleteSelectedRows, alert, modal_open = ctx.run(
+        run_callback_on_delete_experiment_modal_confirmed, selected_rows
+    )
+
+    assert aggrid_deleteSelectedRows is True  # deleteSelectedRows should be True (success)
+    assert alert is not None  # Alert should be present
+    assert modal_open is False  # Modal should be closed
+
+    # Verify experiment was actually deleted
+    assert disk_manager_from_temp_data.get_experiment_metadata(exp_id) is None
+
+    # Verify experiment was actually deleted
+    assert disk_manager_from_temp_data.get_experiment_metadata(exp_id) is None
+
+
+def test_callback_on_delete_experiment_modal_confirmed_error_alert(
+    mocker, temp_experiment_to_delete, disk_manager_from_temp_data
+):
+    exp_id = temp_experiment_to_delete
+    selected_rows = [{"experiment_id": exp_id, "experiment_name": "Temp Delete Test"}]
+
+    # Mock the singleton to use temp data manager
+    mocker.patch("levseq_dash.app.main_app.singleton_data_mgr_instance", disk_manager_from_temp_data)
+
+    # Mock shutil.move to raise an exception but the UI in the callback will catch and create alert
+    mocker.patch("shutil.move", side_effect=Exception("Delete error"))
+
+    ctx = copy_context()
+    aggrid_deleteSelectedRows, alert, modal_open = ctx.run(
+        run_callback_on_delete_experiment_modal_confirmed, selected_rows
+    )
+    assert aggrid_deleteSelectedRows is no_update  # deleteSelectedRows not changed
+    assert alert is not None
+    assert modal_open is False  # Modal should be closed
+
+
+def test_callback_on_delete_experiment_modal_confirmed_no_update():
+    """Test on_delete_experiment_modal_confirmed with None selected_rows raises PreventUpdate."""
+    ctx = copy_context()
+    with pytest.raises(PreventUpdate):
+        ctx.run(run_callback_on_delete_experiment_modal_confirmed, None)
+
+    with pytest.raises(PreventUpdate):
+        ctx.run(run_callback_on_delete_experiment_modal_confirmed, [], 0)
