@@ -24,6 +24,41 @@ offering a significant improvement over traditional spreadsheet-based approaches
 ![app_snapshot_1](docs/_static/app_1.png)
 ![app_snapshot_2](docs/_static/app_2.png)
 
+## Adding data
+
+Required columns for fitness csv:
+"experiment_name": 
+"smiles_string": Smiles string of the reaction (contains >>)
+"plate": the plate that the data originated from
+"well": the well within the plate 
+"alignment_count": this is part of the LevSeq output, but if you don't have this just use 1.
+"amino_acid_substitutions": the substiutions compared to a parent sequence (which is denoted `#PARENT#`).
+"alignment_probability": confidence value, again if you don't have this just set it to be 1.
+"aa_sequence": the sequence of your protein, use only standard amino acids.
+"fitness_value": a float representing the fitness of your protein.
+
+Required tag for the main (or PARENT) sequence: `hashtag_parent = "#PARENT#"`. What this means is that in at least one row in your whole CSV in the `amino_acid_substitutions` column there must be a row that has the value #PARENT#. We use this for normalization (so for example, it could be a blank.)
+
+Metadata required:
+
+```
+{
+    "experiment_name": "The name of your experiment",
+    "doi": "if you have a DOI",
+    "experiment_date": "2019-06-07",
+    "substrate": "c1ccc(N2CCCC2)cc1.[N-]=[N+]=CC(F)(F)F",
+    "product": "FC(F)(F)C[C@H]1CCCN1c1ccccc1",
+    "assay": "Mass Spectometry", # How it was measured
+    "mutagenesis_method": "Across Sequence",
+    "parent_sequence": "MTIKEM.....AFST",
+    "plates_count": 1,
+    "csv_checksum": "",
+    "additional_information": "reaction_string: C=CC1=CC=CC=C1C.O=C(OCC)C=[N+]=[N-]>>O=C(OCC)[C@@H](C2)[C@H]2C3=CC=CC=C3C",
+    "upload_time_stamp": ""
+}
+```
+Lastly, we require a CIF file, this is just so you can check the protein, you could optionally dock any substrates and cofactors.
+For examples, see an [example dataset here](https://github.com/ssec-jhu/levseq-dash/tree/ba072e22ab8c6a91eb63de1c7500a05a2f20ec39/levseq_dash/app/data/ARNLD-2578-f9bcfe10-c995-4e1a-bf05-692ad26432db)
 
 ## Setup
   * Download & install Docker - see [Docker install docs](https://docs.docker.com/get-docker/).
