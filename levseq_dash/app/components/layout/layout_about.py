@@ -66,13 +66,16 @@ def get_layout():
                             "To upload your sequence and fitness data, please ",
                             html.A(
                                 "use the local instance",
-                                href="https://github.com/ssec-jhu/levseq-dash",
+                                href="https://github.com/moragroup/EnzEngDB",
                                 target="_blank",
                             ),
                             ". This functionality is disabled on the public version to preserve "
                             "data integrity and protect your privacy."
                             "Once your data is added locally, "
-                            "your data will appear alongside other experiments. If you wish to "
+                            "your data will appear alongside other experiments."
+                            " See ",
+                            html.A( "EnzEng Github", href="https://github.com/moragroup/EnzEngDB/ ", target="_blank"),
+                            " for file details. If you wish to "
                             "make your data public, first validate the upload "
                             "on the local instance"
                             "to ensure everything appears as intended. When satisfied with the "
@@ -80,7 +83,10 @@ def get_layout():
                             "dashboard and email them "
                             "to us at: ylong[at]caltech[dot]edu, "
                             "along with the upload files and "
-                            "the required metadata. If you have any issues, also please email us.",
+                            "the required metadata. If you have any issues, also please email us. ",
+                            "Alternatively you can follow our checklist on ",
+                            html.A( "EnzEng Github Issues", href="https://github.com/moragroup/EnzEngDB/issues ", target="_blank"),
+                            " and post a data upload issue, inlcude a link to your dataset and we'll handle it from there."
                         ]
                     ),
                 ],
@@ -420,7 +426,7 @@ def get_layout():
             html.Div(
                 [
                     "The source code for the EnzEngDB Dashboard is open-source and available on ",
-                    html.A("GitHub", href="https://github.com/ssec-jhu/levseq-dash", target="_blank"),
+                    html.A("GitHub", href="https://github.com/moragroup/EnzEngDB", target="_blank"),
                     html.P(
                         "If you encounter a bug, would like to request a feature, or wish to contribute, "
                         "please open an issue on the GitHub Issues page."
@@ -435,7 +441,13 @@ def get_layout():
                     "If you use the EnzEngDB Dashboard in your research, please cite both the paper and the software:",
                     html.Ul(
                         [
-                            html.Li("Paper link/citation: https://doi.org/10.1093/nar/gkaf1142"),
+                            html.Li(
+                                ["Paper link/citation: ",
+                                    html.A(
+                                            "Paper DOI", href="https://doi.org/10.1093/nar/gkaf1142", target="_blank"
+                                        ),
+                                    ]
+                                    ),
                             html.Li(
                                 [
                                     "Software Citation: ",
