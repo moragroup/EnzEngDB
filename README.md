@@ -27,6 +27,8 @@ offering a significant improvement over traditional spreadsheet-based approaches
 ## Adding data
 
 Required columns for fitness csv:
+
+```
 "experiment_name": 
 "smiles_string": Smiles string of the reaction (contains >>)
 "plate": the plate that the data originated from
@@ -36,6 +38,7 @@ Required columns for fitness csv:
 "alignment_probability": confidence value, again if you don't have this just set it to be 1.
 "aa_sequence": the sequence of your protein, use only standard amino acids.
 "fitness_value": a float representing the fitness of your protein.
+```
 
 Required tag for the main (or PARENT) sequence: `hashtag_parent = "#PARENT#"`. What this means is that in at least one row in your whole CSV in the `amino_acid_substitutions` column there must be a row that has the value #PARENT#. We use this for normalization (so for example, it could be a blank.)
 
