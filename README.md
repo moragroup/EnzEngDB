@@ -1,4 +1,4 @@
-# SSEC-JHU LevSeq-Dash
+# EnzEngDB
 
 [![CI](https://github.com/ssec-jhu/levseq-dash/actions/workflows/ci.yml/badge.svg)](https://github.com/ssec-jhu/levseq-dash/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ssec-jhu/levseq-dash/branch/main/graph/badge.svg?token=K04NJeMj2Y)](https://codecov.io/gh/ssec-jhu/levseq-dash)
@@ -6,12 +6,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15880411.svg)](https://doi.org/10.5281/zenodo.17310822)
 
 > **🌐 Live Demo**: This application is publicly available at [https://enzengdb.org/](https://enzengdb.org/)
-> 
-> **📖 Documentation**: Documentation is available at [https://ssec-jhu.github.io/levseq-dash/](https://ssec-jhu.github.io/levseq-dash/)
-
-
-
-![SSEC-JHU Logo](docs/_static/SSEC_logo_horiz_blue_1152x263.png)
 
 # About
 
@@ -262,6 +256,12 @@ open docs/_build/html/index.html
 ```
 
 **Note**: Documentation is automatically built when you run `tox` (without arguments).
+
+# Appreciation
+Made in collaboration with JHU and especially Fatemeh Abbasinejad.
+
+![SSEC-JHU Logo](docs/_static/SSEC_logo_horiz_blue_1152x263.png)
+
 
 ## License
 
