@@ -9,16 +9,19 @@
 
 # About
 
-Levseq dash is a user-friendly web application that provides a rich and interactive visualization dashboard to a comprehensive sequence-function database tailored to directed evolution experiments designed for individual labs at this phase.
+EnzEngDB is the website version of the EnzymeEngineering Database.
 The app allows users to explore parent protein structures in 3D, view ligand docking interactions, and analyze 
-variants to determine which mutations lead to enhanced activity. These features streamline the decision-making process, 
-offering a significant improvement over traditional spreadsheet-based approaches. Check it out live at https://enzengdb.org/
+variants to determine which mutations lead to enhanced activity. We hope this makes it easier to share and visualize enzyme engineering experiments. 
+
+Check it out live at https://enzengdb.org/
 
 
 ![app_snapshot_1](docs/_static/app_1.png)
 ![app_snapshot_2](docs/_static/app_2.png)
 
 ## Adding data
+
+We would love for you to contribute data, if you have some enzyme engineering data please open a new issue under the issue tab (with the data adding template) and share a link to your data (on zenodo or google drive) alternatively you can email me at ariane [dot] n [dot] mora [at] gmail.com.
 
 Required columns for fitness csv:
 
