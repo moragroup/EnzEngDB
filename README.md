@@ -62,8 +62,8 @@ For examples, see an [example dataset here](https://github.com/ssec-jhu/levseq-d
 
 ## Setup
   * Download & install Docker - see [Docker install docs](https://docs.docker.com/get-docker/).
-  * Get the code: `git clone https://github.com/ssec-jhu/levseq-dash.git`
-  * cd into repo directory: `cd levseq-dash`
+  * Get the code: `git clone https://github.com/moragroup/EnzEngDB`
+  * cd into repo directory: `cd EnzEngDB`
 
 This application supports two deployment modes: 
   * Public-Playground mode
